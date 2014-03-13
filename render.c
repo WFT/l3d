@@ -192,11 +192,11 @@ void renderperspective(Matrix *edge, double *eye, uint32_t color) {
 	double pz;
 	for (c = 0; c < edge->cols; c += 2) {
 		pz = mat_get_cell(edge, c, 2);
-		unmapped[0] = exoff * (mat_get_cell(edge, c, 0)-ex) / (pz - ez);
-		unmapped[1] = eyoff * (mat_get_cell(edge, c, 1)-ey) / (pz - ez);
+		unmapped[0] = ex - (ez * (mat_get_cell(edge, c, 0)-ex) / (pz - ez));
+		unmapped[1] = ey - (ez * (mat_get_cell(edge, c, 1)-ey) / (pz - ez));
 		pz = mat_get_cell(edge, c+1, 2);
-		unmapped[2] = exoff * (mat_get_cell(edge, c+1, 0)-ex) / (pz - ez);
-		unmapped[3] = eyoff * (mat_get_cell(edge, c+1, 1)-ey) / (pz - ez);
+		unmapped[2] = ex - (ez * (mat_get_cell(edge, c+1, 0)-ex) / (pz - ez));
+		unmapped[3] = ey - (ez * (mat_get_cell(edge, c+1, 1)-ey) / (pz - ez));
 		map_coors(unmapped, mapped);
 		dline(mapped, color);
 	}
