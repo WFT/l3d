@@ -20,10 +20,13 @@ void dline(int *coors, uint32_t color);
 // render screen to ppm
 void renderppm(char *path);
 
+// renders a single perspective -- access through render functions below
+void renderperspective(Matrix *edge, double *eye, uint32_t color);
+
 // rendering functions for screen
 void renderparallel(Matrix *edge);
-void renderperspective(Matrix *edge);
-void renderstereo(Matrix *edge);
+void rendercyclops(Matrix *edge, double *eye);
+void renderstereo(Matrix *edge, double *eyes);
 
 void update_display();
 void clear_screen();
