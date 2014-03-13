@@ -94,6 +94,8 @@ void interpret(char *l) {
     }
     renderstereo(edge, args);
   } else if (strcmp(list[0], "stdin") == 0) {
+    if (in != stdin)
+      fclose(in);
     in = stdin;
   } else if (strcmp(list[0], "file") == 0) {
     renderppm(list[1]);
