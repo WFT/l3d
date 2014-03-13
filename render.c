@@ -233,20 +233,30 @@ void clear_screen() {
 }
 
 void spin(Matrix *edge) {
-  Matrix *x = rotate_x_mat(10 * M_PI / 180);
-  Matrix *y = rotate_y_mat(10 * M_PI / 180);
-  Matrix *z = rotate_z_mat(10 * M_PI / 180);
-  double eye[3] = {0, 0, 3};
-  Matrix *rot;
-  uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
-  while(!should_quit()) {
-    rot = mat_multiply(x, edge);
-    renderperspective(rot, eye, color);
-    mat_destruct(rot);
-  }
+  Matrix *x = rotate_x_mat(1 * M_PI / 180);
+  Matrix *y = rotate_y_mat(1 * M_PI / 180);
+  Matrix *z = rotate_z_mat(1 * M_PI / 180);
+  Matrix *temp = mat_multiply(x, y);
+  Matrix *xyz = mat_multiply(temp, z);
+  mat_destruct(temp);
   mat_destruct(x);
   mat_destruct(y);
   mat_destruct(z);
+  double eye[3] = {0, 0, 3};
+  Matrix *rot;
+  uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
+  uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
+  clear_screen();
+  renderperspective(edge, eye, color);
+  while(!should_quit()) {
+    renderperspective(edge, eye, black);
+    rot = mat_multiply(xyz, edge);
+    mat_destruct(edge);
+    edge = rot;
+    renderperspective(edge, eye, color);
+    SDL_Delay(50);
+    update_display();
+  }
 }
 
 // call to clean up
