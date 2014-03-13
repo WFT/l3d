@@ -34,7 +34,8 @@ void interpret(char *l) {
     args[i] = strtod(list[i+1], NULL);
   }
   if (strcmp(list[0], "pixels") == 0) {
-    init_live_render(args[0], args[1]);
+    // quit on error
+    quit = init_live_render(args[0], args[1]);
   } else if (strcmp(list[0], "screen") == 0) {
     screen = malloc(4 * sizeof(double));
     memcpy(screen, args, 4 * sizeof(double));
