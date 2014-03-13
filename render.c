@@ -187,6 +187,7 @@ void renderperspective(Matrix *edge, double *eye, uint32_t color) {
 	double unmapped[4];
 	int c;
 	double ex = eye[0], ey = eye[1], ez = eye[2];
+	//printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
 	double exoff = ex - ez, eyoff = ey - ez;
 	double pz;
 	for (c = 0; c < edge->cols; c += 2) {
@@ -208,7 +209,15 @@ void rendercyclops(Matrix *edge, double *eye) {
 }
 
 void renderstereo(Matrix *edge, double *eyes) {
+	clear_screen();
 
+	// left -- red
+	renderperspective(edge, eyes, SDL_MapRGB(surface->format, 255, 0, 0));
+
+	// right -- cyan
+	renderperspective(edge, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
+	
+	update_display();
 }
 
 void update_display() {

@@ -87,6 +87,12 @@ void interpret(char *l) {
       return;
     }
     rendercyclops(edge, args);
+  } else if (strcmp(list[0], "render-perspective-stereo") == 0) {
+    if (!screen) {
+      printf("ERROR: screen not set\n");
+      return;
+    }
+    renderstereo(edge, args);
   } else if (strcmp(list[0], "stdin") == 0) {
     in = stdin;
   } else if (strcmp(list[0], "file") == 0) {
