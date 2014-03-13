@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
     fgets(inbuf, MAX_LINE, in);
     interpret(inbuf);
   }
-  if (should)
+  if (shouldspin)
     spin(edge);
   if (rendering_initialized)
     finish_live_render();
