@@ -1,4 +1,5 @@
 #include "render.h"
+#include "transform.h"
 #include <SDL2/SDL.h>
 
 // one of each for drawing -- nothing more complicated required
@@ -156,7 +157,7 @@ void renderppm(char *path) {
 		for (x = 0; x < pxw; x++) {
 			p = getpix(x, y, 0);
 			SDL_GetRGB(p, surface->format, &r, &g, &b);
-    		bwrit += sprintf(obuf+bwrit, "%d %d %d\t", r, g, b);
+			bwrit += sprintf(obuf+bwrit, "%d %d %d\t", r, g, b);
 		}
 	}
 	if (SDL_MUSTLOCK(surface))
@@ -229,6 +230,23 @@ void update_display() {
 void clear_screen() {
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 	update_display();
+}
+
+void spin(Matrix *edge) {
+  Matrix *x = rotate_x_mat(10 * M_PI / 180);
+  Matrix *y = rotate_y_mat(10 * M_PI / 180);
+  Matrix *z = rotate_z_mat(10 * M_PI / 180);
+  double eye[3] = {0, 0, 3};
+  Matrix *rot;
+  uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
+  while(!should_quit()) {
+    rot = mat_multiply(x, edge);
+    renderperspective(rot, eye, color);
+    mat_destruct(rot);
+  }
+  mat_destruct(x);
+  mat_destruct(y);
+  mat_destruct(z);
 }
 
 // call to clean up
