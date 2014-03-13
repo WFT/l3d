@@ -37,7 +37,7 @@ void interpret(char *l) {
     // quit on error
     quit = init_live_render(args[0], args[1]);
     if (quit)
-      printf("live rendering setup failed... Exiting now.\n")
+      printf("live rendering setup failed... Exiting now.\n");
   } else if (strcmp(list[0], "screen") == 0) {
     screen = malloc(4 * sizeof(double));
     memcpy(screen, args, 4 * sizeof(double));
