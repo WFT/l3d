@@ -189,7 +189,6 @@ void renderperspective(Matrix *edge, double *eye, uint32_t color) {
 	int c;
 	double ex = eye[0], ey = eye[1], ez = eye[2];
 	//printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
-	double exoff = ex - ez, eyoff = ey - ez;
 	double pz;
 	for (c = 0; c < edge->cols; c += 2) {
 		pz = mat_get_cell(edge, c, 2);

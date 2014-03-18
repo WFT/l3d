@@ -69,3 +69,21 @@ struct matrix * mat_multiply(struct matrix *a, struct matrix *b) {
   }
   return ret;
 }
+
+// res must be right size
+void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res) {
+  assert(a->cols == b->rows);
+  assert(res->cols == b->cols);
+  assert(res->rows == a->rows);
+  int r, c, j;
+  double val = 0;
+  for (c = 0; c < res->cols; c++) {
+    for (r = 0; r < res->rows; r++) {
+      for (j = 0; j < res->rows; j++) {
+	val += mat_get_cell(a, j, r) * mat_get_cell(b, c, j);
+      }
+      mat_set_cell(res, c, r, val);
+      val = 0;
+    }
+  }
+}

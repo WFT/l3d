@@ -18,3 +18,5 @@ void mat_add_column(struct matrix *mat, double *col);
 
 // multiply a by b
 struct matrix * mat_multiply(struct matrix *a, struct matrix *b);
+
+void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res);

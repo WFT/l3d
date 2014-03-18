@@ -18,10 +18,7 @@ char shouldspin = 0;
 FILE *in;
 
 void multiply_transform(Matrix *transform) {
-  Matrix *temp = mat_multiply(transform, tform);
-  mat_destruct(transform);
-  mat_destruct(tform);
-  tform = temp;
+  mat_multinmat(transform, tform, tform);
 }
 
 void interpret(char *l) {
