@@ -1,7 +1,7 @@
 #octohedron
 identity
-screen -3 -3 3 3
-pixels  500 500
+screen -2 -2 2 2
+pixels  300 300
 line -.5 -.5 0 .5 -.5 0
 line .5 -.5 0 .5 .5 0
 line .5 .5 0 -.5 .5 0
