@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include "matrix.h"
 
@@ -50,7 +51,8 @@ void mat_add_column(struct matrix *mat, double *col) {
   int c = mat->cols;
   mat->cols++;
   mat->cells = realloc(mat->cells, mat->cols * sizeof(double *));
-  mat->cells[c] = col;
+  mat->cells[c] = malloc(mat->rows * sizeof(double));
+  memcpy(mat->cells[c], col, mat->rows * sizeof(double));
 }
 
 struct matrix * mat_multiply(struct matrix *a, struct matrix *b) {  
