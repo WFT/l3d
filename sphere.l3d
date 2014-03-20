@@ -1,0 +1,4 @@
+screen -10 -10 10 10
+pixels 500 500
+sphere 3 0 0 0
+stdin
