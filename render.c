@@ -180,7 +180,6 @@ void renderparallel(Matrix *edge) {
 }
 
 void renderperspective(Matrix *edge, double *eye, uint32_t color) {
-<<<<<<< HEAD
 	int mapped[4];
 	double unmapped[4];
 	int c;
@@ -197,25 +196,6 @@ void renderperspective(Matrix *edge, double *eye, uint32_t color) {
 		map_coors(unmapped, mapped);
 		dline(mapped, color);
 	}
-=======
-  int mapped[4];
-  double unmapped[4];
-  int c;
-  double ex = eye[0], ey = eye[1], ez = eye[2];
-  //printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
-  double exoff = ex - ez, eyoff = ey - ez;
-  double pz;
-  for (c = 0; c < edge->cols; c += 2) {
-    pz = mat_get_cell(edge, c, 2);
-    unmapped[0] = ex - (ez * (mat_get_cell(edge, c, 0)-ex) / (pz - ez));
-    unmapped[1] = ey - (ez * (mat_get_cell(edge, c, 1)-ey) / (pz - ez));
-    pz = mat_get_cell(edge, c+1, 2);
-    unmapped[2] = ex - (ez * (mat_get_cell(edge, c+1, 0)-ex) / (pz - ez));
-    unmapped[3] = ey - (ez * (mat_get_cell(edge, c+1, 1)-ey) / (pz - ez));
-    map_coors(unmapped, mapped);
-    dline(mapped, color);
-  }
->>>>>>> a9d582378e6e55b5a5273e169ed0907011cc16f4
 }
 
 void rendercyclops(Matrix *edge, double *eye) {
