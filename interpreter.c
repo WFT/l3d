@@ -56,8 +56,28 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "sphere") == 0) {
     double r = args[0], cx = args[1], cy = args[2], cz = args[3];
     int nVertices = 20;
-    double lrad = M_PI / (2 * nVertices);
-    
+    double lrad = 2 * M_PI / (nVertices);
+    Matrix *roty = rotate_y_mat(lrad);
+    Matrix *sphere = mat_construct(0, 4);
+    Matrix *arc = mat_construct(0, 4);
+    // gen original arc
+    double coors[4] = {0, 0, 0, 1};
+    for (int  i = 0; i < nVertices; i++) {
+      coors[0] = r * cos(i * lrad);
+      coors[1] = r * sin(i * lrad);
+      mat_add_column(arc, coors);
+
+      coors[0] = r * cos((i+1) * lrad);
+      coors[1] = r * sin((i+1) * lrad);
+      mat_add_column(arc, coors);
+    }
+//    mat_extend(edge, arc);
+    Matrix *oldarc = mat_construct(0, 4);
+    for (int j = 0; j < nVertices; j++) {
+      mat_multinmat(roty, arc, oldarc);
+      mat_extend(edge, oldarc);
+    }
+    mat_destruct(arc);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
   } else if (strcmp(list[0], "move") == 0) {

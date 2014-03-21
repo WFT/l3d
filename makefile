@@ -1,8 +1,8 @@
 3DOSX: transform.o parse_util.o render.o matrix.o interpreter.c
-	gcc interpreter.c transform.o parse_util.o render.o matrix.o -lSDL2 -o 3D
+	gcc interpreter.c transform.o parse_util.o render.o matrix.o -lSDL2 -g -o 3D
 
 ubuntu: transform.o parse_util.o render.o matrix.o interpreter.c
-	gcc interpreter.c transform.o parse_util.o render.o matrix.o -I/usr/local/include/SDL2 -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL2 -lm  -o 3D
+	gcc interpreter.c transform.o parse_util.o render.o matrix.o -ga -I/usr/local/include/SDL2 -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL2 -lm  -o 3D
 
 transform.o: transform.c transform.h
 	gcc transform.c -o transform.o -c
