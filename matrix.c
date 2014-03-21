@@ -89,3 +89,18 @@ void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res) {
     }
   }
 }
+
+void mat_extend(struct matrix *dest, struct matrix *src) {
+
+}
+
+void mat_resize(struct matrix *mat, int c, int r) {
+  int newcols = mat->cols - c, newrows = mat->rows - r;
+  mat->cols = c;
+  mat->rows = r;
+  mat->cells = realloc(mat->cells, mat->cols * sizeof(double *));
+  for (int i = 0; i < newcols; i++) {
+    mat->cells[c - newcols + i] = malloc(r * sizeof(double));
+    memcpy(mat->cells[c - newcols + i], col, mat->rows * sizeof(double));
+  }
+}

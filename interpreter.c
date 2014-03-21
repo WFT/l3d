@@ -55,29 +55,9 @@ void interpret(char *l) {
     mat_add_column(edge, e);
   } else if (strcmp(list[0], "sphere") == 0) {
     double r = args[0], cx = args[1], cy = args[2], cz = args[3];
-    int nVertices = 12;
+    int nVertices = 20;
     double lrad = M_PI / (2 * nVertices);
-    double theta, phi;
-    //*fucked up coors stuff*
-    double coors[4] = {cx, cy + r, cz+r};
-    // latitude
-    for (theta = 0; theta < M_PI; theta += lrad) {
-      double xr = cos(theta) - r;
-      coors[1] = sin(theta);
-      for (phi = 0; phi < M_PI; phi += lrad) {
-	mat_add_column(edge, coors);
-	coors[0] = xr * cos(phi);
-	coors[2] = xr * sin(phi);
-	mat_add_column(edge, coors);
-      }
-    }
-    /* for (lon = 0; lon < 2 * M_PI; lon += lrad) { */
-    /*   coors[0] = cx + (cos(lon)*r); */
-    /*   coors[1] = cy + (sin(lon)*r); */
-    /*   coors[2] = cz + (sin(lon)*r); */
-    /*   coors[3] = 1; */
-    /*   mat_add_column(edge, coors); */
-    /* } */
+    
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
   } else if (strcmp(list[0], "move") == 0) {
