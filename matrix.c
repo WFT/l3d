@@ -92,7 +92,8 @@ void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res) {
 void mat_extend(struct matrix *dest, struct matrix *src) {
   int oldc = dest->cols;
   mat_resize(dest, dest->cols + src->cols, dest->rows);
-  for (int c = oldc; c < dest->cols; c++) {
+  int c;
+  for (c = oldc; c < dest->cols; c++) {
     memcpy(dest->cells[c], src->cells[c - oldc], dest->rows * sizeof(double));
   }
 }
@@ -102,7 +103,8 @@ void mat_resize(struct matrix *mat, int c, int r) {
   mat->cols = c;
   mat->rows = r;
   mat->cells = realloc(mat->cells, mat->cols * sizeof(double *));
-  for (int i = 0; i < newcols; i++) {
+  int i;
+  for (i = 0; i < newcols; i++) {
     mat->cells[c - newcols + i] = calloc(r, sizeof(double));
   }
 }
