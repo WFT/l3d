@@ -63,7 +63,7 @@ struct matrix * mat_multiply(struct matrix *a, struct matrix *b) {
   for (c = 0; c < ret->cols; c++) {
     for (r = 0; r < ret->rows; r++) {
       for (j = 0; j < ret->rows; j++) {
-	val += mat_get_cell(a, j, r) * mat_get_cell(b, c, j);
+	      val += mat_get_cell(a, j, r) * mat_get_cell(b, c, j);
       }
       mat_set_cell(ret, c, r, val);
       val = 0;
@@ -75,14 +75,13 @@ struct matrix * mat_multiply(struct matrix *a, struct matrix *b) {
 // res must be right size
 void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res) {
   assert(a->cols == b->rows);
-  assert(res->cols == b->cols);
-  assert(res->rows == a->rows);
+  mat_resize(res, b->cols, a->rows);
   int r, c, j;
   double val = 0;
   for (c = 0; c < res->cols; c++) {
     for (r = 0; r < res->rows; r++) {
       for (j = 0; j < res->rows; j++) {
-	val += mat_get_cell(a, j, r) * mat_get_cell(b, c, j);
+	      val += mat_get_cell(a, j, r) * mat_get_cell(b, c, j);
       }
       mat_set_cell(res, c, r, val);
       val = 0;
@@ -91,16 +90,19 @@ void mat_multinmat(struct matrix *a, struct matrix *b, struct matrix *res) {
 }
 
 void mat_extend(struct matrix *dest, struct matrix *src) {
-
+  int oldc = dest->cols;
+  mat_resize(dest, dest->cols + src->cols, dest->rows);
+  for (int c = oldc; c < dest->cols; c++) {
+    memcpy(dest->cells[c], src->cells[c - oldc], dest->rows * sizeof(double));
+  }
 }
 
 void mat_resize(struct matrix *mat, int c, int r) {
-  int newcols = mat->cols - c, newrows = mat->rows - r;
+  int newcols = c - mat->cols;
   mat->cols = c;
   mat->rows = r;
   mat->cells = realloc(mat->cells, mat->cols * sizeof(double *));
   for (int i = 0; i < newcols; i++) {
-    mat->cells[c - newcols + i] = malloc(r * sizeof(double));
-    memcpy(mat->cells[c - newcols + i], col, mat->rows * sizeof(double));
+    mat->cells[c - newcols + i] = calloc(r, sizeof(double));
   }
 }
