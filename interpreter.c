@@ -64,12 +64,12 @@ void interpret(char *l) {
     double coors[4] = {0, 0, 0, 1};
     int i;
     for (i = 0; i < nVertices; i++) {
-      coors[0] = r * cos(i * lrad) + cx;
-      coors[1] = r * sin(i * lrad) + cy;
+      coors[0] = r * cos(i * lrad);
+      coors[1] = r * sin(i * lrad);
       mat_add_column(arc, coors);
 
-      coors[0] = r * cos((i+1) * lrad) + cx;
-      coors[1] = r * sin((i+1) * lrad) + cy;
+      coors[0] = r * cos((i+1) * lrad);
+      coors[1] = r * sin((i+1) * lrad);
       mat_add_column(arc, coors);
     }
     Matrix *oldarc = arc;
@@ -85,9 +85,11 @@ void interpret(char *l) {
       mat_destruct(oldarc);
       oldarc = arc;
     }
-    Matrix *complete = mat_multiply(move_mat(cx, cy, cz), sphere);
+    Matrix *center = move_mat(cx, cy, cz);
+    Matrix *complete = mat_multiply(center, sphere);
     mat_extend(edge, complete);
     mat_destruct(sphere);
+    mat_destruct(center);
     mat_destruct(complete);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
