@@ -55,7 +55,7 @@ void interpret(char *l) {
     mat_add_column(edge, e);
   } else if (strcmp(list[0], "sphere") == 0) {
     double r = args[0], cx = args[1], cy = args[2], cz = args[3];
-    int nVertices = 20;
+    int nVertices = 36;
     double lrad = 2 * M_PI / (nVertices);
     Matrix *roty = rotate_y_mat(lrad);
     Matrix *sphere = mat_construct(0, 4);
