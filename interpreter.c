@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -72,7 +72,23 @@ void interpret(char *l) {
       coors[1] = r * sin((i+1) * lrad) + cy;
       mat_add_column(arc, coors);
     }
-    mat_extend(edge, arc);
+    Matrix *oldarc = arc;
+    mat_extend(sphere, arc);
+    for (i = 0; i < nVertices; i++) {
+      arc = mat_multiply(roty, oldarc);
+      mat_extend(sphere, arc);
+      int j;
+      for (j = 1; j < oldarc->cols; j += 2) {
+        mat_add_column(sphere, oldarc->cells[j]);
+        mat_add_column(sphere, arc->cells[j]);
+      }
+      mat_destruct(oldarc);
+      oldarc = arc;
+    }
+    Matrix *complete = mat_multiply(move_mat(cx, cy, cz), sphere);
+    mat_extend(edge, complete);
+    mat_destruct(sphere);
+    mat_destruct(complete);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
   } else if (strcmp(list[0], "move") == 0) {
