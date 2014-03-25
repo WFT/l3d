@@ -212,7 +212,7 @@ void renderstereo(Matrix *edge, double *eyes) {
   clear_screen();
 
   // left -- red
-  renderperspective(edge, eyes, SDL_MapRGB(surface->format, 255, 0, 0));
+  renderperspective(edge, eyes, SDL_MapRGB(surface->format, 127, 0, 0));
 
   // right -- cyan
   renderperspective(edge, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
