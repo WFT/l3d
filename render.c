@@ -8,6 +8,9 @@ SDL_Surface *surface = NULL;
 SDL_Renderer *ren = NULL;
 SDL_Texture *tex = NULL;
 
+// should mix colors when adding new pixel
+char mixcolors = 0;
+
 void log_SDL_error(const char *e) {
   printf("%s failed:\n\t%s\n", e, SDL_GetError());
 }
@@ -55,6 +58,8 @@ void setpix(int x, int y, uint32_t color, char lock) {
   if (lock && SDL_MUSTLOCK(surface))
     SDL_LockSurface(surface);
 
+  if (mixcolors)
+    color += getpix(x, y, 0);
   uint8_t * p = (uint8_t *)surface->pixels;
   p += (y * surface->pitch) + (x * sizeof(uint32_t));
   *((uint32_t *)p) = color;
@@ -215,7 +220,9 @@ void renderstereo(Matrix *edge, double *eyes) {
   renderperspective(edge, eyes, SDL_MapRGB(surface->format, 127, 0, 0));
 
   // right -- cyan
+  mixcolors = 1;
   renderperspective(edge, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
+  mixcolors = 0;
 
   update_display();
 }
@@ -231,28 +238,68 @@ void clear_screen() {
   update_display();
 }
 
-void spin(Matrix *edge) {
-  Matrix *x = rotate_x_mat(1 * M_PI / 180);
-  Matrix *y = rotate_y_mat(1 * M_PI / 180);
-  Matrix *z = rotate_z_mat(1 * M_PI / 180);
-  Matrix *temp = mat_multiply(x, y);
-  Matrix *xyz = mat_multiply(temp, z);
+char endspin() {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    if ( event.type == SDL_QUIT ) {
+      SDL_DestroyRenderer(ren);
+      SDL_DestroyWindow(win);
+      SDL_Quit();
+      return 1;
+    } else if (event.type == SDL_KEYDOWN) {
+      return 1;
+    }
+  }
+  return 0;  
+}
+
+Matrix *spinmat(int x, int y, int z) {
+  Matrix *xr = rotate_x_mat(x * M_PI / 180);
+  Matrix *yr = rotate_y_mat(y * M_PI / 180);
+  Matrix *zr = rotate_z_mat(z * M_PI / 180);
+  Matrix *temp = mat_multiply(xr, yr);
+  Matrix *xyz = mat_multiply(temp, zr);
   mat_destruct(temp);
-  mat_destruct(x);
-  mat_destruct(y);
-  mat_destruct(z);
-  double eye[3] = {0, 0, 3};
+  mat_destruct(xr);
+  mat_destruct(yr);
+  mat_destruct(zr);
+  return xyz;
+}
+
+void spincyclops(Matrix *edge, double *eye) {
+  Matrix *xyz = spinmat(1, 1, 1);
   Matrix *rot;
   uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
   uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
   clear_screen();
-  renderperspective(edge, eye, color);
-  while(!should_quit()) {
+  while(!endspin()) {
     renderperspective(edge, eye, black);
     rot = mat_multiply(xyz, edge);
     mat_destruct(edge);
     edge = rot;
     renderperspective(edge, eye, color);
+    SDL_Delay(50);
+    update_display();
+  }
+}
+
+void spinstereo(Matrix *edge, double *eyes) {
+  Matrix *xyz = spinmat(1, 1, 1);
+  double *el = eyes;
+  double *er = eyes + 3;
+  Matrix *rot;
+  uint32_t red = SDL_MapRGB(surface->format, 127, 0, 0);
+  uint32_t cyan = SDL_MapRGB(surface->format, 0, 127, 127);
+  uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
+  clear_screen();
+  while(!endspin()) {
+    renderperspective(edge, el, black);
+    renderperspective(edge, er, black);
+    rot = mat_multiply(xyz, edge);
+    mat_destruct(edge);
+    edge = rot;
+    renderperspective(edge, el, red);
+    renderperspective(edge, er, cyan);    
     SDL_Delay(50);
     update_display();
   }

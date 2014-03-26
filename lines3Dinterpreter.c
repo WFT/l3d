@@ -14,7 +14,6 @@ Matrix *edge;
 Matrix *tform;
 char quit = 0;
 char sdl_initialized = 0;
-char shouldspin = 0;
 FILE *in;
 
 void multiply_transform(Matrix *transform) {
@@ -132,8 +131,10 @@ void interpret(char *l) {
       return;
     }
     renderstereo(edge, args);
-  } else if (strcmp(list[0], "spin") == 0) {
-    shouldspin = 1;
+  } else if (strcmp(list[0], "spinc") == 0) {
+    spincyclops(edge, args);
+  } else if (strcmp(list[0], "spins") == 0) {
+    spinstereo(edge, args);
   } else if (strcmp(list[0], "stdin") == 0) {
     if (in != stdin)
       fclose(in);
@@ -156,13 +157,11 @@ int main(int argc, char **argv) {
   if (argc > 1)
     in = fopen(argv[1], "r");
   char inbuf[MAX_LINE + 1];
-  while (!quit && !shouldspin) {
+  while (!quit) {
     quit = should_quit();
     fgets(inbuf, MAX_LINE, in);
     interpret(inbuf);
   }
-  if (shouldspin)
-    spin(edge);
   if (rendering_initialized)
     finish_live_render();
 }

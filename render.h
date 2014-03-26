@@ -31,7 +31,8 @@ void renderstereo(Matrix *edge, double *eyes);
 void update_display();
 void clear_screen();
 
-void spin(Matrix *edge);
+void spincyclops(Matrix *edge, double *eye);
+void spinstereo(Matrix *edge, double *eyes);
 
 // call to clean up
 void finish_live_render();
