@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "stack.h"
 
 // returns the current length, in number of items
@@ -22,7 +23,7 @@ int pushstack(struct stack *s, void *val) {
     s->data = realloc(s->data, s->size * 2);
   s->size *= 2;
   s->index += 1;
-  s->data[s->index * s->isize] = *val;
+  memcpy(s->data + (s->index * s->isize), val, s->isize);
   return lenstack(s);
 }
 
