@@ -21,12 +21,12 @@ void dline(int *coors, uint32_t color);
 void renderppm(char *path);
 
 // renders a single perspective -- access through render functions below
-void renderperspective(Matrix *edge, double *eye, uint32_t color);
+void renderperspective(Matrix *faces, double *eye, uint32_t color);
 
 // rendering functions for screen
-void renderparallel(Matrix *edge);
-void rendercyclops(Matrix *edge, double *eye);
-void renderstereo(Matrix *edge, double *eyes);
+// void renderparallel(Matrix *edge);
+void rendercyclops(Matrix *faces, double *eye);
+void renderstereo(Matrix *faces, double *eyes);
 
 void update_display();
 void clear_screen();

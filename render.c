@@ -91,6 +91,8 @@ void map_coors(double *coors, int *mapped) {
   mapped[1] = -ceil((coors[1] - screen[3])*yscale);
   mapped[2] = ceil((coors[2] - screen[0])*xscale);
   mapped[3] = -ceil((coors[3] - screen[3])*yscale);
+  mapped[4] = ceil((coors[4] - screen[0])*xscale);
+  mapped[5] = -ceil((coors[5] - screen[3])*yscale);
 }
 
 // draw a line
@@ -167,61 +169,72 @@ void renderppm(char *path) {
   fclose(out);
 }
 
-void renderparallel(Matrix *edge) {
-  clear_screen();
-  int mapped[4];
-  double unmapped[4];
-  uint32_t color = SDL_MapRGB(surface->format, 255, 255, 255);
+/* void renderparallel(Matrix *edge) { */
+/*   clear_screen(); */
+/*   int mapped[4]; */
+/*   double unmapped[4]; */
+/*   uint32_t color = SDL_MapRGB(surface->format, 255, 255, 255); */
+/*   int c; */
+/*   for (c = 0; c < edge->cols; c += 2) { */
+/*     unmapped[0] = mat_get_cell(edge, c, 0); */
+/*     unmapped[1] = mat_get_cell(edge, c, 1); */
+/*     unmapped[2] = mat_get_cell(edge, c+1, 0); */
+/*     unmapped[3] = mat_get_cell(edge, c+1, 1); */
+/*     map_coors(unmapped, mapped); */
+/*     dline(mapped, color); */
+/*   } */
+/*   update_display(); */
+/* } */
+
+void renderperspective(Matrix *faces, double *eye, uint32_t color) {
+  int mapped[6];
+  double unmapped[6];
   int c;
-  for (c = 0; c < edge->cols; c += 2) {
-    unmapped[0] = mat_get_cell(edge, c, 0);
-    unmapped[1] = mat_get_cell(edge, c, 1);
-    unmapped[2] = mat_get_cell(edge, c+1, 0);
-    unmapped[3] = mat_get_cell(edge, c+1, 1);
+  double ex = eye[0], ey = eye[1], ez = eye[2];
+  //printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
+  double pz;
+  for (c = 0; c < faces->cols; c += 3) {
+    pz = mat_get_cell(faces, c, 2);
+    if (pz > ez)
+      break;
+    unmapped[0] = ex - (ez * (mat_get_cell(faces, c, 0)-ex) / (pz - ez));
+    unmapped[1] = ey - (ez * (mat_get_cell(faces, c, 1)-ey) / (pz - ez));
+    pz = mat_get_cell(faces, c+1, 2);
+    if (pz > ez)
+      break;
+    unmapped[2] = ex - (ez * (mat_get_cell(faces, c+1, 0)-ex) / (pz - ez));
+    unmapped[3] = ey - (ez * (mat_get_cell(faces, c+1, 1)-ey) / (pz - ez));
+    pz = mat_get_cell(faces, c+2, 2);
+    if (pz > ez)
+      break;
+    unmapped[4] = ex - (ez * (mat_get_cell(faces, c+2, 0)-ex) / (pz - ez));
+    unmapped[5] = ey - (ez * (mat_get_cell(faces, c+2, 1)-ey) / (pz - ez));
     map_coors(unmapped, mapped);
     dline(mapped, color);
+    dline(mapped + 2, color);
+    mapped[0] = mapped[4];
+    mapped[1] = mapped[5];
+    mapped[2] = mapped[0];
+    mapped[3] = mapped[1];
+    dline(mapped, color);
   }
-  update_display();
 }
 
-void renderperspective(Matrix *edge, double *eye, uint32_t color) {
-	int mapped[4];
-	double unmapped[4];
-	int c;
-	double ex = eye[0], ey = eye[1], ez = eye[2];
-	//printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
-	double pz;
-	for (c = 0; c < edge->cols; c += 2) {
-		pz = mat_get_cell(edge, c, 2);
-    if (pz > ez)
-      break;
-		unmapped[0] = ex - (ez * (mat_get_cell(edge, c, 0)-ex) / (pz - ez));
-		unmapped[1] = ey - (ez * (mat_get_cell(edge, c, 1)-ey) / (pz - ez));
-		pz = mat_get_cell(edge, c+1, 2);
-    if (pz > ez)
-      break;
-		unmapped[2] = ex - (ez * (mat_get_cell(edge, c+1, 0)-ex) / (pz - ez));
-		unmapped[3] = ey - (ez * (mat_get_cell(edge, c+1, 1)-ey) / (pz - ez));
-		map_coors(unmapped, mapped);
-		dline(mapped, color);
-	}
-}
-
-void rendercyclops(Matrix *edge, double *eye) {
+void rendercyclops(Matrix *faces, double *eye) {
   clear_screen();
-  renderperspective(edge, eye, SDL_MapRGB(surface->format, 255, 255, 255));
+  renderperspective(faces, eye, SDL_MapRGB(surface->format, 255, 255, 255));
   update_display();
 }
 
-void renderstereo(Matrix *edge, double *eyes) {
+void renderstereo(Matrix *faces, double *eyes) {
   clear_screen();
 
   // left -- red
-  renderperspective(edge, eyes, SDL_MapRGB(surface->format, 127, 0, 0));
+  renderperspective(faces, eyes, SDL_MapRGB(surface->format, 127, 0, 0));
 
   // right -- cyan
   mixcolors = 1;
-  renderperspective(edge, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
+  renderperspective(faces, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
   mixcolors = 0;
 
   update_display();
@@ -250,7 +263,7 @@ char endspin() {
       return 1;
     }
   }
-  return 0;  
+  return 0;
 }
 
 Matrix *spinmat(int x, int y, int z) {
@@ -266,24 +279,24 @@ Matrix *spinmat(int x, int y, int z) {
   return xyz;
 }
 
-void spincyclops(Matrix *edge, double *eye) {
+void spincyclops(Matrix *faces, double *eye) {
   Matrix *xyz = spinmat(1, 1, 1);
   Matrix *rot;
   uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
   uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
   clear_screen();
   while(!endspin()) {
-    renderperspective(edge, eye, black);
-    rot = mat_multiply(xyz, edge);
-    mat_destruct(edge);
-    edge = rot;
-    renderperspective(edge, eye, color);
+    renderperspective(faces, eye, black);
+    rot = mat_multiply(xyz, faces);
+    mat_destruct(faces);
+    faces = rot;
+    renderperspective(faces, eye, color);
     SDL_Delay(50);
     update_display();
   }
 }
 
-void spinstereo(Matrix *edge, double *eyes) {
+void spinstereo(Matrix *faces, double *eyes) {
   Matrix *xyz = spinmat(1, 1, 1);
   double *el = eyes;
   double *er = eyes + 3;
@@ -293,13 +306,15 @@ void spinstereo(Matrix *edge, double *eyes) {
   uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
   clear_screen();
   while(!endspin()) {
-    renderperspective(edge, el, black);
-    renderperspective(edge, er, black);
-    rot = mat_multiply(xyz, edge);
-    mat_destruct(edge);
-    edge = rot;
-    renderperspective(edge, el, red);
-    renderperspective(edge, er, cyan);    
+    renderperspective(faces, el, black);
+    renderperspective(faces, er, black);
+    rot = mat_multiply(xyz, faces);
+    mat_destruct(faces);
+    faces = rot;
+    renderperspective(faces, el, red);
+    mixcolors = 1;
+    renderperspective(faces, er, cyan);
+    mixcolors = 0;
     SDL_Delay(50);
     update_display();
   }
