@@ -1,240 +1,104 @@
-#include "render.h"
+#include "display.h"
 #include "transform.h"
-#include <SDL2/SDL.h>
+#include "render.h"
 
-// one of each for drawing -- nothing more complicated required
-SDL_Window *win = NULL;
-SDL_Surface *surface = NULL;
-SDL_Renderer *ren = NULL;
-SDL_Texture *tex = NULL;
+char enable_culling = 1;
 
-// should mix colors when adding new pixel
-char mixcolors = 0;
-
-void log_SDL_error(const char *e) {
-  printf("%s failed:\n\t%s\n", e, SDL_GetError());
+// assumes x y z 1 pattern
+char culltri(double coors[12], double *eye) {
+  //backface culling
+  double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
+  double a[3], b[3], cross[3];
+  a[0] = p2[0]-p1[0]; //p2-p1
+  a[1] = p2[1]-p1[1];
+  a[2] = p2[2]-p1[2];
+  b[0] = p3[0]-p2[0]; //p3-p2
+  b[1] = p3[1]-p2[1];
+  b[2] = p3[2]-p2[2];
+  cross[0] = (a[1]*b[2]) - (a[2]*b[1]);
+  cross[1] = (a[2]*b[0]) - (a[0]*b[2]);
+  cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
+  double ep1[3];
+  ep1[0] = p1[0] - eye[0]; //p1 - eye
+  ep1[1] = p1[1] - eye[1];
+  ep1[2] = p1[2] - eye[2];
+  double dot = (cross[0]*ep1[0]) + (cross[1]*ep1[1]) + (cross[2]*ep1[2]);
+  return dot >= 0;
 }
 
-int init_live_render(int w, int h) {
-
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-    log_SDL_error("SDL_Init()");
-    return 1;
-  }
-  win = SDL_CreateWindow("Live Rendering 3D Graphics",
-                         SDL_WINDOWPOS_UNDEFINED,
-                         SDL_WINDOWPOS_UNDEFINED, w, h,
-                         SDL_WINDOW_SHOWN);
-  if (!win) {
-    log_SDL_error("SDL_CreateWindow()");
-    return 1;
-  }
-  ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED |
-                           SDL_RENDERER_PRESENTVSYNC);
-  if (!ren) {
-    log_SDL_error("SDL_CreateRenderer()");
-    return 1;
-  }
-  surface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
-  if (!surface) {
-    log_SDL_error("SDL_CreateRGBSurface()");
-    return 1;
-  }
-  tex = SDL_CreateTextureFromSurface(ren, surface);
-  if (!tex) {
-    log_SDL_error("SDL_CreateTextureFromSurface()");
-    return 1;
-  }
-  SDL_RenderClear(ren);
-  rendering_initialized = 1;
-  return 0;
-}
-
-// set and get pix from the surface
-void setpix(int x, int y, uint32_t color, char lock) {
-  if (x < 0 || y < 0 || x > surface->w || y > surface->h)
-    return;
-
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
-
-  if (mixcolors)
-    color += getpix(x, y, 0);
-  uint8_t * p = (uint8_t *)surface->pixels;
-  p += (y * surface->pitch) + (x * sizeof(uint32_t));
-  *((uint32_t *)p) = color;
-
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
-}
-uint32_t getpix(int x, int y, char lock) {
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
-
-  uint8_t *p = (uint8_t *)surface->pixels;
-  p += (y * surface->pitch) + (x * sizeof(uint32_t));
-
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
-
-  return *((uint32_t *)p);
-}
-
-// scale xy of world coordinates to fit screen
-// screen = {xmin, ymin, xmax, ymax};
-// coors = {x1, y1, x2, y2};
-void map_coors(double *coors, int *mapped) {
-  double sw = screen[2] - screen[0], sh = screen[3] - screen[1];
-  double xscale = surface->w/sw, yscale = surface->h/sh;
-
-  mapped[0] = ceil((coors[0] - screen[0])*xscale);
-  mapped[1] = -ceil((coors[1] - screen[3])*yscale);
-  mapped[2] = ceil((coors[2] - screen[0])*xscale);
-  mapped[3] = -ceil((coors[3] - screen[3])*yscale);
-}
-
-// draw a line
-void dline(int *coors, uint32_t color) {
-  // draw a line to out
-  int x1, x2, y1, y2;
-  // ensure left to right
-  if (coors[0] > coors[2]) {
-    x1 = coors[2];
-    x2 = coors[0];
-    y1 = coors[3];
-    y2 = coors[1];
-  } else {
-    x2 = coors[2];
-    x1 = coors[0];
-    y2 = coors[3];
-    y1 = coors[1];
-  }
-  int dx = x2 - x1, dy = y2 > y1?y2 - y1:y1 - y2;
-  char xMaj = dx > dy;
-  int x = x1, y = y1;
-  int acc = dx/2;
-  int step = y1 < y2 ? 1 : -1;
-  if (SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
-  if (xMaj) {
-    while (x <= x2) {
-      setpix(x, y, color, 0);
-      acc -= dy;
-      if (acc < 0) {
-        y += step;
-        acc += dx;
-      }
-      x++;
-    }
-  } else {
-    int acc = dy/2;
-    char up = y1 < y2;
-    while (up ? y <= y2 : y >= y2) {
-      setpix(x, y, color, 0);
-      acc -= dx;
-      if (acc < 0) {
-        x++;
-        acc += dy;
-      }
-      y += step;
-    }
-  }
-  if (SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
-}
-
-// rendering functions
-void renderppm(char *path) {
-  FILE *out = fopen(path, "w");
-  fprintf(out, "P3 %d %d 255\n", surface->w, surface->h);
-  int maxb = 13 * surface->w * surface->h;
-  char *obuf = malloc(maxb);
-  uint32_t p = 0;
-  int x, y, bwrit = 0;
-  unsigned char r = 0, g = 0, b = 0;
-  if (SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
-  for (y = 0; y < surface->h; y++) {
-    for (x = 0; x < surface->w; x++) {
-      p = getpix(x, y, 0);
-      SDL_GetRGB(p, surface->format, &r, &g, &b);
-      bwrit += sprintf(obuf+bwrit, "%d %d %d\t", r, g, b);
-    }
-  }
-  if (SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
-  fwrite(obuf, 1, bwrit, out);
-  fclose(out);
-}
-
-void renderparallel(Matrix *edge) {
-  clear_screen();
-  int mapped[4];
-  double unmapped[4];
-  uint32_t color = SDL_MapRGB(surface->format, 255, 255, 255);
+void renderperspective(Matrix *faces, double *eye, uint32_t color) {
+  int mapped[6];
+  double coors[6];
   int c;
-  for (c = 0; c < edge->cols; c += 2) {
-    unmapped[0] = mat_get_cell(edge, c, 0);
-    unmapped[1] = mat_get_cell(edge, c, 1);
-    unmapped[2] = mat_get_cell(edge, c+1, 0);
-    unmapped[3] = mat_get_cell(edge, c+1, 1);
-    map_coors(unmapped, mapped);
-    dline(mapped, color);
+  double ex = eye[0], ey = eye[1], ez = eye[2];
+  double pz;
+  int line[4];
+  double tri[12];
+  mixcolors(1);
+  for (c = 0; c < faces->cols; c += 3) {
+    if (enable_culling) {
+      mat_get_column(faces, c, tri);
+      mat_get_column(faces, c+1, tri+4);
+      mat_get_column(faces, c+2, tri+8);
+      if (culltri(tri, eye))
+	continue;
+    }
+    pz = mat_get_cell(faces, c, 2);
+    if (pz > ez)
+      continue;
+    coors[0] = ex - (ez * (mat_get_cell(faces, c, 0)-ex) / (pz - ez));
+    coors[1] = ey - (ez * (mat_get_cell(faces, c, 1)-ey) / (pz - ez));
+    pz = mat_get_cell(faces, c+1, 2);
+    if (pz > ez)
+      continue;
+    coors[2] = ex - (ez * (mat_get_cell(faces, c+1, 0)-ex) / (pz - ez));
+    coors[3] = ey - (ez * (mat_get_cell(faces, c+1, 1)-ey) / (pz - ez));
+    pz = mat_get_cell(faces, c+2, 2);
+    if (pz > ez)
+      continue;
+    coors[4] = ex - (ez * (mat_get_cell(faces, c+2, 0)-ex) / (pz - ez));
+    coors[5] = ey - (ez * (mat_get_cell(faces, c+2, 1)-ey) / (pz - ez));
+
+    map_coors(coors, coors+1);
+    map_coors(coors+2, coors+3);
+    map_coors(coors+4, coors+5);
+
+    // line 1
+    line[0] = coors[0];
+    line[1] = coors[1];
+    line[2] = coors[2];
+    line[3] = coors[3];
+    dline(line, color);
+
+    // line 2
+    line[0] = coors[4];
+    line[1] = coors[5];
+    dline(line, color);
+
+    // line 3
+    line[2] = coors[0];
+    line[3] = coors[1];
+    dline(line, color);
   }
-  update_display();
 }
 
-void renderperspective(Matrix *edge, double *eye, uint32_t color) {
-	int mapped[4];
-	double unmapped[4];
-	int c;
-	double ex = eye[0], ey = eye[1], ez = eye[2];
-	//printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
-	double pz;
-	for (c = 0; c < edge->cols; c += 2) {
-		pz = mat_get_cell(edge, c, 2);
-    if (pz > ez)
-      break;
-		unmapped[0] = ex - (ez * (mat_get_cell(edge, c, 0)-ex) / (pz - ez));
-		unmapped[1] = ey - (ez * (mat_get_cell(edge, c, 1)-ey) / (pz - ez));
-		pz = mat_get_cell(edge, c+1, 2);
-    if (pz > ez)
-      break;
-		unmapped[2] = ex - (ez * (mat_get_cell(edge, c+1, 0)-ex) / (pz - ez));
-		unmapped[3] = ey - (ez * (mat_get_cell(edge, c+1, 1)-ey) / (pz - ez));
-		map_coors(unmapped, mapped);
-		dline(mapped, color);
-	}
-}
-
-void rendercyclops(Matrix *edge, double *eye) {
+void rendercyclops(Matrix *faces, double *eye) {
   clear_screen();
-  renderperspective(edge, eye, SDL_MapRGB(surface->format, 255, 255, 255));
+  renderperspective(faces, eye, rgb(255, 255, 255));
   update_display();
 }
 
-void renderstereo(Matrix *edge, double *eyes) {
+void renderstereo(Matrix *faces, double *eyes) {
   clear_screen();
 
   // left -- red
-  renderperspective(edge, eyes, SDL_MapRGB(surface->format, 127, 0, 0));
+  renderperspective(faces, eyes, rgb(127, 0, 0));
 
   // right -- cyan
-  mixcolors = 1;
-  renderperspective(edge, eyes+3, SDL_MapRGB(surface->format, 0, 127, 127));
-  mixcolors = 0;
+  mixcolors(1);
+  renderperspective(faces, eyes+3, rgb(0, 127, 127));
+  mixcolors(0);
 
-  update_display();
-}
-
-void update_display() {
-  SDL_UpdateTexture(tex, NULL, surface->pixels, surface->pitch);
-  SDL_RenderCopy(ren, tex, NULL, NULL);
-  SDL_RenderPresent(ren);
-}
-
-void clear_screen() {
-  SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
   update_display();
 }
 
@@ -242,8 +106,9 @@ char endspin() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if ( event.type == SDL_QUIT ) {
-      SDL_DestroyRenderer(ren);
-      SDL_DestroyWindow(win);
+      printf("Memory leaking... You really ought to fix that.\n");
+      /* SDL_DestroyRenderer(ren); */
+      /* SDL_DestroyWindow(win); */
       SDL_Quit();
       return 1;
     } else if (event.type == SDL_KEYDOWN) {
@@ -251,7 +116,7 @@ char endspin() {
       return 1;
     }
   }
-  return 0;  
+  return 0;
 }
 
 Matrix *spinmat(int x, int y, int z) {
@@ -267,20 +132,20 @@ Matrix *spinmat(int x, int y, int z) {
   return xyz;
 }
 
-void spincyclops(Matrix *edge, double *eye) {
+void spincyclops(Matrix *faces, double *eye) {
   Matrix *xyz = spinmat(1, 1, 1);
   Matrix *rot;
   Matrix *unspun = edge;
   edge = mat_multiply(xyz, edge);
-  uint32_t color = SDL_MapRGB(surface->format, 0, 200, 0);
-  uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
+  uint32_t color = rgb(0, 200, 0);
+  uint32_t black = rgb(0, 0, 0);
   clear_screen();
   while(!endspin()) {
-    renderperspective(edge, eye, black);
-    rot = mat_multiply(xyz, edge);
-    mat_destruct(edge);
-    edge = rot;
-    renderperspective(edge, eye, color);
+    renderperspective(faces, eye, black);
+    rot = mat_multiply(xyz, faces);
+    mat_destruct(faces);
+    faces = rot;
+    renderperspective(faces, eye, color);
     SDL_Delay(50);
     update_display();
   }
@@ -289,11 +154,12 @@ void spincyclops(Matrix *edge, double *eye) {
   renderperspective(unspun, eye, SDL_MapRGB(surface->format, 255, 255, 255));
 }
 
-void spinstereo(Matrix *edge, double *eyes) {
+void spinstereo(Matrix *faces, double *eyes) {
   Matrix *xyz = spinmat(1, 1, 1);
   double *el = eyes;
   double *er = eyes + 3;
   Matrix *rot;
+<<<<<<< HEAD
   Matrix *unspun = edge;
   edge = mat_multiply(xyz, edge);
   uint32_t red = SDL_MapRGB(surface->format, 127, 0, 0);
@@ -310,6 +176,22 @@ void spinstereo(Matrix *edge, double *eyes) {
     mixcolors = 1;
     renderperspective(edge, er, cyan);
     mixcolors = 0;
+=======
+  uint32_t red = rgb(127, 0, 0);
+  uint32_t cyan = rgb(0, 127, 127);
+  uint32_t black = rgb(0, 0, 0);
+  clear_screen();
+  while(!endspin()) {
+    renderperspective(faces, el, black);
+    renderperspective(faces, er, black);
+    rot = mat_multiply(xyz, faces);
+    mat_destruct(faces);
+    faces = rot;
+    renderperspective(faces, el, red);
+    mixcolors(1);
+    renderperspective(faces, er, cyan);
+    mixcolors(0);
+>>>>>>> bfde2ae867fd69d37e97744119bd19f821265e45
     SDL_Delay(50);
     update_display();
   }
@@ -319,26 +201,4 @@ void spinstereo(Matrix *edge, double *eyes) {
   mixcolors = 1;
   renderperspective(unspun, el, cyan);
   mixcolors = 0;
-}
-
-// call to clean up
-void finish_live_render() {
-  SDL_DestroyWindow(win);
-  SDL_DestroyRenderer(ren);
-  SDL_DestroyTexture(tex);
-  SDL_FreeSurface(surface);
-  SDL_Quit();
-}
-
-char should_quit() {
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    if ( event.type == SDL_QUIT ) {
-      SDL_DestroyRenderer(ren);
-      SDL_DestroyWindow(win);
-      SDL_Quit();
-      return 1;
-    }
-  }
-  return 0;
 }

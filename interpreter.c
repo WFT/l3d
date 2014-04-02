@@ -3,14 +3,16 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include "display.h"
 #include "render.h"
 #include "matrix.h"
 #include "parse_util.h"
 #include "transform.h"
+#include "objects.h"
 
 #define TO_RAD(deg) (deg * M_PI / 180)
 
-Matrix *edge;
+Matrix *tri;
 Matrix *tform;
 char quit = 0;
 char sdl_initialized = 0;
@@ -38,58 +40,18 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "screen") == 0) {
     screen = malloc(4 * sizeof(double));
     memcpy(screen, args, 4 * sizeof(double));
-  } else if (strcmp(list[0], "line") == 0) {
-    double *s = malloc(4 * sizeof(double));
-    s[0] = args[0];
-    s[1] = args[1];
-    s[2] = args[2];
-    s[3] = 1;
-
-    double *e = malloc(4 * sizeof(double));
-    e[0] = args[3];
-    e[1] = args[4];
-    e[2] = args[5];
-    e[3] = 1;
-    mat_add_column(edge, s);
-    mat_add_column(edge, e);
-  } else if (strcmp(list[0], "sphere") == 0) {
-    double r = args[0], cx = args[1], cy = args[2], cz = args[3];
-    int nVertices = 25;
-    double lrad = 2 * M_PI / (nVertices);
-    Matrix *roty = rotate_y_mat(lrad);
-    Matrix *sphere = mat_construct(0, 4);
-    Matrix *arc = mat_construct(0, 4);
-    // gen original arc
-    double coors[4] = {0, 0, 0, 1};
-    int i;
-    for (i = 0; i < nVertices; i++) {
-      coors[0] = r * cos(i * lrad);
-      coors[1] = r * sin(i * lrad);
-      mat_add_column(arc, coors);
-
-      coors[0] = r * cos((i+1) * lrad);
-      coors[1] = r * sin((i+1) * lrad);
-      mat_add_column(arc, coors);
-    }
-    Matrix *oldarc = arc;
-    mat_extend(sphere, arc);
-    for (i = 0; i < nVertices; i++) {
-      arc = mat_multiply(roty, oldarc);
-      mat_extend(sphere, arc);
-      int j;
-      for (j = 1; j < oldarc->cols; j += 2) {
-        mat_add_column(sphere, oldarc->cells[j]);
-        mat_add_column(sphere, arc->cells[j]);
-      }
-      mat_destruct(oldarc);
-      oldarc = arc;
-    }
-    Matrix *center = move_mat(cx, cy, cz);
-    Matrix *complete = mat_multiply(center, sphere);
-    mat_extend(edge, complete);
+  } else if (strcmp(list[0], "sphere-t") == 0) {
+    Matrix *sphere = sphere_t(args);
+    Matrix *obj = mat_multiply(tform, sphere);
+    mat_extend(tri, obj);
     mat_destruct(sphere);
-    mat_destruct(center);
-    mat_destruct(complete);
+    mat_destruct(obj);
+  } else if (strcmp(list[0], "box-t") == 0) {
+    Matrix *cube = box_t(args);
+    Matrix *obj = mat_multiply(tform, cube);
+    mat_extend(tri, obj);
+    mat_destruct(cube);
+    mat_destruct(obj);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
   } else if (strcmp(list[0], "move") == 0) {
@@ -102,40 +64,29 @@ void interpret(char *l) {
     multiply_transform(rotate_y_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "rotate-z") == 0) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
-  } else if (strcmp(list[0], "transform") == 0) {
-    Matrix *temp = mat_multiply(tform, edge);
-    mat_destruct(edge);
-    edge = temp;
-    clear_screen();
-  } else if (strcmp(list[0], "clear-edges") == 0) {
-    mat_destruct(edge);
-    edge = mat_construct(0, 4);
+  } else if (strcmp(list[0], "clear-triangles") == 0) {
+    mat_destruct(tri);
+    tri = mat_construct(0, 4);
   } else if (strcmp(list[0], "clear-pixels") == 0) {
     clear_screen();
-  } else if (strcmp(list[0], "render-parallel") == 0) {
-    if (!screen) {
-      printf("ERROR: screen not set\n");
-      return;
-    }
-    renderparallel(edge);
-  } else if (strcmp(list[0], "pedge") == 0) {
-    pmat(edge);
+  } else if (strcmp(list[0], "ptri") == 0) {
+    pmat(tri);
   } else if (strcmp(list[0], "render-perspective-cyclops") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
       return;
     }
-    rendercyclops(edge, args);
+    rendercyclops(tri, args);
   } else if (strcmp(list[0], "render-perspective-stereo") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
       return;
     }
-    renderstereo(edge, args);
+    renderstereo(tri, args);
   } else if (strcmp(list[0], "spinc") == 0) {
-    spincyclops(edge, args);
+    spincyclops(tri, args);
   } else if (strcmp(list[0], "spins") == 0) {
-    spinstereo(edge, args);
+    spinstereo(tri, args);
   } else if (strcmp(list[0], "stdin") == 0) {
     if (in != stdin)
       fclose(in);
@@ -150,7 +101,7 @@ void interpret(char *l) {
 }
 
 int main(int argc, char **argv) {
-  edge = mat_construct(0, 4);
+  tri = mat_construct(0, 4);
   tform = identity_mat();
   in = stdin;
   screen = 0;
@@ -164,5 +115,5 @@ int main(int argc, char **argv) {
     interpret(inbuf);
   }
   if (rendering_initialized)
-    finish_live_render();
+    finish_live_display();
 }
