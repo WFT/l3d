@@ -104,6 +104,7 @@ void interpret(char *l) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "transform") == 0) {
     Matrix *temp = mat_multiply(tform, edge);
+    mat_destruct(edge);
     edge = temp;
     clear_screen();
   } else if (strcmp(list[0], "clear-edges") == 0) {

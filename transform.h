@@ -1,5 +1,8 @@
 #pragma once
+#include <math.h>
 #include "matrix.h"
+
+#define TO_RAD(deg) (deg * M_PI / 180)
 
 Matrix * identity_mat();
 
