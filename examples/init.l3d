@@ -1,0 +1,3 @@
+screen -10 -10 10 10
+pixels 500 500
+stdin

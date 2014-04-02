@@ -2,6 +2,10 @@
 #include "transform.h"
 #include "render.h"
 
+char should_draw(double coors[6]) {
+  
+}
+
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   int mapped[6];
   double coors[6];
