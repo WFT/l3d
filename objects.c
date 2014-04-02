@@ -31,8 +31,9 @@ Matrix *sphere_t(double *args) {
     mat_get_column(arc, i+1, points+4);
     mat_get_column(arc2, i+1, points+8);
     addtriangle(arcs, points, points+4, points+8); 
-    mat_get_column(arc2, i+1, points+4);
-    mat_get_column(arc2, i, points+8);
+    mat_get_column(arc2, i+1, points);
+    mat_get_column(arc2, i, points+4);
+    mat_get_column(arc, i, points+8);
     addtriangle(arcs, points, points+4, points+8); 
   }
   mat_destruct(arc);
@@ -63,24 +64,24 @@ Matrix *box_t(double *args) {
   double blb[4] = {-1, -1, -1, 1};	// back left back
   double brf[4] = {1, -1, 1, 1};	// back right front
   double brb[4] = {1, -1, -1, 1};	// back right back
-  // top face
+  // top face -- done
   addtriangle(cube, tlf, trb, tlb);
   addtriangle(cube, tlf, trf, trb);
-  // bottom face
-  addtriangle(cube, blf, brb, blb);
-  addtriangle(cube, blf, brf, brb);
-  // back face
-  addtriangle(cube, blb, trb, tlb);
-  addtriangle(cube, blb, brb, trb);
-  // front face
+  // bottom face -- done
+  addtriangle(cube, blf, brb, brf);
+  addtriangle(cube, blf, blb, brb);
+  // back face -- done
+  addtriangle(cube, blb, trb, brb);
+  addtriangle(cube, blb, tlb, trb);
+  // front face -- done
   addtriangle(cube, blf, brf, trf);
   addtriangle(cube, blf, trf, tlf);
-  // right face
+  // right face -- done
   addtriangle(cube, brf, brb, trb);
   addtriangle(cube, brf, trb, trf);
   // left face
-  addtriangle(cube, blf, blb, tlf);
-  addtriangle(cube, tlf, blb, tlb);
+  addtriangle(cube, blf, tlf, blb);
+  addtriangle(cube, blb, tlf, tlb);
   Matrix *t  = otransform(args);
   Matrix *ret = mat_multiply(t, cube);
   mat_destruct(cube);

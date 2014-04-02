@@ -26,4 +26,4 @@ matrix.o: matrix.c matrix.h
 	gcc matrix.c -o matrix.o -c
 
 clean:
-	rm *.o 3D *~
+	rm *.o 3D

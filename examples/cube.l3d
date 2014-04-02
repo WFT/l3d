@@ -1,0 +1,5 @@
+screen -10 -10 10 10
+pixels 500 500
+box-t 3 3 3 0 0 0 0 0 0
+render-perspective-cyclops 0 0 10
+stdin

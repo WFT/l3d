@@ -2,8 +2,10 @@
 #include "transform.h"
 #include "render.h"
 
+char enable_culling = 1;
+
 // assumes x y z 1 pattern
-char should_draw(double coors[12], double *eye) {
+char culltri(double coors[12], double *eye) {
   //backface culling
   double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
   double a[3], b[3], cross[3];
@@ -21,7 +23,7 @@ char should_draw(double coors[12], double *eye) {
   ep1[1] = p1[1] - eye[1];
   ep1[2] = p1[2] - eye[2];
   double dot = (cross[0]*ep1[0]) + (cross[1]*ep1[1]) + (cross[2]*ep1[2]);
-  return dot < 0;
+  return dot >= 0;
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
@@ -29,29 +31,31 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
   double ex = eye[0], ey = eye[1], ez = eye[2];
-  //printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
   double pz;
   int line[4];
   double tri[12];
+  mixcolors(1);
   for (c = 0; c < faces->cols; c += 3) {
-    mat_get_column(faces, c, tri);
-    mat_get_column(faces, c+4, tri);
-    mat_get_column(faces, c+8, tri);
-    /* if (!should_draw(tri, eye)) */
-    /*   break; */
+    if (enable_culling) {
+      mat_get_column(faces, c, tri);
+      mat_get_column(faces, c+1, tri+4);
+      mat_get_column(faces, c+2, tri+8);
+      if (culltri(tri, eye))
+	continue;
+    }
     pz = mat_get_cell(faces, c, 2);
     if (pz > ez)
-      break;
+      continue;
     coors[0] = ex - (ez * (mat_get_cell(faces, c, 0)-ex) / (pz - ez));
     coors[1] = ey - (ez * (mat_get_cell(faces, c, 1)-ey) / (pz - ez));
     pz = mat_get_cell(faces, c+1, 2);
     if (pz > ez)
-      break;
+      continue;
     coors[2] = ex - (ez * (mat_get_cell(faces, c+1, 0)-ex) / (pz - ez));
     coors[3] = ey - (ez * (mat_get_cell(faces, c+1, 1)-ey) / (pz - ez));
     pz = mat_get_cell(faces, c+2, 2);
     if (pz > ez)
-      break;
+      continue;
     coors[4] = ex - (ez * (mat_get_cell(faces, c+2, 0)-ex) / (pz - ez));
     coors[5] = ey - (ez * (mat_get_cell(faces, c+2, 1)-ey) / (pz - ez));
 
