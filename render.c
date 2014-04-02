@@ -2,8 +2,26 @@
 #include "transform.h"
 #include "render.h"
 
-char should_draw(double coors[6]) {
-  
+// assumes x y z 1 pattern
+char should_draw(double coors[12], double *eye) {
+  //backface culling
+  double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
+  double a[3], b[3], cross[3];
+  a[0] = p2[0]-p1[0]; //p2-p1
+  a[1] = p2[1]-p1[1];
+  a[2] = p2[2]-p1[2];
+  b[0] = p3[0]-p2[0]; //p3-p2
+  b[1] = p3[1]-p2[1];
+  b[2] = p3[2]-p2[2];
+  cross[0] = (a[1]*b[2]) - (a[2]*b[1]);
+  cross[1] = (a[2]*b[0]) - (a[0]*b[2]);
+  cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
+  double ep1[3];
+  ep1[0] = p1[0] - eye[0]; //p1 - eye
+  ep1[1] = p1[1] - eye[1];
+  ep1[2] = p1[2] - eye[2];
+  double dot = (cross[0]*ep1[0]) + (cross[1]*ep1[1]) + (cross[2]*ep1[2]);
+  return dot < 0;
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
@@ -14,7 +32,13 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   //printf("rendering perspective: %.2f %.2f %.2f\n", ex, ey, ez);
   double pz;
   int line[4];
+  double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
+    mat_get_column(faces, c, tri);
+    mat_get_column(faces, c+4, tri);
+    mat_get_column(faces, c+8, tri);
+    /* if (!should_draw(tri, eye)) */
+    /*   break; */
     pz = mat_get_cell(faces, c, 2);
     if (pz > ez)
       break;
@@ -30,6 +54,7 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
       break;
     coors[4] = ex - (ez * (mat_get_cell(faces, c+2, 0)-ex) / (pz - ez));
     coors[5] = ey - (ez * (mat_get_cell(faces, c+2, 1)-ey) / (pz - ez));
+
     map_coors(coors, coors+1);
     map_coors(coors+2, coors+3);
     map_coors(coors+4, coors+5);
