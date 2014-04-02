@@ -135,8 +135,8 @@ Matrix *spinmat(int x, int y, int z) {
 void spincyclops(Matrix *faces, double *eye) {
   Matrix *xyz = spinmat(1, 1, 1);
   Matrix *rot;
-  Matrix *unspun = edge;
-  edge = mat_multiply(xyz, edge);
+  Matrix *unspun = faces;
+  faces = mat_multiply(xyz, faces);
   uint32_t color = rgb(0, 200, 0);
   uint32_t black = rgb(0, 0, 0);
   clear_screen();
@@ -151,7 +151,7 @@ void spincyclops(Matrix *faces, double *eye) {
   }
   clear_screen();
   printf("Spin finished... Resetting display.\n");
-  renderperspective(unspun, eye, SDL_MapRGB(surface->format, 255, 255, 255));
+  renderperspective(unspun, eye, rgb(255, 255, 255));
 }
 
 void spinstereo(Matrix *faces, double *eyes) {
@@ -159,24 +159,8 @@ void spinstereo(Matrix *faces, double *eyes) {
   double *el = eyes;
   double *er = eyes + 3;
   Matrix *rot;
-<<<<<<< HEAD
-  Matrix *unspun = edge;
-  edge = mat_multiply(xyz, edge);
-  uint32_t red = SDL_MapRGB(surface->format, 127, 0, 0);
-  uint32_t cyan = SDL_MapRGB(surface->format, 0, 127, 127);
-  uint32_t black = SDL_MapRGB(surface->format, 0, 0, 0);
-  clear_screen();
-  while(!endspin()) {
-    renderperspective(edge, el, black);
-    renderperspective(edge, er, black);
-    rot = mat_multiply(xyz, edge);
-    mat_destruct(edge);
-    edge = rot;
-    renderperspective(edge, el, red);
-    mixcolors = 1;
-    renderperspective(edge, er, cyan);
-    mixcolors = 0;
-=======
+  Matrix *unspun = faces;
+  faces = mat_multiply(xyz, faces);
   uint32_t red = rgb(127, 0, 0);
   uint32_t cyan = rgb(0, 127, 127);
   uint32_t black = rgb(0, 0, 0);
@@ -191,14 +175,13 @@ void spinstereo(Matrix *faces, double *eyes) {
     mixcolors(1);
     renderperspective(faces, er, cyan);
     mixcolors(0);
->>>>>>> bfde2ae867fd69d37e97744119bd19f821265e45
     SDL_Delay(50);
     update_display();
   }
   clear_screen();
   printf("Spin finished... Resetting display.\n");
   renderperspective(unspun, el, red);
-  mixcolors = 1;
+  mixcolors(1);
   renderperspective(unspun, el, cyan);
-  mixcolors = 0;
+  mixcolors(0);
 }
