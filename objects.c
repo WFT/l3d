@@ -14,11 +14,10 @@ Matrix *sphere_t(double *args) {
   Matrix *arc = mat_construct(0, 4);
   double coors[4] = {0, 0, 0, 1};
   int i;
-  for (i = 0; i < nVertices; i++) {
+  for (i = 0; i < nVertices/2; i++) {
     coors[0] = cos(i * lrad);
     coors[1] = sin(i * lrad);
     mat_add_column(arc, coors);
-
     coors[0] = cos((i+1) * lrad);
     coors[1] = sin((i+1) * lrad);
     mat_add_column(arc, coors);
@@ -26,20 +25,21 @@ Matrix *sphere_t(double *args) {
   Matrix *arc2 = mat_multiply(roty, arc);
   Matrix *arcs = mat_construct(0, 4);
   double points[12];
-  for (i = 0; i < 2 * nVertices - 1; i++) {
+  // connect the arcs
+  for (i = 0; i < nVertices - 1; i++) {
     mat_get_column(arc, i, points);
-    mat_get_column(arc, i+1, points+4);
-    mat_get_column(arc2, i+1, points+8);
-    addtriangle(arcs, points, points+4, points+8); 
-    mat_get_column(arc2, i+1, points);
     mat_get_column(arc2, i, points+4);
-    mat_get_column(arc, i, points+8);
+    mat_get_column(arc, i+1, points+8);
     addtriangle(arcs, points, points+4, points+8); 
+    mat_get_column(arc, i+1, points);
+    mat_get_column(arc2, i, points+4);
+    mat_get_column(arc2, i+1, points+8);
+    addtriangle(arcs, points, points+4, points+8);
   }
   mat_destruct(arc);
   mat_destruct(arc2);
   mat_destruct(roty);
-  Matrix *rot2y = rotate_y_mat(2 * lrad);
+  Matrix *rot2y = rotate_y_mat(lrad);
   Matrix *tfrmd;
   for (i = 0; i < nVertices; i+=2) {
     tfrmd = mat_multiply(rot2y, arcs);
