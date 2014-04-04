@@ -65,9 +65,20 @@ Matrix *sphere_t(double *args) {
   /* double rz = -sin(lrad); */
   int i;
   double p1[4], p2[4], p3[4];
+  p1[3] = p2[3] = p3[3] = 1;
+  double theta, phi = lrad;
   for (i = 0; i < nVertices; i++) {
-    p1 = {cos(i * lrad), sin(i * lrad), 0, 1};
-    p2 = {cos(i*lrad), sin(i * lrad), 0, 1};
+    theta = i*lrad;
+    p1[0] = cos(theta);
+    p1[1] = sin(theta);
+    p1[2] = cos(theta);
+    p2[0] = cos(theta)*cos(phi);
+    p2[1] = p1[1];
+    p2[2] = cos(theta)*sin(phi);
+    p3[0] = cos(theta + phi) * cos(phi);
+    p3[1] = sin(theta + phi);
+    p3[2] = cos(theta + phi) * sin(phi);
+    
   }
 }
 
