@@ -1,4 +1,3 @@
-#include <math.h>
 #include "transform.h"
 
 Matrix * identity_mat() {
