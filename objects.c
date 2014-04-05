@@ -3,83 +3,54 @@
 
 Matrix *otransform(double *args);
 void addtriangle(Matrix *mat, double *p1, double *p2, double *p3);
-// s s s r r r m m m
-/* /\* Matrix *sphere_t(double *args) { */
-/*   int nVertices = 30; */
-/*   double lrad = 2 * M_PI / nVertices; */
-/*   Matrix *roty = rotate_y_mat(lrad); */
-/*   Matrix *sphere = mat_construct(0, 4); */
-
-/*   // gen original arc */
-/*   Matrix *arc = mat_construct(0, 4); */
-/*   double coors[4] = {0, 0, 0, 1}; */
-/*   int i; */
-/*   for (i = 0; i < nVertices/2; i++) { */
-/*     coors[0] = cos(i * lrad); */
-/*     coors[1] = sin(i * lrad); */
-/*     mat_add_column(arc, coors); */
-/*     coors[0] = cos((i+1) * lrad); */
-/*     coors[1] = sin((i+1) * lrad); */
-/*     mat_add_column(arc, coors); */
-/*   } */
-/*   Matrix *arc2 = mat_multiply(roty, arc); */
-/*   Matrix *arcs = mat_construct(0, 4); */
-/*   double points[12]; */
-/*   // connect the arcs */
-/*   for (i = 0; i < nVertices - 1; i++) { */
-/*     mat_get_column(arc, i, points); */
-/*     mat_get_column(arc2, i, points+4); */
-/*     mat_get_column(arc, i+1, points+8); */
-/*     addtriangle(arcs, points, points+4, points+8);  */
-/*     mat_get_column(arc, i+1, points); */
-/*     mat_get_column(arc2, i, points+4); */
-/*     mat_get_column(arc2, i+1, points+8); */
-/*     addtriangle(arcs, points, points+4, points+8); */
-/*   } */
-/*   mat_destruct(arc); */
-/*   mat_destruct(arc2); */
-/*   mat_destruct(roty); */
-/*   Matrix *rot2y = rotate_y_mat(lrad); */
-/*   Matrix *tfrmd; */
-/*   for (i = 0; i < nVertices; i+=2) { */
-/*     tfrmd = mat_multiply(rot2y, arcs); */
-/*     mat_extend(sphere, tfrmd); */
-/*     mat_destruct(arcs); */
-/*     arcs = tfrmd; */
-/*   } */
-/*   Matrix *t  = otransform(args); */
-/*   Matrix *ret = mat_multiply(t, sphere); */
-/*   mat_destruct(sphere); */
-/*   mat_destruct(t); */
-/*   return ret; */
-/* } */
 
 Matrix *sphere_t(double *args) {
-  int nVertices = 30;
-  double lrad = 2 * M_PI / nVertices;
+  int nVertices = 15;
+  double lrad = (M_PI)/ nVertices;
   Matrix *roty = rotate_y_mat(lrad);
   Matrix *sphere = mat_construct(0, 4);
   
   Matrix *arc = mat_construct(0,4);
-  /* double rx = cos(lrad); */
-  /* double rz = -sin(lrad); */
+  double coors[4] = {0, 0, 0, 1};
   int i;
-  double p1[4], p2[4], p3[4];
-  p1[3] = p2[3] = p3[3] = 1;
-  double theta, phi = lrad;
   for (i = 0; i < nVertices; i++) {
-    theta = i*lrad;
-    p1[0] = cos(theta);
-    p1[1] = sin(theta);
-    p1[2] = cos(theta);
-    p2[0] = cos(theta)*cos(phi);
-    p2[1] = p1[1];
-    p2[2] = cos(theta)*sin(phi);
-    p3[0] = cos(theta + phi) * cos(phi);
-    p3[1] = sin(theta + phi);
-    p3[2] = cos(theta + phi) * sin(phi);
-    
+    coors[0] = sin(i * lrad);
+    coors[1] = cos(i * lrad);
+    mat_add_column(arc, coors);
   }
+  Matrix *arcp = mat_multiply(roty, arc);
+  Matrix *weave = mat_construct(0,4);
+  double col[4];
+  for (i = 0; i < nVertices - 1; i++) {
+    mat_get_column(arc, i, col);
+    mat_add_column(weave, col);
+    mat_get_column(arc, i+1, col); //(i+1)==arc->cols?0:
+    mat_add_column(weave, col);
+    mat_get_column(arcp, i, col);
+    mat_add_column(weave, col);
+    //arcp, i
+    mat_add_column(weave, col);
+    mat_get_column(arc, i+1, col); //(i+1)==arc->cols?0:
+    mat_add_column(weave, col);
+    mat_get_column(arcp, i+1, col); //(i+1)==arc->cols?0:
+    mat_add_column(weave, col);
+  }
+  Matrix *tfrmd;
+  for (i = 0; i < nVertices * 2; i++) {
+    tfrmd = mat_multiply(roty, weave);
+    mat_extend(sphere, weave);
+    mat_destruct(weave);
+    weave = tfrmd;
+  }
+  Matrix *t  = otransform(args);
+  Matrix *ret = mat_multiply(t, sphere);
+  mat_destruct(roty);
+  mat_destruct(arcp);
+  mat_destruct(arc);
+  mat_destruct(weave);
+  mat_destruct(sphere);
+  mat_destruct(t);
+  return ret;
 }
 
 Matrix *box_t(double *args) {

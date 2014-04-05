@@ -56,10 +56,12 @@ void mat_add_column(struct matrix *mat, double *col) {
 }
 
 void mat_get_column(struct matrix *mat, int c, double *col) {
+  assert(mat->cols > c);
   memcpy(col, mat->cells[c], mat->rows * sizeof(double));
 }
 
 void mat_set_column(struct matrix *mat, int c, double *col) {
+  assert(mat->cols > c);
   memcpy(mat->cells[c], col, mat->rows * sizeof(double));
 }
 

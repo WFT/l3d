@@ -27,7 +27,6 @@ char culltri(double coors[12], double *eye) {
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
-  int mapped[6];
   double coors[6];
   int c;
   double ex = eye[0], ey = eye[1], ez = eye[2];
