@@ -71,18 +71,24 @@ void interpret(char *l) {
     clear_screen();
   } else if (strcmp(list[0], "ptri") == 0) {
     pmat(tri);
-  } else if (strcmp(list[0], "render-perspective-cyclops") == 0) {
+  } else if (strcmp(list[0], "render-perspective-cyclops") == 0 ||
+	     strcmp(list[0], "rcyclops") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
       return;
     }
     rendercyclops(tri, args);
-  } else if (strcmp(list[0], "render-perspective-stereo") == 0) {
+  } else if (strcmp(list[0], "render-perspective-stereo") == 0 ||
+	     strcmp(list[0], "rstereo") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
       return;
     }
     renderstereo(tri, args);
+  } else if (strcmp(list[0], "spint") == 0) {
+    clear_screen();
+    renderperspective(tri, args, rgb(0, 255, 0));
+    renderperspective(tri, args, rgb(0, 0, 0));
   } else if (strcmp(list[0], "spinc") == 0) {
     spincyclops(tri, args);
   } else if (strcmp(list[0], "spins") == 0) {

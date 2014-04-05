@@ -33,7 +33,6 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double pz;
   int line[4];
   double tri[12];
-  mixcolors(1);
   for (c = 0; c < faces->cols; c += 3) {
     if (enable_culling) {
       mat_get_column(faces, c, tri);
@@ -139,14 +138,15 @@ void spincyclops(Matrix *faces, double *eye) {
   uint32_t color = rgb(0, 200, 0);
   uint32_t black = rgb(0, 0, 0);
   clear_screen();
+  mixcolors(0);
   while(!endspin()) {
-    renderperspective(faces, eye, black);
     rot = mat_multiply(xyz, faces);
     mat_destruct(faces);
     faces = rot;
     renderperspective(faces, eye, color);
     SDL_Delay(50);
     update_display();
+    renderperspective(faces, eye, black);
   }
   clear_screen();
   printf("Spin finished... Resetting display.\n");
