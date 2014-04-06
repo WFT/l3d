@@ -90,11 +90,19 @@ Matrix *box_t(double *args) {
 
 Matrix *otransform(double *args) {
   Matrix *t = scale_mat(args[0], args[1], args[2]);
-  mat_multinmat(rotate_x_mat(TO_RAD(args[3])), t, t);
-  mat_multinmat(rotate_y_mat(TO_RAD(args[4])), t, t);
-  mat_multinmat(rotate_z_mat(TO_RAD(args[5])), t, t);
-  mat_multinmat(move_mat(args[6], args[7], args[8]), t, t);
-  return t;
+  Matrix *temp;
+  temp = mat_multiply(rotate_x_mat(TO_RAD(args[3])), t);
+  mat_destruct(t);
+  t = temp;
+  temp = mat_multiply(rotate_y_mat(TO_RAD(args[4])), t);
+  mat_destruct(t);
+  t = temp;
+  temp = mat_multiply(rotate_z_mat(TO_RAD(args[5])), t);
+  mat_destruct(t);
+  t = temp;
+  temp = mat_multiply(move_mat(args[6], args[7], args[8]), t);
+  mat_destruct(t);
+  return temp;
 }
 
 void addtriangle(Matrix *mat, double *p1, double *p2, double *p3) {

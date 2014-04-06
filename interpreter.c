@@ -19,7 +19,10 @@ char sdl_initialized = 0;
 FILE *in;
 
 void multiply_transform(Matrix *transform) {
-  mat_multinmat(transform, tform, tform);
+  //mat_multinmat(transform, tform, tform);
+  Matrix *temp = mat_multiply(transform, tform);
+  mat_destruct(tform);
+  tform = temp;
 }
 
 void interpret(char *l) {
