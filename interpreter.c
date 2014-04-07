@@ -88,10 +88,13 @@ void interpret(char *l) {
       return;
     }
     renderstereo(tri, args);
-  } else if (strcmp(list[0], "spint") == 0) {
-    clear_screen();
-    renderperspective(tri, args, rgb(0, 255, 0));
-    renderperspective(tri, args, rgb(0, 0, 0));
+  } else if (strcmp(list[0], "render-parallel") == 0 ||
+	     strcmp(list[0], "rparallel") == 0) {
+    if (!screen) {
+      printf("ERROR: screen not set\n");
+      return;
+    }
+    renderparallel(tri);
   } else if (strcmp(list[0], "spinc") == 0) {
     spincyclops(tri, args);
   } else if (strcmp(list[0], "spins") == 0) {
