@@ -24,17 +24,28 @@ Matrix *sphere_t(double *args) {
   for (i = 0; i < nVertices - 1; i++) {
     mat_get_column(arc, i, col);
     mat_add_column(weave, col);
-    mat_get_column(arc, i+1, col); //(i+1)==arc->cols?0:
+    mat_get_column(arc, i+1, col);
     mat_add_column(weave, col);
     mat_get_column(arcp, i, col);
     mat_add_column(weave, col);
     //arcp, i
     mat_add_column(weave, col);
-    mat_get_column(arc, i+1, col); //(i+1)==arc->cols?0:
+    mat_get_column(arc, i+1, col);
     mat_add_column(weave, col);
-    mat_get_column(arcp, i+1, col); //(i+1)==arc->cols?0:
+    mat_get_column(arcp, i+1, col);
     mat_add_column(weave, col);
   }
+  // end triangles!
+  double end[4] = {0, -1, 0, 1};
+  mat_get_column(arc, nVertices - 1, col);
+  mat_add_column(weave, col);
+  mat_add_column(weave, end);
+  mat_get_column(arcp, nVertices - 1, col);
+  mat_add_column(weave, col);
+  mat_add_column(weave, col);
+  mat_add_column(weave, end);
+  mat_add_column(weave, end);
+  // spin the woven matrix
   Matrix *tfrmd;
   for (i = 0; i < nVertices * 2; i++) {
     tfrmd = mat_multiply(roty, weave);
