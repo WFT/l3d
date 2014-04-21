@@ -103,6 +103,10 @@ void interpret(char *l) {
     if (in != stdin)
       fclose(in);
     in = stdin;
+  } else if (strcmp(list[0], "filein") == 0) {
+    if (in != stdin)
+      fclose(in);
+    in = fopen(list[1], "r");
   } else if (strcmp(list[0], "file") == 0) {
     renderppm(list[1]);
   } else if (strcmp(list[0], "end") == 0) {
