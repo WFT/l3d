@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -110,10 +110,18 @@ void interpret(char *l) {
     if (!autocyclops)
       autocyclops = malloc(3 * sizeof(double));
     memcpy(autocyclops, args, 3 * sizeof(double));
+    if (autostereo) {
+      free(autostereo);
+      autostereo = NULL;
+    }
   } else if (strcmp(list[0], "autors") == 0) {
     if (!autostereo)
       autostereo = malloc(6 * sizeof(double));
     memcpy(autostereo, args, 6 * sizeof(double));
+    if (autocyclops) {
+      free(autocyclops);
+      autocyclops = NULL;
+    }
   } else if (strcmp(list[0], "filein") == 0) {
     if (in != stdin)
       fclose(in);
@@ -141,9 +149,9 @@ int main(int argc, char **argv) {
     fgets(inbuf, MAX_LINE, in);
     interpret(inbuf);
     if (autocyclops)
-      rendercyclops(autocyclops);
+      rendercyclops(tri, autocyclops);
     else if (autostereo)
-      renderstereo(autostereo);
+      renderstereo(tri, autostereo);
   }
   if (rendering_initialized)
     finish_live_display();

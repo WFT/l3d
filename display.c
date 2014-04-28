@@ -90,7 +90,6 @@ uint32_t rgb(int r, int g, int b) {
 
 // scale xy of world coordinates to fit screen
 // screen = {xmin, ymin, xmax, ymax};
-// coors = {x1, y1, x2, y2};
 void map_coors(double *x, double *y) {
   double sw = screen[2] - screen[0], sh = screen[3] - screen[1];
   double xscale = surface->w/sw, yscale = surface->h/sh;
