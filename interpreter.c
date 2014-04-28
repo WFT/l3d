@@ -12,6 +12,9 @@
 
 #define TO_RAD(deg) (deg * M_PI / 180)
 
+double *autocyclops = NULL;
+double *autostereo = NULL;
+
 Matrix *tri;
 Matrix *tform;
 char quit = 0;
@@ -103,6 +106,14 @@ void interpret(char *l) {
     if (in != stdin)
       fclose(in);
     in = stdin;
+  } else if (strcmp(list[0], "autorc") == 0) {
+    if (!autocyclops)
+      autocyclops = malloc(3 * sizeof(double));
+    memcpy(autocyclops, args, 3 * sizeof(double));
+  } else if (strcmp(list[0], "autors") == 0) {
+    if (!autostereo)
+      autostereo = malloc(6 * sizeof(double));
+    memcpy(autostereo, args, 6 * sizeof(double));
   } else if (strcmp(list[0], "filein") == 0) {
     if (in != stdin)
       fclose(in);
@@ -129,6 +140,10 @@ int main(int argc, char **argv) {
     quit = should_quit();
     fgets(inbuf, MAX_LINE, in);
     interpret(inbuf);
+    if (autocyclops)
+      rendercyclops(autocyclops);
+    else if (autostereo)
+      renderstereo(autostereo);
   }
   if (rendering_initialized)
     finish_live_display();
