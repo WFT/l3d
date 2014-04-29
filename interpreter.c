@@ -15,6 +15,8 @@
 double *autocyclops = NULL;
 double *autostereo = NULL;
 
+int nowframe = 0, totalframes = -1;
+
 Matrix *tri;
 Matrix *tform;
 char quit = 0;
@@ -129,13 +131,16 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "file") == 0) {
     renderppm(list[1]);
   } else if (strcmp(list[0], "end") == 0) {
-    quit = 1;
+    if (nowframe < totalframes)
+      rewind(in);
+    else
+      quit = 1;      
   } else {
     printf("invalid command: %s\n", list[0]);
   }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) {  
   tri = mat_construct(0, 4);
   tform = identity_mat();
   in = stdin;
@@ -152,6 +157,8 @@ int main(int argc, char **argv) {
       rendercyclops(tri, autocyclops);
     else if (autostereo)
       renderstereo(tri, autostereo);
+    if (nowframe == totalframes)
+      quit = 1;
   }
   if (rendering_initialized)
     finish_live_display();
