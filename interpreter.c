@@ -15,7 +15,11 @@
 double *autocyclops = NULL;
 double *autostereo = NULL;
 
-int nowframe = 0, totalframes = -1;
+int startframe = 0, nowframe = 0, totalframes = -1;
+
+char keys[25][100];
+double values[100];
+int lastIndex = -1;
 
 Matrix *tri;
 Matrix *tform;
@@ -38,9 +42,21 @@ void interpret(char *l) {
   double *args = calloc(argc, sizeof(double));
   int i;
   for (i = 0; i < argc; i++) {
-    args[i] = strtod(list[i+1], NULL);
+    if (isalpha(list[i+1][0]) && strcmp(list[0], "vary") != 0) {
+      int j;
+      for (j = lastIndex; j > -1; j--) {
+	if (strcmp(keys[j], list[i+1])) {
+	  args[i] = values[j];
+	  break;
+	}
+	if (j == 0) return;
+      }
+    } else {
+      args[i] = strtod(list[i+1], NULL);
+    }
   }
   if (strcmp(list[0], "pixels") == 0) {
+    if (rendering_initialized) return;
     // quit on error
     quit = init_live_render(args[0], args[1]);
     if (quit)
@@ -72,6 +88,23 @@ void interpret(char *l) {
     multiply_transform(rotate_y_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "rotate-z") == 0) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
+  } else if (strcmp(list[0], "vary") == 0) {
+    if (totalframes < 0) {
+      printf("Initialize with frames command before varying.\n");
+      return;
+    } 
+    if (lastIndex >= 99) {
+      printf("Up to 100 variables allowed.\n");
+      return;
+    }
+    lastIndex++;
+    if (nowframe > args[3] && nowframe < args[4]) {
+      strcpy(keys[lastIndex], list[1]);
+      values[lastIndex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
+    }
+  } else if (strcmp(list[0], "frames") == 0) {
+    startframe = args[0];
+    totalframes = args[1] - args[0];
   } else if (strcmp(list[0], "clear-triangles") == 0) {
     mat_destruct(tri);
     tri = mat_construct(0, 4);
@@ -128,12 +161,22 @@ void interpret(char *l) {
     if (in != stdin)
       fclose(in);
     in = fopen(list[1], "r");
+  } else if (strcmp(list[0], "files") == 0) {
+    char *fname;
+    if (asprintf(&fname, "%s%03d.ppm", list[1], nowframe) == -1) {
+      printf("Who took all the memory?\n");
+      return;
+    }
+    renderppm(fname);
+    free(fname);
   } else if (strcmp(list[0], "file") == 0) {
     renderppm(list[1]);
   } else if (strcmp(list[0], "end") == 0) {
-    if (nowframe < totalframes)
+    if (nowframe < totalframes) {
       rewind(in);
-    else
+      lastIndex = -1;
+      nowframe++;
+    } else
       quit = 1;      
   } else {
     printf("invalid command: %s\n", list[0]);
