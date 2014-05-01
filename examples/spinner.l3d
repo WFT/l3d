@@ -1,0 +1,20 @@
+frames 1 400
+vary rx 0 360 1 400
+vary ry 0 720 1 400
+move 0 0 -2
+screen -3 -2 3 2
+pixels 300 200
+# rotation is controlled by varying the variables
+rotate-y ry
+rotate-x rx
+sphere-t 1 1 1  0 0 0 1 0 0
+box-t 1 1 1 0 0 0 -1 -0.5 -1
+#render-perspective-stereo -1.25 0 10 1.25 0 10
+rcyclops 0 0 10
+# this will produce files anim_000.ppm, anim_001.ppm, etc.
+files anim_
+
+# alternatively, if you have displaying code (SDL?), 
+# you can display it directly
+#display 0.02
+end
