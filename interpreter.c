@@ -189,8 +189,12 @@ void interpret(char *l) {
       rewind(in);
       lastIndex = -1;
       nowframe++;
+      mat_destruct(tri);
+      mat_destruct(tform);
+      tri = mat_construct(0, 4);
+      tform = identity_mat();
     } else
-      quit = 1;      
+      quit = 1;
   } else {
     printf("invalid command: %s\n", list[0]);
   }
@@ -208,6 +212,7 @@ int main(int argc, char **argv) {
   while (!quit) {
     quit = should_quit();
     fgets(inbuf, MAX_LINE, in);
+    if (inbuf[0] == '\n') continue;
     printf("I'm going in! '%s'\n", inbuf);
     interpret(inbuf);
     printf("I'm out!\n");
