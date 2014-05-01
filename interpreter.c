@@ -42,11 +42,15 @@ void interpret(char *l) {
   double *args = calloc(argc, sizeof(double));
   int i;
   for (i = 0; i < argc; i++) {
-    if (isalpha(list[i+1][0]) && strcmp(list[0], "vary") != 0) {
+    if (isalpha(list[i+1][0]) 
+	&& strcmp(list[0], "vary") != 0
+	&& strcmp(list[0], "file") != 0
+	&& strcmp(list[0], "files") != 0) {
       int j;
       for (j = lastIndex; j > -1; j--) {
 	if (strcmp(keys[j], list[i+1])) {
 	  args[i] = values[j];
+	  printf("('%s', %.2f) in %s\n", keys[j], values[j], list[i]);
 	  break;
 	}
 	if (j == 0) return;
