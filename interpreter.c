@@ -47,13 +47,22 @@ void interpret(char *l) {
 	&& strcmp(list[0], "file") != 0
 	&& strcmp(list[0], "files") != 0) {
       int j;
+      char found = 0;
       for (j = lastIndex; j > -1; j--) {
-	if (strcmp(keys[j], list[i+1])) {
+	printf("checking index %d\n", j);
+	if (strcmp(keys[j], list[i+1]) == 0) {
 	  args[i] = values[j];
-	  printf("('%s', %.2f) in %s\n", keys[j], values[j], list[i]);
+	  printf("('%s', %.2f) in %s (f%d)\n", list[i+1], values[j], list[i], nowframe);
+	  found = 1;
 	  break;
 	}
-	if (j == 0) return;
+	if (!found) {
+	  printf("%s not found in command %s (f%d) [checked %d values]", list[i+1], list[0], nowframe, lastIndex+1);
+	  for (j=0; j < lastIndex + 1; j++)
+	    printf("(%s, %.2f), ", keys[j], values[j]);
+	  printf("\n");
+	  return;
+	}
       }
     } else {
       args[i] = strtod(list[i+1], NULL);
@@ -199,7 +208,9 @@ int main(int argc, char **argv) {
   while (!quit) {
     quit = should_quit();
     fgets(inbuf, MAX_LINE, in);
+    printf("I'm going in! '%s'\n", inbuf);
     interpret(inbuf);
+    printf("I'm out!\n");
     if (autocyclops)
       rendercyclops(tri, autocyclops);
     else if (autostereo)
