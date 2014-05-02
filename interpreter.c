@@ -146,10 +146,15 @@ void interpret(char *l) {
     lastvdex++;
     if (nowframe > args[3] && nowframe < args[4]) {
       strcpy(vary_keys[lastvdex], list[1]);
-      vary_values[lastvdex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
+      if (nowframe == startframe)
+	vary_values[lastvdex] = args[1];
+      else
+	vary_values[lastvdex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
     }
   } else if (strcmp(list[0], "frames") == 0) {
     startframe = args[0];
+    if (totalframes < 0)
+      nowframe = args[0];
     totalframes = args[1] - args[0];
   } else if (strcmp(list[0], "clear-triangles") == 0) {
     mat_destruct(tri);
