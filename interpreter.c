@@ -17,9 +17,13 @@ double *autostereo = NULL;
 
 int startframe = 0, nowframe = 0, totalframes = -1;
 
-char keys[25][100];
-double values[100];
-int lastIndex = -1;
+char vary_keys[25][100];
+double vary_values[100];
+int lastvdex = -1;
+
+char tform_keys[25][100];
+Matrix *tform_mats[100];
+int lastmdex = -1;
 
 Matrix *tri;
 Matrix *tform;
@@ -42,24 +46,26 @@ void interpret(char *l) {
   double *args = calloc(argc, sizeof(double));
   int i;
   for (i = 0; i < argc; i++) {
-    if (isalpha(list[i+1][0]) 
-	&& strcmp(list[0], "vary") != 0
+    if (isalpha(list[i+1][0])
+ 	&& strcmp(list[0], "vary") != 0
+	&& strcmp(list[0], "save") != 0
+	&& strcmp(list[0], "restore") != 0
 	&& strcmp(list[0], "file") != 0
 	&& strcmp(list[0], "files") != 0) {
       int j;
       char found = 0;
-      for (j = lastIndex; j > -1; j--) {
-	if (strcmp(keys[j], list[i+1]) == 0) {
-	  args[i] = values[j];
-	  printf("('%s', %.2f) in %s (f%d)\n", list[i+1], values[j], list[i], nowframe);
+      for (j = lastvdex; j > -1; j--) {
+	if (strcmp(vary_keys[j], list[i+1]) == 0) {
+	  args[i] = vary_values[j];
+	  printf("('%s', %.2f) in %s (f%d)\n", list[i+1], vary_values[j], list[i], nowframe);
 	  found = 1;
 	  break;
 	}
       }
       if (!found) {
-	printf("%s not found in command %s (f%d) [checked %d values]", list[i+1], list[0], nowframe, lastIndex+1);
-	for (j=0; j < lastIndex + 1; j++)
-	  printf("(%s, %.2f), ", keys[j], values[j]);
+	printf("%s not found in command %s (f%d) [checked %d vary_values]", list[i+1], list[0], nowframe, lastvdex+1);
+	for (j=0; j < lastvdex + 1; j++)
+	  printf("(%s, %.2f), ", vary_keys[j], vary_values[j]);
 	printf("\n");
 	return;
       }
@@ -100,19 +106,47 @@ void interpret(char *l) {
     multiply_transform(rotate_y_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "rotate-z") == 0) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
+  } else if (strcmp(list[0], "save") == 0) {
+    if (lastmdex >= 99) {
+      printf("Up to 100 transform saves allowed. This is number %d\n", lastmdex + 1);
+      return;
+    }
+    lastmdex++;
+    strcpy(tform_keys[lastmdex], list[1]);
+    tform_mats[lastmdex] = mat_construct(0, 4);
+    mat_extend(tform_mats[lastmdex], tform);
+  } else if (strcmp(list[0], "restore") == 0) {
+    Matrix *p = NULL;
+    int i;
+    for (i = 0; i > -1; i--) {
+      if (strcmp(list[1], tform_keys[i]) == 0) {
+	p = tform_mats[i];
+	break;
+      }
+    }
+    if (p) {
+      mat_destruct(tform);
+      tform = mat_construct(0, 4);
+      mat_extend(tform, p);
+    } else {
+      printf("Saved transform '%s' not found in ", list[1]);
+      for (i=0;i>-1;i--)
+	printf("|('%s')|", tform_keys[i]);
+      printf("\n");
+    }
   } else if (strcmp(list[0], "vary") == 0) {
     if (totalframes < 0) {
       printf("Initialize with frames command before varying.\n");
       return;
     } 
-    if (lastIndex >= 99) {
+    if (lastvdex >= 99) {
       printf("Up to 100 variables allowed.\n");
       return;
     }
-    lastIndex++;
+    lastvdex++;
     if (nowframe > args[3] && nowframe < args[4]) {
-      strcpy(keys[lastIndex], list[1]);
-      values[lastIndex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
+      strcpy(vary_keys[lastvdex], list[1]);
+      vary_values[lastvdex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
     }
   } else if (strcmp(list[0], "frames") == 0) {
     startframe = args[0];
@@ -186,7 +220,7 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "end") == 0) {
     if (nowframe < totalframes) {
       rewind(in);
-      lastIndex = -1;
+      lastvdex = -1;
       nowframe++;
       mat_destruct(tri);
       mat_destruct(tform);
