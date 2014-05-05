@@ -130,6 +130,10 @@ void interpret(char *l) {
       mat_destruct(tform);
       tform = mat_construct(0, 4);
       mat_extend(tform, p);
+      printf("transform is now:\n");
+      pmat(tform);
+      printf("%s is:\n", list[1]);
+      pmat(p);
     } else {
       printf("Saved transform '%s' not found in ", list[1]);
       for (i=0;i>-1;i--)
