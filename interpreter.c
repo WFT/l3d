@@ -17,11 +17,11 @@ double *autostereo = NULL;
 
 int startframe = 0, nowframe = 0, totalframes = -1;
 
-char vary_keys[25][100];
+char vary_keys[100][25];
 double vary_values[100];
 int lastvdex = -1;
 
-char tform_keys[25][100];
+char tform_keys[100][25];
 Matrix *tform_mats[100];
 int lastmdex = -1;
 
@@ -112,7 +112,9 @@ void interpret(char *l) {
       return;
     }
     lastmdex++;
+    printf("Saving transforms with %s (%d)...\n", list[1], lastmdex);
     strcpy(tform_keys[lastmdex], list[1]);
+    printf("key copied.\n");
     tform_mats[lastmdex] = mat_construct(0, 4);
     mat_extend(tform_mats[lastmdex], tform);
   } else if (strcmp(list[0], "restore") == 0) {
@@ -145,7 +147,9 @@ void interpret(char *l) {
     }
     lastvdex++;
     if (nowframe > args[3] && nowframe < args[4]) {
+      printf("varying with %s...\n", list[1]);
       strcpy(vary_keys[lastvdex], list[1]);
+      printf("key copied.\n");
       if (nowframe == startframe)
 	vary_values[lastvdex] = args[1];
       else
@@ -225,7 +229,7 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "end") == 0) {
     if (nowframe < totalframes) {
       rewind(in);
-      lastvdex = -1;
+      lastvdex = lastmdex = -1;
       nowframe++;
       mat_destruct(tri);
       mat_destruct(tform);
