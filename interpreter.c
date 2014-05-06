@@ -91,6 +91,8 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "box-t") == 0) {
     Matrix *cube = box_t(args);
     Matrix *obj = mat_multiply(tform, cube);
+    printf("transform (making box) is:\n");
+    pmat(tform);
     mat_extend(tri, obj);
     mat_destruct(cube);
     mat_destruct(obj);
@@ -117,6 +119,8 @@ void interpret(char *l) {
     printf("key copied.\n");
     tform_mats[lastmdex] = mat_construct(0, 4);
     mat_extend(tform_mats[lastmdex], tform);
+    printf("%s is:\n", list[1]);
+    pmat(tform);
   } else if (strcmp(list[0], "restore") == 0) {
     Matrix *p = NULL;
     int i;
@@ -132,8 +136,6 @@ void interpret(char *l) {
       mat_extend(tform, p);
       printf("transform is now:\n");
       pmat(tform);
-      printf("%s is:\n", list[1]);
-      pmat(p);
     } else {
       printf("Saved transform '%s' not found in ", list[1]);
       for (i=0;i>-1;i--)
