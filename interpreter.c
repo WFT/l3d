@@ -260,7 +260,6 @@ int main(int argc, char **argv) {
   while (!quit) {
     quit = should_quit();
     fgets(inbuf, MAX_LINE, in);
-    if (inbuf[0] == '\n') continue;
     interpret(inbuf);
     if (autocyclops)
       rendercyclops(tri, autocyclops);
