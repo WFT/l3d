@@ -157,7 +157,7 @@ void interpret(char *l) {
       if (nowframe == startframe)
 	vary_values[lastvdex] = args[1];
       else
-	vary_values[lastvdex] = (nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3]));
+	vary_values[lastvdex] = args[1] + ((nowframe - args[3]) * ((args[2] - args[1])/(args[4] - args[3])));
     }
   } else if (strcmp(list[0], "frames") == 0) {
     startframe = args[0];
