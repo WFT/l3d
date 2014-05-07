@@ -42,6 +42,8 @@ void interpret(char *l) {
   if (l[0] == '#')
     return;
   char **list = parse_split(l);
+  if (list[0] == NULL)
+    return;
   int argc = parse_numwords(list) - 1;
   double *args = calloc(argc, sizeof(double));
   int i;
