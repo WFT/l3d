@@ -93,8 +93,6 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "box-t") == 0) {
     Matrix *cube = box_t(args);
     Matrix *obj = mat_multiply(tform, cube);
-    printf("transform (making box) is:\n");
-    pmat(tform);
     mat_extend(tri, obj);
     mat_destruct(cube);
     mat_destruct(obj);
