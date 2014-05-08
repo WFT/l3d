@@ -14,8 +14,8 @@ Matrix *sphere_t(double *args) {
   double coors[4] = {0, 0, 0, 1};
   int i;
   for (i = 0; i < nVertices; i++) {
-    coors[0] = sin(i * lrad);
-    coors[1] = cos(i * lrad);
+    coors[0] = .5 * sin(i * lrad);
+    coors[1] = .5 * cos(i * lrad);
     mat_add_column(arc, coors);
   }
   Matrix *arcp = mat_multiply(roty, arc);
@@ -36,7 +36,7 @@ Matrix *sphere_t(double *args) {
     mat_add_column(weave, col);
   }
   // end triangles!
-  double end[4] = {0, -1, 0, 1};
+  double end[4] = {0, -.5, 0, 1};
   mat_get_column(arc, nVertices - 1, col);
   mat_add_column(weave, col);
   mat_add_column(weave, end);
