@@ -66,14 +66,14 @@ Matrix *sphere_t(double *args) {
 
 Matrix *box_t(double *args) {
   Matrix *cube = mat_construct(0, 4);
-  double tlf[4] = {-1, 1, 1, 1};	// top left front
-  double tlb[4] = {-1, 1, -1, 1};	// top left back
-  double trf[4] = {1, 1, 1, 1};		// top right front
-  double trb[4] = {1, 1, -1, 1};	// top right back
-  double blf[4] = {-1, -1, 1, 1};	// back left front
-  double blb[4] = {-1, -1, -1, 1};	// back left back
-  double brf[4] = {1, -1, 1, 1};	// back right front
-  double brb[4] = {1, -1, -1, 1};	// back right back
+  double tlf[4] = {-.5, .5, .5, .5};	// top left front
+  double tlb[4] = {-.5, .5, -.5, .5};	// top left back
+  double trf[4] = {.5, .5, .5, .5};		// top right front
+  double trb[4] = {.5, .5, -.5, .5};	// top right back
+  double blf[4] = {-.5, -.5, .5, .5};	// back left front
+  double blb[4] = {-.5, -.5, -.5, .5};	// back left back
+  double brf[4] = {.5, -.5, .5, .5};	// back right front
+  double brb[4] = {.5, -.5, -.5, .5};	// back right back
   // top face -- done
   addtriangle(cube, tlf, trb, tlb);
   addtriangle(cube, tlf, trf, trb);
