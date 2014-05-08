@@ -33,7 +33,7 @@ FILE *in;
 
 void multiply_transform(Matrix *transform) {
   //mat_multinmat(transform, tform, tform);
-  Matrix *temp = mat_multiply(transform, tform);
+  Matrix *temp = mat_multiply(tform, transform);
   mat_destruct(tform);
   tform = temp;
 }
