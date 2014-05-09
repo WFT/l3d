@@ -95,6 +95,7 @@ void interpret(char *l) {
     Matrix *obj = mat_multiply(tform, cube);
     mat_extend(tri, obj);
     mat_destruct(cube);
+    pmat(obj);
     mat_destruct(obj);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
