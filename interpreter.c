@@ -95,7 +95,6 @@ void interpret(char *l) {
     Matrix *obj = mat_multiply(tform, cube);
     mat_extend(tri, obj);
     mat_destruct(cube);
-    pmat(obj);
     mat_destruct(obj);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
@@ -121,7 +120,6 @@ void interpret(char *l) {
     tform_mats[lastmdex] = mat_construct(0, 4);
     mat_extend(tform_mats[lastmdex], tform);
     printf("%s is:\n", list[1]);
-    pmat(tform);
   } else if (strcmp(list[0], "restore") == 0) {
     Matrix *p = NULL;
     int i;
@@ -136,7 +134,6 @@ void interpret(char *l) {
       tform = mat_construct(0, 4);
       mat_extend(tform, p);
       printf("transform is now:\n");
-      pmat(tform);
     } else {
       printf("Saved transform '%s' not found in ", list[1]);
       for (i=0;i>-1;i--)
