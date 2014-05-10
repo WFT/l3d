@@ -28,19 +28,22 @@ char culltri(double coors[12], double *eye) {
 
 // modifies the pointed to x and y with a perspective transform
 void perspectify(double *x, double *y, double pz, double *eye) {
-  double oldx = *x, oldy = *y;
-  *x = eye[0] - (eye[2] * (oldx-eye[0]) / (pz - eye[2]));
-  *y = eye[1] - (eye[2] * (oldy-eye[1]) / (pz - eye[2]));  
+  *x = eye[0] - (eye[2] * (*x-eye[0]) / (pz - eye[2]));
+  *y = eye[1] - (eye[2] * (*y-eye[1]) / (pz - eye[2]));
+  /* double oldx = -*x, oldy = -*y; */
+  /* *x = eye[2] * oldx / (pz - eye[2]); */
+  /* *y = eye[2] * oldy / (pz - eye[2]); */
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
   double pz;
-  double ez = eye[3];
   int line[4];
   double tri[12];
-  
+  /* Matrix *scale = scale_mat(1, 1, -1); */
+  /* faces = mat_multiply(scale, faces); */
+  /* mat_destruct(scale); */
   for (c = 0; c < faces->cols; c += 3) {
     if (enable_culling) {
       mat_get_column(faces, c, tri);
@@ -50,17 +53,17 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
 	continue;
     }
     pz = mat_get_cell(faces, c, 2);
-    if (pz > ez) continue;
+    if (pz > eye[2]) continue;
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
     perspectify(coors, coors+1, pz, eye);
     pz = mat_get_cell(faces, c+1, 2);
-    if (pz > ez) continue;
+    if (pz > eye[2]) continue;
     coors[2] = mat_get_cell(faces, c+1, 0);
     coors[3] = mat_get_cell(faces, c+1, 1);
     perspectify(coors+2, coors+3, pz, eye);
     pz = mat_get_cell(faces, c+2, 2);
-    if (pz > ez) continue;
+    if (pz > eye[2]) continue;
     coors[4] = mat_get_cell(faces, c+2, 0);
     coors[5] = mat_get_cell(faces, c+2, 1);
     perspectify(coors+4, coors+5, pz, eye);
