@@ -21,4 +21,6 @@
 *.exe
 *.out
 *.app
-3D
+3D*
+
+*.dySYM/
