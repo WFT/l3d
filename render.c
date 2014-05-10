@@ -30,9 +30,6 @@ char culltri(double coors[12], double *eye) {
 void perspectify(double *x, double *y, double pz, double *eye) {
   *x = eye[0] - (eye[2] * (*x-eye[0]) / (pz - eye[2]));
   *y = eye[1] - (eye[2] * (*y-eye[1]) / (pz - eye[2]));
-  /* double oldx = -*x, oldy = -*y; */
-  /* *x = eye[2] * oldx / (pz - eye[2]); */
-  /* *y = eye[2] * oldy / (pz - eye[2]); */
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
@@ -41,9 +38,6 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double pz;
   int line[4];
   double tri[12];
-  /* Matrix *scale = scale_mat(1, 1, -1); */
-  /* faces = mat_multiply(scale, faces); */
-  /* mat_destruct(scale); */
   for (c = 0; c < faces->cols; c += 3) {
     if (enable_culling) {
       mat_get_column(faces, c, tri);
