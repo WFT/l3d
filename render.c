@@ -37,6 +37,7 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
   double pz;
+  double ez = eye[3];
   int line[4];
   double tri[12];
   
