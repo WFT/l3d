@@ -36,7 +36,6 @@ void perspectify(double *x, double *y, double pz, double *eye) {
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
-  double ex = eye[0], ey = eye[1], ez = eye[2];
   double pz;
   int line[4];
   double tri[12];
