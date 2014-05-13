@@ -31,6 +31,11 @@ char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
+void import_tri(char *fname) {
+  FILE *f = fopen(fname, "r");
+  
+}
+
 void multiply_transform(Matrix *transform) {
   //mat_multinmat(transform, tform, tform);
   Matrix *temp = mat_multiply(tform, transform);
