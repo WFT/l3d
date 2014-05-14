@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "transform.h"
 #include "parse_util.h"
 #include "objects.h"
@@ -16,22 +18,28 @@ Matrix *tri_file(char *fname, double *args) {
     }
   }
   int ctri = atoi(linein);
+  Matrix *obj = mat_construct(0, 4);
   double col[4];
   int argc, i;
   char **list;
-  printf("adding %.2f triangles from file %s.\n", ctri, fname);
+  printf("adding %d triangles from file %s.\n", ctri, fname);
   while (fgets(linein, MAX_LINE-1, f) && ctri > 0) {
     if (linein[0] == '#') {
       return;
     }
     list = parse_split(linein);
     argc = parse_numwords(list) - 1;
-    for (i = 0; i < argc; i++) {
+    for (i = 0; i < argc && list[i]; i++) {
+      printf("gothere%s\n", list[i]);
       col[i] = strtod(list[i], NULL);
     }
-    mat_add_column(tri, col);
+    mat_add_column(obj, col);
     ctri--;
   }
+  //Matrix *t  = otransform(args);
+  //Matrix *ret = mat_multiply(t, obj);
+  //return ret;
+  return obj;
 }
 
 

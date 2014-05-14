@@ -110,7 +110,9 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "rotate-z") == 0) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "import") == 0) {
-    import_tri(list[1]);
+    Matrix *obj = tri_file(list[1], args);
+    mat_extend(tri, obj);
+    mat_destruct(obj);
   } else if (strcmp(list[0], "save") == 0) {
     if (lastmdex >= 99) {
       printf("Up to 100 transform saves allowed. This is number %d\n", lastmdex + 1);
