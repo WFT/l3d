@@ -261,7 +261,7 @@ int main(int argc, char **argv) {
   while (!quit) {
     quit = should_quit();
     if (!fgets(inbuf, MAX_LINE, in))
-      return;
+      return 0;
     interpret(inbuf);
     if (autocyclops)
       rendercyclops(tri, autocyclops);
