@@ -31,10 +31,34 @@ char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
-/* void import_tri(char *fname) { */
-/*   FILE *f = fopen(fname, "r"); */
-  
-/* } */
+void import_tri(char *fname) {
+  FILE *f = fopen(fname, "r");
+  char linein[100];
+  linein[0] = '#';
+  while (linein[0] == '#') {
+    if (!fgets(linein, 99, f)) {
+      printf("File read failed.");
+      return;
+    }
+  }
+  int ctri = atoi(linein);
+  double col[4];
+  int argc, i;
+  char **list;
+  printf("adding %.2f triangles from file %s.\n", ctri, fname);
+  while (fgets(linein, 99, f) && ctri > 0) {
+    if (linein[0] == '#') {
+      return;
+    }
+    list = parse_split(linein);
+    argc = parse_numwords(list) - 1;
+    for (i = 0; i < argc; i++) {
+      col[i] = strtod(list[i], NULL);
+    }
+    mat_add_column(tri, col);
+    ctri--;
+  }
+}
 
 void multiply_transform(Matrix *transform) {
   //mat_multinmat(transform, tform, tform);
@@ -58,6 +82,7 @@ void interpret(char *l) {
 	&& strcmp(list[0], "save") != 0
 	&& strcmp(list[0], "restore") != 0
 	&& strcmp(list[0], "file") != 0
+	&& strcmp(list[0], "import") != 0
 	&& strcmp(list[0], "files") != 0) {
       int j;
       char found = 0;
@@ -113,6 +138,8 @@ void interpret(char *l) {
     multiply_transform(rotate_y_mat(TO_RAD(args[0])));
   } else if (strcmp(list[0], "rotate-z") == 0) {
     multiply_transform(rotate_z_mat(TO_RAD(args[0])));
+  } else if (strcmp(list[0], "import") == 0) {
+    import_tri(list[1]);
   } else if (strcmp(list[0], "save") == 0) {
     if (lastmdex >= 99) {
       printf("Up to 100 transform saves allowed. This is number %d\n", lastmdex + 1);
@@ -262,7 +289,8 @@ int main(int argc, char **argv) {
   char inbuf[MAX_LINE + 1];
   while (!quit) {
     quit = should_quit();
-    fgets(inbuf, MAX_LINE, in);
+    if (!fgets(inbuf, MAX_LINE, in))
+      return;
     interpret(inbuf);
     if (autocyclops)
       rendercyclops(tri, autocyclops);
