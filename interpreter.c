@@ -43,18 +43,26 @@ void import_tri(char *fname) {
   }
   int ctri = atoi(linein);
   double col[4];
-  int argc, i;
+  int i, j;
   char **list;
-  printf("adding %.2f triangles from file %s.\n", ctri, fname);
+  col[3] = 1;
+  printf("adding %d triangles from file %s.\n", ctri, fname);
   while (fgets(linein, 99, f) && ctri > 0) {
     if (linein[0] == '#') {
       return;
     }
     list = parse_split(linein);
-    argc = parse_numwords(list) - 1;
-    for (i = 0; i < argc; i++) {
-      col[i] = strtod(list[i], NULL);
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+	col[j] = strtod(list[j + (i*3)], NULL);
+      }
+      mat_add_column(tri, col);
+      // duplicate last vertice
+      if (i > 0)
+	mat_add_column(tri, col);
     }
+    for (j = 0; j < 3; j++)
+      col[j] = strtod(list[j], NULL);
     mat_add_column(tri, col);
     ctri--;
   }
@@ -290,7 +298,7 @@ int main(int argc, char **argv) {
   while (!quit) {
     quit = should_quit();
     if (!fgets(inbuf, MAX_LINE, in))
-      return;
+      return 0;
     interpret(inbuf);
     if (autocyclops)
       rendercyclops(tri, autocyclops);
