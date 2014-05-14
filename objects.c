@@ -1,8 +1,39 @@
 #include "transform.h"
+#include "parse_util.h"
 #include "objects.h"
 
 Matrix *otransform(double *args);
 void addtriangle(Matrix *mat, double *p1, double *p2, double *p3);
+
+Matrix *tri_file(char *fname, double *args) {
+  FILE *f = fopen(fname, "r");
+  char linein[MAX_LINE];
+  linein[0] = '#';
+  while (linein[0] == '#') {
+    if (!fgets(linein, 99, f)) {
+      printf("File read failed.");
+      return;
+    }
+  }
+  int ctri = atoi(linein);
+  double col[4];
+  int argc, i;
+  char **list;
+  printf("adding %.2f triangles from file %s.\n", ctri, fname);
+  while (fgets(linein, MAX_LINE-1, f) && ctri > 0) {
+    if (linein[0] == '#') {
+      return;
+    }
+    list = parse_split(linein);
+    argc = parse_numwords(list) - 1;
+    for (i = 0; i < argc; i++) {
+      col[i] = strtod(list[i], NULL);
+    }
+    mat_add_column(tri, col);
+    ctri--;
+  }
+}
+
 
 Matrix *sphere_t(double *args) {
   int nVertices = 15;

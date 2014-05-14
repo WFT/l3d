@@ -31,35 +31,6 @@ char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
-void import_tri(char *fname) {
-  FILE *f = fopen(fname, "r");
-  char linein[100];
-  linein[0] = '#';
-  while (linein[0] == '#') {
-    if (!fgets(linein, 99, f)) {
-      printf("File read failed.");
-      return;
-    }
-  }
-  int ctri = atoi(linein);
-  double col[4];
-  int argc, i;
-  char **list;
-  printf("adding %.2f triangles from file %s.\n", ctri, fname);
-  while (fgets(linein, 99, f) && ctri > 0) {
-    if (linein[0] == '#') {
-      return;
-    }
-    list = parse_split(linein);
-    argc = parse_numwords(list) - 1;
-    for (i = 0; i < argc; i++) {
-      col[i] = strtod(list[i], NULL);
-    }
-    mat_add_column(tri, col);
-    ctri--;
-  }
-}
-
 void multiply_transform(Matrix *transform) {
   //mat_multinmat(transform, tform, tform);
   Matrix *temp = mat_multiply(tform, transform);
