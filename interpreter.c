@@ -60,16 +60,16 @@ void interpret(char *l) {
       for (j = lastvdex; j > -1; j--) {
 	if (strcmp(vary_keys[j], list[i+1]) == 0) {
 	  args[i] = vary_values[j];
-	  printf("('%s', %.2f) in %s (f%d)\n", list[i+1], vary_values[j], list[i], nowframe);
+	  //printf("('%s', %.2f) in %s (f%d)\n", list[i+1], vary_values[j], list[i], nowframe);
 	  found = 1;
 	  break;
 	}
       }
       if (!found) {
 	printf("%s not found in command %s (f%d) [checked %d vary_values]", list[i+1], list[0], nowframe, lastvdex+1);
-	for (j=0; j < lastvdex + 1; j++)
-	  printf("(%s, %.2f), ", vary_keys[j], vary_values[j]);
-	printf("\n");
+	//for (j=0; j < lastvdex + 1; j++)
+	//printf("(%s, %.2f), ", vary_keys[j], vary_values[j]);
+	//printf("\n");
 	return;
       }
     } else {
@@ -119,12 +119,12 @@ void interpret(char *l) {
       return;
     }
     lastmdex++;
-    printf("Saving transforms with %s (%d)...\n", list[1], lastmdex);
+    //printf("Saving transforms with %s (%d)...\n", list[1], lastmdex);
     strcpy(tform_keys[lastmdex], list[1]);
-    printf("key copied.\n");
+    //printf("key copied.\n");
     tform_mats[lastmdex] = mat_construct(0, 4);
     mat_extend(tform_mats[lastmdex], tform);
-    printf("%s is:\n", list[1]);
+    //printf("%s is:\n", list[1]);
   } else if (strcmp(list[0], "restore") == 0) {
     Matrix *p = NULL;
     int i;
@@ -138,12 +138,12 @@ void interpret(char *l) {
       mat_destruct(tform);
       tform = mat_construct(0, 4);
       mat_extend(tform, p);
-      printf("transform is now:\n");
+      //printf("transform is now:\n");
     } else {
-      printf("Saved transform '%s' not found in ", list[1]);
-      for (i=0;i>-1;i--)
-	printf("|('%s')|", tform_keys[i]);
-      printf("\n");
+      //printf("Saved transform '%s' not found in ", list[1]);
+      // for (i=0;i>-1;i--)
+      // 	printf("|('%s')|", tform_keys[i]);
+      // printf("\n");
     }
   } else if (strcmp(list[0], "vary") == 0) {
     if (totalframes < 0) {
@@ -156,9 +156,9 @@ void interpret(char *l) {
     }
     lastvdex++;
     if (nowframe > args[3] && nowframe < args[4]) {
-      printf("varying with %s...\n", list[1]);
+      //printf("varying with %s...\n", list[1]);
       strcpy(vary_keys[lastvdex], list[1]);
-      printf("key copied.\n");
+      //printf("key copied.\n");
       if (nowframe == startframe)
 	vary_values[lastvdex] = args[1];
       else
@@ -239,6 +239,7 @@ void interpret(char *l) {
     if (nowframe < totalframes) {
       rewind(in);
       lastvdex = lastmdex = -1;
+      printf("frame %d\n", nowframe);
       nowframe++;
       mat_destruct(tri);
       mat_destruct(tform);
