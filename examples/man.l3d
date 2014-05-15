@@ -1,0 +1,35 @@
+frames 1 200
+
+vary turn 0 360 1 200
+vary rarm 0 60 1 100
+vary rarm 60 0 100 200
+
+pixels 300 500
+screen -3 -5 3 5
+
+scale .75 .75 .75
+rotate-y turn
+save man
+# head
+sphere-t 1 1 1 0 0 0 0 4 0
+# body
+box-t 2 2 2 0 0 0 0 2 0
+box-t 2 2 2 0 0 0 0 0 0
+# rarm
+#rotate-x rarm
+box-t 1 2 1 0 0 0 1.5 0 0
+box-t 1 2 1 0 0 0 1.5 2 0
+restore man
+# larm
+box-t 1 2 1 0 0 0 -1.5 0 0
+box-t 1 2 1 0 0 0 -1.5 2 0
+#lleg
+box-t 1 2 1 0 0 0 -.5 -2 0
+box-t 1 2 1 0 0 0 -.5 -4 0
+# rleg
+box-t 1 2 1 0 0 0 .5 -2 0
+box-t 1 2 1 0 0 0 .5 -4 0
+
+rcyclops 0 0 10
+files man_
+end
