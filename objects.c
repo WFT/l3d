@@ -7,6 +7,9 @@
 Matrix *otransform(double *args);
 void addtriangle(Matrix *mat, double *p1, double *p2, double *p3);
 
+
+// We'll fix this later -- for now we've got to work on docs
+/*
 Matrix *tri_file(char *fname, double *args) {
   FILE *f = fopen(fname, "r");
   char linein[MAX_LINE];
@@ -36,12 +39,11 @@ Matrix *tri_file(char *fname, double *args) {
     mat_add_column(obj, col);
     ctri--;
   }
-  //Matrix *t  = otransform(args);
-  //Matrix *ret = mat_multiply(t, obj);
-  //return ret;
-  return obj;
+  Matrix *t  = otransform(args);
+  Matrix *ret = mat_multiply(t, obj);
+  return ret;
 }
-
+*/
 
 Matrix *sphere_t(double *args) {
   int nVertices = 15;
@@ -52,6 +54,7 @@ Matrix *sphere_t(double *args) {
   Matrix *arc = mat_construct(0,4);
   double coors[4] = {0, 0, 0, 1};
   int i;
+  // generate one arc of points, along z = 0
   for (i = 0; i < nVertices; i++) {
     coors[0] = sin(i * lrad);
     coors[1] = cos(i * lrad);
@@ -60,6 +63,7 @@ Matrix *sphere_t(double *args) {
   Matrix *arcp = mat_multiply(roty, arc);
   Matrix *weave = mat_construct(0,4);
   double col[4];
+  // turn the previous arcs into a series of triangles
   for (i = 0; i < nVertices - 1; i++) {
     mat_get_column(arc, i, col);
     mat_add_column(weave, col);
@@ -84,7 +88,7 @@ Matrix *sphere_t(double *args) {
   mat_add_column(weave, col);
   mat_add_column(weave, end);
   mat_add_column(weave, end);
-  // spin the woven matrix
+  // spin the woven matrix and zip it up
   Matrix *tfrmd;
   for (i = 0; i < nVertices * 2; i++) {
     tfrmd = mat_multiply(roty, weave);
@@ -107,25 +111,25 @@ Matrix *box_t(double *args) {
   Matrix *cube = mat_construct(0, 4);
   double tlf[4] = {-.5, .5, .5, 1};	// top left front
   double tlb[4] = {-.5, .5, -.5, 1};	// top left back
-  double trf[4] = {.5, .5, .5, 1};		// top right front
+  double trf[4] = {.5, .5, .5, 1};	// top right front
   double trb[4] = {.5, .5, -.5, 1};	// top right back
   double blf[4] = {-.5, -.5, .5, 1};	// back left front
   double blb[4] = {-.5, -.5, -.5, 1};	// back left back
   double brf[4] = {.5, -.5, .5, 1};	// back right front
   double brb[4] = {.5, -.5, -.5, 1};	// back right back
-  // top face -- done
+  // top face
   addtriangle(cube, tlf, trb, tlb);
   addtriangle(cube, tlf, trf, trb);
-  // bottom face -- done
+  // bottom face
   addtriangle(cube, blf, brb, brf);
   addtriangle(cube, blf, blb, brb);
-  // back face -- done
+  // back face
   addtriangle(cube, blb, trb, brb);
   addtriangle(cube, blb, tlb, trb);
-  // front face -- done
+  // front face
   addtriangle(cube, blf, brf, trf);
   addtriangle(cube, blf, trf, tlf);
-  // right face -- done
+  // right face
   addtriangle(cube, brf, brb, trb);
   addtriangle(cube, brf, trb, trf);
   // left face
@@ -138,6 +142,8 @@ Matrix *box_t(double *args) {
   return ret;
 }
 
+// turn the arguments into a transformation matrix
+// using the standard Sx Sy Sz Rx Ry Rz Mx My Mz
 Matrix *otransform(double *args) {
   Matrix *t = scale_mat(args[0], args[1], args[2]);
   Matrix *temp;
@@ -155,6 +161,7 @@ Matrix *otransform(double *args) {
   return temp;
 }
 
+// add three points to a matrix
 void addtriangle(Matrix *mat, double *p1, double *p2, double *p3) {
   mat_add_column(mat, p1);
   mat_add_column(mat, p2);

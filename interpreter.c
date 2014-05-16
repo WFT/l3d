@@ -1,3 +1,8 @@
+/*********************************************************/
+/* This whole file is a massive hack			 */
+/* Only the rest of the project is supposed to look good */
+/*********************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
