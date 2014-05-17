@@ -1,5 +1,6 @@
 #include "display.h"
 #include "transform.h"
+#include "lines.h"
 #include "render.h"
 
 char enable_culling = 1;
@@ -33,9 +34,8 @@ void perspectify(double *x, double *y, double pz, double *eye) {
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
-  double coors[6];
+  double coors[9];
   int c;
-  double pz;
   int line[4];
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
@@ -46,25 +46,25 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
       if (culltri(tri, eye))
 	continue;
     }
-    pz = mat_get_cell(faces, c, 2);
-    if (pz > eye[2]) continue;
+    coors[2] = mat_get_cell(faces, c, 2);
+    if (coors[2] > eye[2]) continue;
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
-    perspectify(coors, coors+1, pz, eye);
-    pz = mat_get_cell(faces, c+1, 2);
-    if (pz > eye[2]) continue;
-    coors[2] = mat_get_cell(faces, c+1, 0);
-    coors[3] = mat_get_cell(faces, c+1, 1);
-    perspectify(coors+2, coors+3, pz, eye);
-    pz = mat_get_cell(faces, c+2, 2);
-    if (pz > eye[2]) continue;
+    perspectify(coors, coors+1, coors[2], eye);
+    coors[5] = mat_get_cell(faces, c+1, 2);
+    if (coors[5] > eye[2]) continue;
+    coors[3] = mat_get_cell(faces, c+1, 0);
+    coors[4] = mat_get_cell(faces, c+1, 1);
+    perspectify(coors+3, coors+4, coors[5], eye);
+    coors[8] = mat_get_cell(faces, c+2, 2);
+    if (coors[8] > eye[2]) continue;
     coors[4] = mat_get_cell(faces, c+2, 0);
     coors[5] = mat_get_cell(faces, c+2, 1);
-    perspectify(coors+4, coors+5, pz, eye);
+    perspectify(coors+4, coors+5, coors[8], eye);
 
     map_coors(coors, coors+1);
-    map_coors(coors+2, coors+3);
-    map_coors(coors+4, coors+5);
+    map_coors(coors+3, coors+4);
+    map_coors(coors+6, coors+7);
 
     // line 1
     line[0] = coors[0];
