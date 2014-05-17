@@ -59,8 +59,8 @@ void setpix(int x, int y, uint32_t color, char lock) {
   if (x < 0 || y < 0 || x > surface->w || y > surface->h)
     return;
 
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
+  if (lock)
+    lock_surface();
 
   if (mix)
     color += getpix(x, y, 0);
@@ -68,20 +68,30 @@ void setpix(int x, int y, uint32_t color, char lock) {
   p += (y * surface->pitch) + (x * sizeof(uint32_t));
   *((uint32_t *)p) = color;
 
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
+  if (lock)
+    unlock_surface();
 }
 uint32_t getpix(int x, int y, char lock) {
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
+  if (lock)
+    lock_surface();
 
   uint8_t *p = (uint8_t *)surface->pixels;
   p += (y * surface->pitch) + (x * sizeof(uint32_t));
 
-  if (lock && SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
+  if (lock)
+    unlock_surface();
 
   return *((uint32_t *)p);
+}
+
+void lock_surface() {
+  if (SDL_MUSTLOCK(surface))
+    SDL_LockSurface(surface);
+}
+
+void unlock_surface() {
+  if (SDL_MUSTLOCK(surface))
+    SDL_UnlockSurface(surface);
 }
 
 uint32_t rgb(int r, int g, int b) {
@@ -157,8 +167,7 @@ void renderppm(char *path) {
   uint32_t p = 0;
   int x, y, bwrit = 0;
   unsigned char r = 0, g = 0, b = 0;
-  if (SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
+  lock_surface();
   for (y = 0; y < surface->h; y++) {
     for (x = 0; x < surface->w; x++) {
       p = getpix(x, y, 0);
@@ -166,8 +175,7 @@ void renderppm(char *path) {
       bwrit += sprintf(obuf+bwrit, "%d %d %d\t", r, g, b);
     }
   }
-  if (SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
+  unlock_surface();
   fwrite(obuf, 1, bwrit, out);
   fclose(out);
 }

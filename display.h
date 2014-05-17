@@ -12,6 +12,16 @@ int init_live_render(int w, int h);
 void setpix(int x, int y, uint32_t color, char lock);
 uint32_t getpix(int x, int y, char lock);
 
+// lock the surface prior to drawing
+// if setting many pixels, lock first and tell setpix()
+// not to lock by passing 0 as the last parameter
+void lock_surface();
+
+// always manually unlock after manually locking
+// if setpix and getpix are locking (passing 1 as last parameter)
+// then they also unlock, automatically
+void unlock_surface();
+
 // returns a 32 bit int representing an rgb color in the surface format
 uint32_t rgb(int r, int g, int b);
 

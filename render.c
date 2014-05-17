@@ -36,7 +36,7 @@ void perspectify(double *x, double *y, double pz, double *eye) {
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[9];
   int c;
-  int line[4];
+  int line[9];
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
     if (enable_culling) {
@@ -66,22 +66,27 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
     map_coors(coors+3, coors+4);
     map_coors(coors+6, coors+7);
 
-    // line 1
-    line[0] = coors[0];
-    line[1] = coors[1];
-    line[2] = coors[2];
-    line[3] = coors[3];
-    dline(line, color);
+    /* // line 1 */
+    /* line[0] = coors[0]; */
+    /* line[1] = coors[1]; */
+    /* line[2] = coors[2]; */
+    /* line[3] = coors[3]; */
+    /* dline(line, color); */
 
-    // line 2
-    line[0] = coors[4];
-    line[1] = coors[5];
-    dline(line, color);
+    /* // line 2 */
+    /* line[0] = coors[4]; */
+    /* line[1] = coors[5]; */
+    /* dline(line, color); */
 
-    // line 3
-    line[2] = coors[0];
-    line[3] = coors[1];
-    dline(line, color);
+    /* // line 3 */
+    /* line[2] = coors[0]; */
+    /* line[3] = coors[1]; */
+    /* dline(line, color); */
+
+    int i;
+    for (i=0; i < 9; i++)
+      line[i] = coors[i];
+    draw_triangle(line, color);
   }
 }
 
