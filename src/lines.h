@@ -8,7 +8,7 @@ typedef struct bresenham_line {
   double *z_points;
 } BLine;
 
-#define BLINE_DEFAULT = ((BLine){-1, -1, -1, -1, -1, -1, NULL, NULL, NULL});
+#define BLINE_DEFAULT ((BLine){-1, -1, -1, -1, -1, -1, NULL, NULL, NULL})
 
 // sets up the BLine using the endpoints already set
 void bline_load(BLine *line);

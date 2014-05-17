@@ -3,19 +3,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-BLine *ab;
-BLine *bc;
-BLine *cd;
-BLine *da;
+BLine *ab = &BLINE_DEFAULT;
+BLine *bc = &BLINE_DEFAULT;
+BLine *cd = &BLINE_DEFAULT;
+BLine *da = &BLINE_DEFAULT;
 
 
 void bline_load(BLine * line) {
   order_endpoints(line);
   int count = point_count(line);
   size_t b = count * sizeof(int);
-  realloc(line->x_points, b);
-  realloc(line->y_points, b);
-  realloc(line->z_points, count * sizeof(double));
+  line->x_points = realloc(line->x_points, b);
+  line->y_points = realloc(line->y_points, b);
+  line->z_points = realloc(line->z_points, count * sizeof(double));
   find_points(line);
 }
 
@@ -59,6 +59,8 @@ void draw_triangle(int coors[9], uint32_t color) {
   bline_load(bc);
   bline_load(cd);
 
+  lock_surface();
+
   int p, count = point_count(ab);
   for (p = 0; p < count; p++)
     setpix(ab->x_points[p], ab->y_points[p], color, 0);
@@ -70,6 +72,8 @@ void draw_triangle(int coors[9], uint32_t color) {
   count = point_count(cd);
   for (p = 0; p < count; p++)
     setpix(ab->x_points[p], ab->y_points[p], color, 0);
+
+  lock_surface();
 }
 
 void order_endpoints(BLine *line) {
@@ -114,10 +118,12 @@ void find_points(BLine *line) {
   // creates a rough approximation of evenly spaced z coordinates
   p = 0;
   double z = line->z1;
-  double zstep = (line->z1 - line->z2) / point_count(line);
-  while (z < line->z2) {
+  int count = point_count(line);
+  double zstep = ((double)line->z1 - (double)line->z2) / (double)count;
+  while (p < count) {
     line->z_points[p] = z;
     z += zstep;
+    p++;
   }
 }
 
@@ -141,5 +147,6 @@ void draw_horizontals(int x1, int x2, int y, uint32_t color) {
 int point_count(BLine *line)  {
   int dx = line->x2 - line->x1;
   int dy = line->y2 - line->y1;
+  //printf("%d points from (%d, %d) to (%d, %d)\n", dx > dy ? dx + 1 : dy + 1, line->x1, line->y1, line->x2, line->y2);
   return dx > dy ? dx + 1 : dy + 1;
 }
