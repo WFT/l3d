@@ -3,12 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-BLine *ab = &BLINE_DEFAULT;
-BLine *bc = &BLINE_DEFAULT;
-BLine *cd = &BLINE_DEFAULT;
-BLine *da = &BLINE_DEFAULT;
-
-
 void bline_load(BLine * line) {
   order_endpoints(line);
   int count = point_count(line);
@@ -20,26 +14,31 @@ void bline_load(BLine * line) {
 }
 
 void draw_triangle(int coors[9], uint32_t color) {
-  ab->x1 = coors[0];
-  ab->y1 = coors[1];
-  ab->z1 = coors[2];
-  ab->x2 = coors[3];
-  ab->y2 = coors[4];
-  ab->z2 = coors[5];
+  BLine ab = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
+  BLine bc = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
+  BLine cd = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
+  BLine da = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
 
-  bc->x1 = coors[3];
-  bc->y1 = coors[4];
-  bc->z1 = coors[5];
-  bc->x2 = coors[6];
-  bc->y2 = coors[7];
-  bc->z2 = coors[8];
+  ab.x1 = coors[0];
+  ab.y1 = coors[1];
+  ab.z1 = coors[2];
+  ab.x2 = coors[3];
+  ab.y2 = coors[4];
+  ab.z2 = coors[5];
 
-  cd->x1 = coors[6];
-  cd->y1 = coors[7];
-  cd->z1 = coors[8];
-  cd->x2 = coors[0];
-  cd->y2 = coors[1];
-  cd->z2 = coors[2];
+  bc.x1 = coors[3];
+  bc.y1 = coors[4];
+  bc.z1 = coors[5];
+  bc.x2 = coors[6];
+  bc.y2 = coors[7];
+  bc.z2 = coors[8];
+
+  cd.x1 = coors[6];
+  cd.y1 = coors[7];
+  cd.z1 = coors[8];
+  cd.x2 = coors[0];
+  cd.y2 = coors[1];
+  cd.z2 = coors[2];
 
 
   // find the mid y value
@@ -55,23 +54,23 @@ void draw_triangle(int coors[9], uint32_t color) {
   else if (coors[7] != max_y && coors[7] != min_y)
     mid_y = coors[7];
 
-  bline_load(ab);
-  bline_load(bc);
-  bline_load(cd);
+  bline_load(&ab);
+  bline_load(&bc);
+  bline_load(&cd);
 
   lock_surface();
 
-  int p, count = point_count(ab);
+  int p, count = point_count(&ab);
   for (p = 0; p < count; p++)
-    setpix(ab->x_points[p], ab->y_points[p], color, 0);
+    setpix(ab.x_points[p], ab.y_points[p], color, 0);
 
-  count = point_count(bc);
+  count = point_count(&bc);
   for (p = 0; p < count; p++)
-    setpix(bc->x_points[p], bc->y_points[p], color, 0);
+    setpix(bc.x_points[p], bc.y_points[p], color, 0);
 
-  count = point_count(cd);
+  count = point_count(&cd);
   for (p = 0; p < count; p++)
-    setpix(ab->x_points[p], ab->y_points[p], color, 0);
+    setpix(ab.x_points[p], ab.y_points[p], color, 0);
 
   lock_surface();
 }
@@ -100,6 +99,7 @@ void find_points(BLine *line) {
   if (dx > dy) {
     int acc  = dx/2;
     while (x < line->x2) {
+      if (p >= point_count(line)) printf("count failure\n");
       line->x_points[p] = x;
       line->y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
