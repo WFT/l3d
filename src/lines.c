@@ -3,125 +3,139 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void bline_load(BLine * line) {
-  order_endpoints(line);
-  int count = point_count(line);
-  size_t b = count * sizeof(int);
-  line->x_points = realloc(line->x_points, b);
-  line->y_points = realloc(line->y_points, b);
-  line->z_points = realloc(line->z_points, count * sizeof(double));
-  find_points(line);
-}
-
 void draw_triangle(int coors[9], uint32_t color) {
-  BLine ab = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
-  BLine bc = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
-  BLine cd = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
-  BLine da = (BLine) {0, 0, 0, 0, 0, 0, NULL, NULL, NULL};
+  int ab_x1 = coors[0];
+  int ab_y1 = coors[1];
+  int ab_z1 = coors[2];
+  int ab_x2 = coors[3];
+  int ab_y2 = coors[4];
+  int ab_z2 = coors[5];
 
-  ab.x1 = coors[0];
-  ab.y1 = coors[1];
-  ab.z1 = coors[2];
-  ab.x2 = coors[3];
-  ab.y2 = coors[4];
-  ab.z2 = coors[5];
+  order_endpoints(&ab_x1, &ab_y1, &ab_z1, &ab_x1, &ab_y2, &ab_z2);
 
-  bc.x1 = coors[3];
-  bc.y1 = coors[4];
-  bc.z1 = coors[5];
-  bc.x2 = coors[6];
-  bc.y2 = coors[7];
-  bc.z2 = coors[8];
+  int bc_x1 = coors[3];
+  int bc_y1 = coors[4];
+  int bc_z1 = coors[5];
+  int bc_x2 = coors[6];
+  int bc_y2 = coors[7];
+  int bc_z2 = coors[8];
 
-  cd.x1 = coors[6];
-  cd.y1 = coors[7];
-  cd.z1 = coors[8];
-  cd.x2 = coors[0];
-  cd.y2 = coors[1];
-  cd.z2 = coors[2];
+  order_endpoints(&bc_x1, &bc_y1, &bc_z1, &bc_x1, &bc_y2, &bc_z2);
 
+  int ca_x1 = coors[6];
+  int ca_y1 = coors[7];
+  int ca_z1 = coors[8];
+  int ca_x2 = coors[0];
+  int ca_y2 = coors[1];
+  int ca_z2 = coors[2];
+
+  order_endpoints(&ca_x1, &ca_y1, &ca_z1, &ca_x1, &ca_y2, &ca_z2);
 
   // find the mid y value
-  int max_y = coors[1] > coors[4] ? coors[1]:coors[4];
-  max_y = coors[7] > max_y ? coors[7]:max_y;
-  int min_y = coors[1] < coors[4] ? coors[1]:coors[4];
-  min_y = coors[7] < min_y ? coors[7]:min_y;
-  int mid_y;
-  if (coors[1] != max_y && coors[1] != min_y)
-    mid_y = coors[1];
-  else if (coors[4] != max_y && coors[4] != min_y)
-    mid_y = coors[4];
-  else if (coors[7] != max_y && coors[7] != min_y)
-    mid_y = coors[7];
+  /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
+  /* max_y = coors[7] > max_y ? coors[7]:max_y; */
+  /* int min_y = coors[1] < coors[4] ? coors[1]:coors[4]; */
+  /* min_y = coors[7] < min_y ? coors[7]:min_y; */
+  /* int mid_y; */
+  /* if (coors[1] != max_y && coors[1] != min_y) */
+  /*   mid_y = coors[1]; */
+  /* else if (coors[4] != max_y && coors[4] != min_y) */
+  /*   mid_y = coors[4]; */
+  /* else if (coors[7] != max_y && coors[7] != min_y) */
+  /*   mid_y = coors[7]; */
 
-  bline_load(&ab);
-  bline_load(&bc);
-  bline_load(&cd);
 
   lock_surface();
 
-  int p, count = point_count(&ab);
+  int p, count = point_count(ab_x1, ab_y1, ab_x2, ab_y2);
+  int *ab_x_points = malloc(count * sizeof(int));
+  int *ab_y_points = malloc(count * sizeof(int));
+  int *ab_z_points = malloc(count * sizeof(int));
+  find_points(ab_x1, ab_y1, ab_z1, ab_x2, ab_y2, ab_z2,
+	      ab_x_points, ab_y_points, ab_z_points);
   for (p = 0; p < count; p++)
-    setpix(ab.x_points[p], ab.y_points[p], color, 0);
+    setpix(ab_x_points[p], ab_y_points[p], color, 0);
+  free(ab_x_points);
+  free(ab_y_points);
+  free(ab_z_points);
 
-  count = point_count(&bc);
+  count = point_count(bc_x1, bc_y1, bc_x2, bc_y2);
+  int *bc_x_points = malloc(count * sizeof(int));
+  int *bc_y_points = malloc(count * sizeof(int));
+  int *bc_z_points = malloc(count * sizeof(int));
+  find_points(bc_x1, bc_y1, bc_z1, bc_x2, bc_y2, bc_z2,
+	      bc_x_points, bc_y_points, bc_z_points);
   for (p = 0; p < count; p++)
-    setpix(bc.x_points[p], bc.y_points[p], color, 0);
+    setpix(bc_x_points[p], bc_y_points[p], color, 0);
+  free(bc_x_points);
+  free(bc_y_points);
+  free(bc_z_points);
 
-  count = point_count(&cd);
+  count = point_count(ca_x1, ca_y1, ca_x2, ca_y2);
+  int *ca_x_points = malloc(count * sizeof(int));
+  int *ca_y_points = malloc(count * sizeof(int));
+  int *ca_z_points = malloc(count * sizeof(int));
+  find_points(ca_x1, ca_y1, ca_z1, ca_x2, ca_y2, ca_z2,
+	      ca_x_points, ca_y_points, ca_z_points);
   for (p = 0; p < count; p++)
-    setpix(ab.x_points[p], ab.y_points[p], color, 0);
+    setpix(ca_x_points[p], ca_y_points[p], color, 0);
+  free(ca_x_points);
+  free(ca_y_points);
+  free(ca_z_points);
 
   lock_surface();
 }
 
-void order_endpoints(BLine *line) {
-  if (line->x1 > line->x2) {
-    int swap = line->x1;
-    line->x1 = line->x2;
-    line->x2 = line->x1;
-    swap = line->y1;
-    line->y1 = line->y2;
-    line->y2 = line->y1;
-    swap = line->z1;
-    line->z1 = line->z2;
-    line->z2 = line->z1;
+void order_endpoints(int *x1, int *y1, int *z1,
+		     int *x2, int *y2, int *z2) {
+  if (*x1 > *x2) {
+    int swap = *x1;
+    *x1 = *x2;
+    *x2 = *x1;
+    swap = *y1;
+    *y1 = *y2;
+    *y2 = *y1;
+    swap = *z1;
+    *z1 = *z2;
+    *z2 = *z1;
   }
 }
 
-void find_points(BLine *line) {
-  int dx = line->x2 - line->x1;
-  int dy = line->y2 > line->y1?line->y2 - line->y1:line->y1 - line->y2;
-  int x = line->x1, y = line->y1;
+  void find_points(int x1, int y1, int z1, int x2, int y2, int z2,
+		 int *x_points, int *y_points, int *z_points) {
+  int dx = x2 - x1;
+  int dy = y2 > y1?y2 - y1:y1 - y2;
+  int x = x1, y = y1;
   // y goes up if y1 is smaller than y2, else it goes down
-  int ystep = line->y1 < line->y2 ? 1 : -1;
+  int ystep = y1 < y2 ? 1 : -1;
   int p = 0;
   if (dx > dy) {
     int acc  = dx/2;
-    while (x < line->x2) {
-      if (p >= point_count(line)) printf("count failure\n");
-      line->x_points[p] = x;
-      line->y_points[p] = y;
+    while (x < x2) {
+      if (p >= point_count(x1, y1, x2, y2))
+	printf("count failure\n");
+      x_points[p] = x;
+      y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
       p++;
     }
   } else {
     int  acc = dy/2;
-    char up = line->y1 < line->y2;
-    while (up ? y <= line->y2 : y >= line->y2) {
-      line->x_points[p] = x;
-      line->y_points[p] = y;
+    char up = y1 < y2;
+    while (up ? y <= y2 : y >= y2) {
+      x_points[p] = x;
+      y_points[p] = y;
       bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
       p++;
     }
   }
   // creates a rough approximation of evenly spaced z coordinates
   p = 0;
-  double z = line->z1;
-  int count = point_count(line);
-  double zstep = ((double)line->z1 - (double)line->z2) / (double)count;
+  double z = z1;
+  int count = point_count(x1, y1, x2, y2);
+  double zstep = ((double)z1 - (double)z2) / (double)count;
   while (p < count) {
-    line->z_points[p] = z;
+    z_points[p] = z;
     z += zstep;
     p++;
   }
@@ -144,9 +158,9 @@ void draw_horizontals(int x1, int x2, int y, uint32_t color) {
   }
 }
 
-int point_count(BLine *line)  {
-  int dx = line->x2 - line->x1;
-  int dy = line->y2 - line->y1;
-  //printf("%d points from (%d, %d) to (%d, %d)\n", dx > dy ? dx + 1 : dy + 1, line->x1, line->y1, line->x2, line->y2);
+// points should be ordered first
+int point_count(int x1, int y1, int x2, int y2)  {
+  int dx = x2 - x1;
+  int dy = y2 - y1;
   return dx > dy ? dx + 1 : dy + 1;
 }
