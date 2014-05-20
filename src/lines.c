@@ -80,7 +80,7 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
     *y1 = *y2;
     *y2 = swap;
   }
-  printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
+  //printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
 }
 
 void find_points(int x1, int y1, int x2, int y2,
@@ -94,13 +94,12 @@ void find_points(int x1, int y1, int x2, int y2,
   if (dx > dy) {
     int acc  = dx/2;
     while (x < x2) {
-      if (p >= point_count(x1, y1, x2, y2))
-	printf("count failure\n");
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
       p++;
     }
+    printf("p(%d), count(%d)\n", p, point_count(x1, y1, x2, y2));
   } else {
     int  acc = dy/2;
     char up = y1 < y2;
@@ -136,5 +135,5 @@ int point_count(int x1, int y1, int x2, int y2)  {
   int dy = y2 - y1;
   if (dy < 0)
     dy = -dy;
-  return dx > dy ? dx + 1 : dy + 1;
+  return (dx > dy ? dx : dy);
 }
