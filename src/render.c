@@ -131,9 +131,6 @@ char endspin() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if ( event.type == SDL_QUIT ) {
-      printf("Memory leaking... You really ought to fix that.\n");
-      /* SDL_DestroyRenderer(ren); */
-      /* SDL_DestroyWindow(win); */
       SDL_Quit();
       return 1;
     } else if (event.type == SDL_KEYDOWN) {
