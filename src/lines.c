@@ -48,42 +48,36 @@ void draw_triangle(int coors[9], uint32_t color) {
   lock_surface();
 
   int p, count = point_count(ab_x1, ab_y1, ab_x2, ab_y2);
-  int *ab_x_points = malloc(count * sizeof(int));
-  int *ab_y_points = malloc(count * sizeof(int));
-  int *ab_z_points = malloc(count * sizeof(int));
+  int *x_points = malloc(count * sizeof(int));
+  int *y_points = malloc(count * sizeof(int));
+  int *z_points = malloc(count * sizeof(int));
   find_points(ab_x1, ab_y1, ab_z1, ab_x2, ab_y2, ab_z2,
-	      ab_x_points, ab_y_points, ab_z_points);
+	      x_points, y_points, z_points);
   for (p = 0; p < count; p++)
-    setpix(ab_x_points[p], ab_y_points[p], color, 0);
-  free(ab_x_points);
-  free(ab_y_points);
-  free(ab_z_points);
+    setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(bc_x1, bc_y1, bc_x2, bc_y2);
-  int *bc_x_points = malloc(count * sizeof(int));
-  int *bc_y_points = malloc(count * sizeof(int));
-  int *bc_z_points = malloc(count * sizeof(int));
+  x_points = realloc(x_points, count * sizeof(int));
+  y_points = realloc(y_points, count * sizeof(int));
+  z_points = realloc(z_points, count * sizeof(int));
   find_points(bc_x1, bc_y1, bc_z1, bc_x2, bc_y2, bc_z2,
-	      bc_x_points, bc_y_points, bc_z_points);
+	      x_points, y_points, z_points);
   for (p = 0; p < count; p++)
-    setpix(bc_x_points[p], bc_y_points[p], color, 0);
-  free(bc_x_points);
-  free(bc_y_points);
-  free(bc_z_points);
+    setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(ca_x1, ca_y1, ca_x2, ca_y2);
-  int *ca_x_points = malloc(count * sizeof(int));
-  int *ca_y_points = malloc(count * sizeof(int));
-  int *ca_z_points = malloc(count * sizeof(int));
+  x_points = realloc(x_points, count * sizeof(int));
+  y_points = realloc(y_points, count * sizeof(int));
+  z_points = realloc(z_points, count * sizeof(int));
   find_points(ca_x1, ca_y1, ca_z1, ca_x2, ca_y2, ca_z2,
-	      ca_x_points, ca_y_points, ca_z_points);
+	      x_points, y_points, z_points);
   for (p = 0; p < count; p++)
-    setpix(ca_x_points[p], ca_y_points[p], color, 0);
-  free(ca_x_points);
-  free(ca_y_points);
-  free(ca_z_points);
+    setpix(x_points[p], y_points[p], color, 0);
+  free(x_points);
+  free(y_points);
+  free(z_points);
 
-  lock_surface();
+  unlock_surface();
 }
 
 void order_endpoints(int *x1, int *y1, int *z1,
