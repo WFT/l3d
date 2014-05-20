@@ -11,7 +11,9 @@ void draw_triangle(int coors[9], uint32_t color) {
   int ab_y2 = coors[4];
   int ab_z2 = coors[5];
 
+	printf("A(%d, %d) to B(%d, %d)\n", ab_x1, ab_y1, ab_x2, ab_y2);
   order_endpoints(&ab_x1, &ab_y1, &ab_z1, &ab_x1, &ab_y2, &ab_z2);
+printf("A(%d, %d) to B(%d, %d) post order\n", ab_x1, ab_y1, ab_x2, ab_y2);
 
   int bc_x1 = coors[3];
   int bc_y1 = coors[4];
@@ -48,7 +50,7 @@ void draw_triangle(int coors[9], uint32_t color) {
   lock_surface();
 
   int p, count = point_count(ab_x1, ab_y1, ab_x2, ab_y2);
-  printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), ab_x1, ab_y1, ab_x2, ab_y2);
+  //printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), ab_x1, ab_y1, ab_x2, ab_y2);
   int *x_points = malloc(count * sizeof(int));
   int *y_points = malloc(count * sizeof(int));
   int *z_points = malloc(count * sizeof(int));
@@ -58,7 +60,7 @@ void draw_triangle(int coors[9], uint32_t color) {
     setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(bc_x1, bc_y1, bc_x2, bc_y2);
-  printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), bc_x1, bc_y1, bc_x2, bc_y2);
+  //printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), bc_x1, bc_y1, bc_x2, bc_y2);
   x_points = realloc(x_points, count * sizeof(int));
   y_points = realloc(y_points, count * sizeof(int));
   z_points = realloc(z_points, count * sizeof(int));
@@ -68,7 +70,7 @@ void draw_triangle(int coors[9], uint32_t color) {
     setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(ca_x1, ca_y1, ca_x2, ca_y2);
-  printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), ca_x1, ca_y1, ca_x2, ca_y2);
+  //printf("%d points (%lu B malloc'd) (%d, %d) to (%d, %d)\n", count, count * sizeof(int), ca_x1, ca_y1, ca_x2, ca_y2);
   x_points = realloc(x_points, count * sizeof(int));
   y_points = realloc(y_points, count * sizeof(int));
   z_points = realloc(z_points, count * sizeof(int));
@@ -88,17 +90,17 @@ void order_endpoints(int *x1, int *y1, int *z1,
   if (*x1 > *x2) {
     int swap = *x1;
     *x1 = *x2;
-    *x2 = *x1;
+    *x2 = swap;
     swap = *y1;
     *y1 = *y2;
-    *y2 = *y1;
+    *y2 = swap;
     swap = *z1;
     *z1 = *z2;
-    *z2 = *z1;
+    *z2 = swap;
   }
 }
 
-  void find_points(int x1, int y1, int z1, int x2, int y2, int z2,
+void find_points(int x1, int y1, int z1, int x2, int y2, int z2,
 		 int *x_points, int *y_points, int *z_points) {
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
