@@ -45,7 +45,8 @@ int init_live_render(int w, int h) {
     log_SDL_error("SDL_CreateTextureFromSurface()");
     return 1;
   }
-  SDL_RenderClear(ren);
+  //SDL_RenderClear(ren);
+  clear_screen();
   rendering_initialized = 1;
   return 0;
 }
