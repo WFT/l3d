@@ -48,6 +48,7 @@ void draw_triangle(int coors[9], uint32_t color) {
   lock_surface();
 
   int p, count = point_count(ab_x1, ab_y1, ab_x2, ab_y2);
+  printf("%d points (%lu B malloc'd)\n", count, count * sizeof(int));
   int *x_points = malloc(count * sizeof(int));
   int *y_points = malloc(count * sizeof(int));
   int *z_points = malloc(count * sizeof(int));
@@ -57,6 +58,7 @@ void draw_triangle(int coors[9], uint32_t color) {
     setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(bc_x1, bc_y1, bc_x2, bc_y2);
+  printf("%d points (%lu B malloc'd)\n", count, count * sizeof(int));
   x_points = realloc(x_points, count * sizeof(int));
   y_points = realloc(y_points, count * sizeof(int));
   z_points = realloc(z_points, count * sizeof(int));
@@ -66,6 +68,7 @@ void draw_triangle(int coors[9], uint32_t color) {
     setpix(x_points[p], y_points[p], color, 0);
 
   count = point_count(ca_x1, ca_y1, ca_x2, ca_y2);
+  printf("%d points (%lu B malloc'd)\n", count, count * sizeof(int));
   x_points = realloc(x_points, count * sizeof(int));
   y_points = realloc(y_points, count * sizeof(int));
   z_points = realloc(z_points, count * sizeof(int));
@@ -156,5 +159,7 @@ void draw_horizontals(int x1, int x2, int y, uint32_t color) {
 int point_count(int x1, int y1, int x2, int y2)  {
   int dx = x2 - x1;
   int dy = y2 - y1;
+  if (dy < 0)
+    dy = -dy;
   return dx > dy ? dx + 1 : dy + 1;
 }
