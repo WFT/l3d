@@ -29,5 +29,10 @@ matrix.o: matrix.c matrix.h
 lines.o: lines.c lines.h
 	gcc lines.c -o lines.o -c $(STDFLAGS)
 
+test: test.c matrix.o transform.o
+	gcc test.c matrix.o transform.o -o test -lm
+	./test
+	rm test
+
 clean:
 	rm *.o 3D
