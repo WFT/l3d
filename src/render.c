@@ -65,11 +65,6 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
     map_coors(coors, coors+1);
     map_coors(coors+2, coors+3);
     map_coors(coors+4, coors+5);
-
-    printf("coors: %.2f %.2f %.2f %.2f %.2f %.2f\n",
-	   coors[0], coors[1], coors[2],
-	   coors[3], coors[4], coors[5]);
-
     int i;
     for (i=0; i < 6; i++)
       line[i] = coors[i];

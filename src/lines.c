@@ -11,7 +11,6 @@ void draw_triangle(int coors[6], uint32_t color) {
   int cx = coors[4];
   int cy = coors[5];
 
-
   // find the mid y value
   /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
   /* max_y = coors[7] > max_y ? coors[7]:max_y; */
@@ -38,27 +37,38 @@ void draw_triangle(int coors[6], uint32_t color) {
   for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
+  bx = coors[2];
+  by = coors[3];
   order_endpoints(&bx, &by, &cx, &cy);
   count = point_count(bx, by, cx, cy);
-  x_points = realloc(x_points, count * sizeof(int));
-  y_points = realloc(y_points, count * sizeof(int));
+  free(x_points);
+  free(y_points);
+  x_points = malloc(count * sizeof(int));
+  y_points = malloc(count * sizeof(int));
   find_points(bx, by,  cx, cy, 
 	      x_points, y_points);
   for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
+  ax = coors[0];
+  ay = coors[1];
+  cx = coors[4];
+  cy = coors[5];
   order_endpoints(&cx, &cy, &ax, &ay);
   count = point_count(cx, cy, ax, ay);
-  x_points = realloc(x_points, count * sizeof(int));
-  y_points = realloc(y_points, count * sizeof(int));
+  free(x_points);
+  free(y_points);
+  x_points = malloc(count * sizeof(int));
+  y_points = malloc(count * sizeof(int));
   find_points(cx, cy, ax, ay,
 	      x_points, y_points);
   for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
-  free(x_points);
-  free(y_points);
 
   unlock_surface();
+
+  free(x_points);
+  free(y_points);
 }
 
 void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
@@ -70,6 +80,7 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
     *y1 = *y2;
     *y2 = swap;
   }
+  printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
 }
 
 void find_points(int x1, int y1, int x2, int y2,
