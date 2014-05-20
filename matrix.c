@@ -44,6 +44,7 @@ void mat_destruct(struct matrix *mat) {
   int i;
   for (i = 0; i < mat->cols; i++)
     free(mat->cells[i]);
+  free(mat->cells);
   free(mat);
 }
 

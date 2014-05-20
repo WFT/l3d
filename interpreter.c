@@ -75,6 +75,7 @@ void interpret(char *l) {
 	//for (j=0; j < lastvdex + 1; j++)
 	//printf("(%s, %.2f), ", vary_keys[j], vary_values[j]);
 	//printf("\n");
+	free(args);
 	return;
       }
     } else {
@@ -82,7 +83,10 @@ void interpret(char *l) {
     }
   }
   if (strcmp(list[0], "pixels") == 0) {
-    if (rendering_initialized) return;
+    if (rendering_initialized) {
+      free(args);
+      return;
+    }
     // quit on error
     quit = init_live_render(args[0], args[1]);
     if (quit)
@@ -121,6 +125,7 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "save") == 0) {
     if (lastmdex >= 99) {
       printf("Up to 100 transform saves allowed. This is number %d\n", lastmdex + 1);
+      free(args);
       return;
     }
     lastmdex++;
@@ -153,10 +158,12 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "vary") == 0) {
     if (totalframes < 0) {
       printf("Initialize with frames command before varying.\n");
+      free(args);
       return;
     } 
     if (lastvdex >= 99) {
       printf("Up to 100 variables allowed.\n");
+      free(args);
       return;
     }
     lastvdex++;
@@ -185,6 +192,7 @@ void interpret(char *l) {
 	     strcmp(list[0], "rcyclops") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
+      free(args);
       return;
     }
     rendercyclops(tri, args);
@@ -192,6 +200,7 @@ void interpret(char *l) {
 	     strcmp(list[0], "rstereo") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
+      free(args);
       return;
     }
     renderstereo(tri, args);
@@ -199,6 +208,7 @@ void interpret(char *l) {
 	     strcmp(list[0], "rparallel") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
+      free(args);
       return;
     }
     renderparallel(tri);
@@ -234,6 +244,7 @@ void interpret(char *l) {
     char *fname;
     if (asprintf(&fname, "%s%03d.ppm", list[1], nowframe) == -1) {
       printf("Who took all the memory?\n");
+      free(args);
       return;
     }
     renderppm(fname);
@@ -255,6 +266,7 @@ void interpret(char *l) {
   } else {
     printf("invalid command: %s\n", list[0]);
   }
+  free(args);
 }
 
 int main(int argc, char **argv) {  
