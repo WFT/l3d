@@ -1,3 +1,4 @@
 screen -10 -10 10 10
 pixels 300 300
+autorc 0 0 10
 stdin
