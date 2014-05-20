@@ -50,3 +50,10 @@ Matrix * rotate_z_mat(double rad) {
   mat_set_cell(ret, 1, 1, cos(rad));
   return ret;
 }
+
+Matrix * apply_transform(Matrix *transform, Matrix **obj) {
+  Matrix *ret = mat_multiply(transform, *obj);
+  mat_destruct(*obj);
+  mat_destruct(transform);
+  *obj = ret;
+}

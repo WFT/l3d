@@ -1,5 +1,5 @@
 DEPENDENCIES = transform.o parse_util.o display.o render.o matrix.o objects.o lines.o
-SPECIALFLAGS = `sdl2-config --cflags --static-libs` -lm -g
+SPECIALFLAGS = `sdl2-config --cflags --static-libs` -lm
 STDFLAGS = -g -O3
 
 build:  $(DEPENDENCIES) interpreter.c
@@ -18,7 +18,7 @@ objects.o: objects.c objects.h
 	gcc objects.c -o objects.o -c $(STDFLAGS)
 
 display.o: display.c display.h
-	gcc display.c $(SPECIALFLAGS) -o display.o -c $(STDFLAGS)
+	gcc display.c -o display.o -c $(STDFLAGS) $(SPECIALFLAGS)
 
 render.o: render.c render.h
 	gcc render.c -o render.o -c $(STDFLAGS)
