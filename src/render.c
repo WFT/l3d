@@ -46,46 +46,34 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
       if (culltri(tri, eye))
 	continue;
     }
-    coors[2] = mat_get_cell(faces, c, 2);
-    if (coors[2] > eye[2]) continue;
+    int pz = mat_get_cell(faces, c, 2);
+    if (pz > eye[2]) continue;
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
-    perspectify(coors, coors+1, coors[2], eye);
-    coors[5] = mat_get_cell(faces, c+1, 2);
-    if (coors[5] > eye[2]) continue;
-    coors[3] = mat_get_cell(faces, c+1, 0);
-    coors[4] = mat_get_cell(faces, c+1, 1);
-    perspectify(coors+3, coors+4, coors[5], eye);
-    coors[8] = mat_get_cell(faces, c+2, 2);
-    if (coors[8] > eye[2]) continue;
+    perspectify(coors, coors+1, pz, eye);
+    pz = mat_get_cell(faces, c+1, 2);
+    if (pz > eye[2]) continue;
+    coors[2] = mat_get_cell(faces, c+1, 0);
+    coors[3] = mat_get_cell(faces, c+1, 1);
+    perspectify(coors+2, coors+3, pz, eye);
+    pz = mat_get_cell(faces, c+2, 2);
+    if (pz > eye[2]) continue;
     coors[4] = mat_get_cell(faces, c+2, 0);
     coors[5] = mat_get_cell(faces, c+2, 1);
-    perspectify(coors+4, coors+5, coors[8], eye);
+    perspectify(coors+4, coors+5, pz, eye);
 
     map_coors(coors, coors+1);
-    map_coors(coors+3, coors+4);
-    map_coors(coors+6, coors+7);
+    map_coors(coors+2, coors+3);
+    map_coors(coors+4, coors+5);
 
-    /* // line 1 */
-    /* line[0] = coors[0]; */
-    /* line[1] = coors[1]; */
-    /* line[2] = coors[2]; */
-    /* line[3] = coors[3]; */
-    /* dline(line, color); */
-
-    /* // line 2 */
-    /* line[0] = coors[4]; */
-    /* line[1] = coors[5]; */
-    /* dline(line, color); */
-
-    /* // line 3 */
-    /* line[2] = coors[0]; */
-    /* line[3] = coors[1]; */
-    /* dline(line, color); */
+    printf("coors: %.2f %.2f %.2f %.2f %.2f %.2f\n",
+	   coors[0], coors[1], coors[2],
+	   coors[3], coors[4], coors[5]);
 
     int i;
-    for (i=0; i < 9; i++)
+    for (i=0; i < 6; i++)
       line[i] = coors[i];
+    
     draw_triangle(line, color);
   }
 }
