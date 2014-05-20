@@ -34,7 +34,7 @@ void draw_triangle(int coors[6], uint32_t color) {
 
   find_points(ax, ay, bx, by, 
 	      x_points, y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < count-1; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   bx = coors[2];
@@ -47,7 +47,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   y_points = malloc(count * sizeof(int));
   find_points(bx, by,  cx, cy, 
 	      x_points, y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < count-1; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   ax = coors[0];
@@ -62,7 +62,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   y_points = malloc(count * sizeof(int));
   find_points(cx, cy, ax, ay,
 	      x_points, y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < count-1; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   unlock_surface();
@@ -135,5 +135,5 @@ int point_count(int x1, int y1, int x2, int y2)  {
   int dy = y2 - y1;
   if (dy < 0)
     dy = -dy;
-  return (dx > dy ? dx : dy);
+  return (dx > dy ? dx : dy) + 1;
 }
