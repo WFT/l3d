@@ -36,11 +36,12 @@ char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
+// will destroy the transform
 void multiply_transform(Matrix *transform) {
-  //mat_multinmat(transform, tform, tform);
   Matrix *temp = mat_multiply(tform, transform);
   mat_destruct(tform);
   tform = temp;
+  mat_destruct(transform);
 }
 
 void interpret(char *l) {

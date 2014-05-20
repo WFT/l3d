@@ -185,6 +185,8 @@ void spincyclops(Matrix *faces, double *eye) {
   clear_screen();
   printf("Spin finished... Resetting display.\n");
   renderperspective(unspun, eye, rgb(255, 255, 255));
+  mat_destruct(xyz);
+  mat_destruct(rot);
 }
 
 void spinstereo(Matrix *faces, double *eyes) {
@@ -217,4 +219,6 @@ void spinstereo(Matrix *faces, double *eyes) {
   mixcolors(1);
   renderperspective(unspun, el, cyan);
   mixcolors(0);
+  mat_destruct(xyz);
+  mat_destruct(rot);
 }

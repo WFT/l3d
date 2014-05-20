@@ -146,19 +146,11 @@ Matrix *box_t(double *args) {
 // using the standard Sx Sy Sz Rx Ry Rz Mx My Mz
 Matrix *otransform(double *args) {
   Matrix *t = scale_mat(args[0], args[1], args[2]);
-  Matrix *temp;
-  temp = mat_multiply(rotate_x_mat(TO_RAD(args[3])), t);
-  mat_destruct(t);
-  t = temp;
-  temp = mat_multiply(rotate_y_mat(TO_RAD(args[4])), t);
-  mat_destruct(t);
-  t = temp;
-  temp = mat_multiply(rotate_z_mat(TO_RAD(args[5])), t);
-  mat_destruct(t);
-  t = temp;
-  temp = mat_multiply(move_mat(args[6], args[7], args[8]), t);
-  mat_destruct(t);
-  return temp;
+  apply_transform(rotate_x_mat(args[3]), &t);
+  apply_transform(rotate_y_mat(args[4]), &t);
+  apply_transform(rotate_z_mat(args[5]), &t);
+  apply_transform(move_mat(args[6], args[7], args[8]), &t);
+  return t;
 }
 
 // add three points to a matrix
