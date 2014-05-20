@@ -17,7 +17,7 @@ objects.o: objects.c objects.h
 	gcc objects.c -o objects.o -c -g
 
 display.o: display.c display.h
-	gcc display.c $(SPECIALFLAGS) -o display.o -c -g
+	gcc display.c $(SPECIALFLAGS) -o display.o -c
 
 render.o: render.c render.h
 	gcc render.c -o render.o -c -g
