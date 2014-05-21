@@ -31,28 +31,24 @@ void draw_triangle(int coors[6], uint32_t color) {
 
   lock_surface();
   order_endpoints(&ax, &ay, &bx, &by);
-
   int p, count = point_count(ax, ay, bx, by);
-  int *x_points = malloc(count * sizeof(int));
-  int *y_points = malloc(count * sizeof(int));
-
+  int *ab_x_points = malloc(count * sizeof(int));
+  int *ab_y_points = malloc(count * sizeof(int));
   count = find_points(ax, ay, bx, by, 
-	      x_points, y_points);
+	      ab_x_points, ab_y_points);
   for (p = 0; p < count; p++)
-    setpix(x_points[p], y_points[p], color, 0);
+    setpix(ab_x_points[p], ab_y_points[p], color, 0);
 
   bx = coors[2];
   by = coors[3];
   order_endpoints(&bx, &by, &cx, &cy);
   count = point_count(bx, by, cx, cy);
-  free(x_points);
-  free(y_points);
-  x_points = malloc(count * sizeof(int));
-  y_points = malloc(count * sizeof(int));
+  int *bc_x_points = malloc(count * sizeof(int));
+  int *bc_y_points = malloc(count * sizeof(int));
   count = find_points(bx, by,  cx, cy, 
-	      x_points, y_points);
+	      bc_x_points, bc_y_points);
   for (p = 0; p < count; p++)
-    setpix(x_points[p], y_points[p], color, 0);
+    setpix(bc_x_points[p], bc_y_points[p], color, 0);
 
   ax = coors[0];
   ay = coors[1];
@@ -60,19 +56,21 @@ void draw_triangle(int coors[6], uint32_t color) {
   cy = coors[5];
   order_endpoints(&cx, &cy, &ax, &ay);
   count = point_count(cx, cy, ax, ay);
-  free(x_points);
-  free(y_points);
-  x_points = malloc(count * sizeof(int));
-  y_points = malloc(count * sizeof(int));
+  int *ca_x_points = malloc(count * sizeof(int));
+  int *ca_y_points = malloc(count * sizeof(int));
   count = find_points(cx, cy, ax, ay,
-	      x_points, y_points);
+	      ca_x_points, ca_y_points);
   for (p = 0; p < count; p++)
-    setpix(x_points[p], y_points[p], color, 0);
+    setpix(ca_x_points[p], ca_y_points[p], color, 0);
 
   unlock_surface();
 
-  free(x_points);
-  free(y_points);
+  free(ab_x_points);
+  free(ab_y_points);
+  free(bc_x_points);
+  free(bc_y_points);
+  free(ca_x_points);
+  free(ca_y_points);
 }
 
 void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
