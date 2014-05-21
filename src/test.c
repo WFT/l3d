@@ -57,6 +57,7 @@ void render_spin_test() {
   double rad;
   unsigned long i;
   do {
+    renderperspective(faces, eye, 0x000000);
     for (i=0; i < 30; i++) {
       rand_point(col);
       mat_add_column(faces, col);
@@ -68,13 +69,12 @@ void render_spin_test() {
     renderperspective(faces, eye, 0xFF0000);
     t = clock() - t;
     printf("%d faces spun (%f radians) in %f seconds\n", faces->cols/3, rad, ((float)t)/CLOCKS_PER_SEC);
-    clear_screen();
   } while (((float)t)/CLOCKS_PER_SEC < 1);
   mat_destruct(faces);
 }
 
 int main(int argc, char **argv) {
   srand(time(NULL));
-  spin_test();
+  render_spin_test();
   return 0;
 }

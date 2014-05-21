@@ -46,7 +46,7 @@ Matrix *tri_file(char *fname, double *args) {
 */
 
 Matrix *sphere_t(double *args) {
-  int nVertices = 15;
+  int nVertices = 25;
   double lrad = (M_PI)/ nVertices;
   Matrix *roty = rotate_y_mat(lrad);
   Matrix *sphere = mat_construct(0, 4);
