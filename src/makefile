@@ -30,7 +30,7 @@ lines.o: lines.c lines.h
 	gcc lines.c -o lines.o -c $(STDFLAGS)
 
 test: test.c matrix.o transform.o display.o render.o lines.o
-	gcc test.c display.o render.o matrix.o transform.o lines.o -o test $(SPECIALFLAGS)
+	gcc test.c display.o render.o matrix.o transform.o lines.o -o test $(SPECIALFLAGS) $(STDFLAGS)
 	./test
 	rm test
 
