@@ -11,10 +11,10 @@ void draw_triangle(int coors[6], uint32_t color) {
   int cx = coors[4];
   int cy = coors[5];
 
-  setpix(ax, ay, color, 1);
-  setpix(bx, by, color, 1);
-  setpix(cx, cy, color, 1);
-  return;
+  //setpix(ax, ay, color, 1);
+  //setpix(bx, by, color, 1);
+  //setpix(cx, cy, color, 1);
+  //return;
   // find the mid y value
   /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
   /* max_y = coors[7] > max_y ? coors[7]:max_y; */

@@ -3,7 +3,7 @@
 #include "lines.h"
 #include "render.h"
 
-const char enable_culling = 0;
+const char enable_culling = 1;
 
 // assumes x y z 1 pattern
 char culltri(double coors[12], double *eye) {
@@ -34,9 +34,10 @@ void perspectify(double *x, double *y, double pz, double *eye) {
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
-  double coors[9];
+    double coors[6];
   int c;
-  int line[9];
+  double pz;
+  int line[6];
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
     if (enable_culling) {
@@ -46,18 +47,18 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
       if (culltri(tri, eye))
 	continue;
     }
-    int pz = mat_get_cell(faces, c, 2);
-    //if (pz > eye[2]) continue;
+    pz = mat_get_cell(faces, c, 2);
+    if (pz > eye[2]) continue;
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
     perspectify(coors, coors+1, pz, eye);
     pz = mat_get_cell(faces, c+1, 2);
-    //if (pz > eye[2]) continue;
+    if (pz > eye[2]) continue;
     coors[2] = mat_get_cell(faces, c+1, 0);
     coors[3] = mat_get_cell(faces, c+1, 1);
     perspectify(coors+2, coors+3, pz, eye);
     pz = mat_get_cell(faces, c+2, 2);
-    //if (pz > eye[2]) continue;
+    if (pz > eye[2]) continue;
     coors[4] = mat_get_cell(faces, c+2, 0);
     coors[5] = mat_get_cell(faces, c+2, 1);
     perspectify(coors+4, coors+5, pz, eye);
@@ -65,10 +66,14 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
     map_coors(coors, coors+1);
     map_coors(coors+2, coors+3);
     map_coors(coors+4, coors+5);
-    int i;
-    for (i=0; i < 6; i++)
-      line[i] = (int)coors[i];
-    
+
+    // line 1
+    line[0] = coors[0];
+    line[1] = coors[1];
+    line[2] = coors[2];
+    line[3] = coors[3];
+    line[4] = coors[4];
+    line[5] = coors[5];
     draw_triangle(line, color);
   }
 }
