@@ -25,6 +25,9 @@ void draw_triangle(int coors[6], uint32_t color) {
 
 
   lock_surface();
+
+#if DRAW_LINES
+
   order_endpoints(&ax, &ay, &bx, &by);
   int p, count = point_count(ax, ay, bx, by);
   int *ab_x_points = malloc(count * sizeof(int));
@@ -58,24 +61,26 @@ void draw_triangle(int coors[6], uint32_t color) {
   for (p = 0; p < count; p++)
     setpix(ca_x_points[p], ca_y_points[p], color, 0);
 
-  unlock_surface();
-
   free(ab_x_points);
   free(ab_y_points);
   free(bc_x_points);
   free(bc_y_points);
   free(ca_x_points);
   free(ca_y_points);
+#endif
 
-  // if VERTICES_COLOR && color are set to non-black colors,
-  // vertices will be drawn
-#if VERTICES_COLOR
+  // if color is set to non-black colors
+  // and DRAW_VERTICES is true, vertices will be drawn
+#if DRAW_VERTICES
   if (color) {
     setpix(ax, ay, VERTICES_COLOR, 1);
     setpix(bx, by, VERTICES_COLOR, 1);
     setpix(cx, cy, VERTICES_COLOR, 1);
   }
 #endif
+
+  unlock_surface();
+
 }
 
 inline void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
