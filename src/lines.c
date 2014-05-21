@@ -78,7 +78,7 @@ void draw_triangle(int coors[6], uint32_t color) {
 #endif
 }
 
-void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
+inline void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
   if (*x1 > *x2) {
     int swap = *x1;
     *x1 = *x2;
@@ -87,7 +87,6 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
     *y1 = *y2;
     *y2 = swap;
   }
-  //printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
 }
 
 inline int find_points(int x1, int y1, int x2, int y2,
@@ -130,7 +129,16 @@ inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int
   *major_counter += major_step;
 }
 
-void draw_horizontals(int x1, int x2, int y, uint32_t color) {
+// points should be ordered first
+inline int point_count(int x1, int y1, int x2, int y2)  {
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+  if (dy < 0)
+    dy = -dy;
+  return (dx > dy ? dx : dy) + 1;
+}
+
+inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
   int x = x1;
   while (x <= x2) {
     setpix(x, y, color, 0);
@@ -138,11 +146,3 @@ void draw_horizontals(int x1, int x2, int y, uint32_t color) {
   }
 }
 
-// points should be ordered first
-int point_count(int x1, int y1, int x2, int y2)  {
-  int dx = x2 - x1;
-  int dy = y2 - y1;
-  if (dy < 0)
-    dy = -dy;
-  return (dx > dy ? dx : dy) + 1;
-}
