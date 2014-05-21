@@ -69,13 +69,13 @@ void draw_triangle(int coors[6], uint32_t color) {
 
   // if VERTICES_COLOR && color are set to non-black colors,
   // vertices will be drawn
-  if (VERTICES_COLOR && color) {
+#if VERTICES_COLOR
+  if (color) {
     setpix(ax, ay, VERTICES_COLOR, 1);
     setpix(bx, by, VERTICES_COLOR, 1);
     setpix(cx, cy, VERTICES_COLOR, 1);
   }
-
-
+#endif
 }
 
 void order_endpoints(int *x1, int *y1, int *x2, int *y2) {

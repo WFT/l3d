@@ -3,7 +3,7 @@
 #include "lines.h"
 #include "render.h"
 
-const char enable_culling = 1;
+#define ENABLE_CULLING 1
 
 // assumes x y z 1 pattern
 char culltri(double coors[12], double *eye) {
@@ -34,19 +34,19 @@ void perspectify(double *x, double *y, double pz, double *eye) {
 }
 
 void renderperspective(Matrix *faces, double *eye, uint32_t color) {
-    double coors[6];
+  double coors[6];
   int c;
   double pz;
   int line[6];
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
-    if (enable_culling) {
+#if ENABLE_CULLING
       mat_get_column(faces, c, tri);
       mat_get_column(faces, c+1, tri+4);
       mat_get_column(faces, c+2, tri+8);
       if (culltri(tri, eye))
 	continue;
-    }
+#endif
     pz = mat_get_cell(faces, c, 2);
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
