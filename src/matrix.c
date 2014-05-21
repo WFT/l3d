@@ -34,8 +34,16 @@ struct matrix * mat_construct(int c, int r) {
   ret->rows = r;
   ret->cells = (double **)malloc(c * sizeof(double *));
   int i;
-  for (i = 0; i < c; i++) {
-    ret->cells[i] = (double *)calloc(r, sizeof(double));
+  char success = ret->cells != NULL;
+  if (success) {
+    for (i = 0; i < c; i++) {
+      ret->cells[i] = (double *)calloc(r, sizeof(double));
+      success = success && ret->cells[i];
+    } 
+  } 
+  if (!success) {
+    printf("Ran out of memory allocating new Matrix (%dx%d)\n", c, r);
+    abort();
   }
   return ret;
 }
@@ -66,7 +74,7 @@ void mat_set_column(struct matrix *mat, int c, double *col) {
   memcpy(mat->cells[c], col, mat->rows * sizeof(double));
 }
 
-struct matrix * mat_multiply(struct matrix *a, struct matrix *b) {  
+struct matrix *mat_multiply(struct matrix *a, struct matrix *b) {  
   assert(a->cols == b->rows);
   struct matrix *ret = mat_construct(b->cols, a->rows);
   int r, c, j;
@@ -114,8 +122,15 @@ void mat_resize(struct matrix *mat, int c, int r) {
   mat->cols = c;
   mat->rows = r;
   mat->cells = realloc(mat->cells, mat->cols * sizeof(double *));
-  int i;
-  for (i = 0; i < newcols; i++) {
-    mat->cells[c - newcols + i] = calloc(r, sizeof(double));
+  char success = mat->cells != NULL;
+  if (success) {
+    int i;
+    for (i = 0; i < newcols; i++) {
+      mat->cells[c - newcols + i] = calloc(r, sizeof(double));
+    }
+  }
+  if (!success) {
+    printf("Ran out of memory resizing Matrix (to %dx%d)\n", c, r);
+    abort();
   }
 }
