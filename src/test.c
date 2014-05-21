@@ -11,7 +11,7 @@
 void rand_point(double p[4]) {
   int i;
   for (i=0; i < 3; i++)
-    p[i] = rand() % 200 - 100;
+    p[i] = rand() % 18 - 9;
   p[3] = 1;
 }
 
@@ -46,10 +46,10 @@ void render_spin_test() {
   double col[4] = {0, 0, 0, 1};
   double eye[3] = {0, 0, 100};
   screen = malloc(4 * sizeof(double));
-  screen[0] = -100;
-  screen[1] = -100;
-  screen[2] = 0;
-  screen[3] = 0;
+  screen[0] = -10;
+  screen[1] = -10;
+  screen[2] = 10;
+  screen[3] = 10;
   if (init_live_render(300, 300))
     printf("live rendering setup failed... Exiting now.\n");
   clock_t t;
@@ -57,7 +57,7 @@ void render_spin_test() {
   double rad;
   unsigned long i;
   do {
-    renderperspective(faces, eye, 0x000000);
+    //renderperspective(faces, eye, rgb(0, 0, 0));
     for (i=0; i < 30; i++) {
       rand_point(col);
       mat_add_column(faces, col);
@@ -66,7 +66,7 @@ void render_spin_test() {
     spin = rotate_x_mat(rad);
     t = clock();
     apply_transform(spin, &faces);
-    renderperspective(faces, eye, 0xFF0000);
+    renderperspective(faces, eye, rgb(255, 0, 0));
     t = clock() - t;
     printf("%d faces spun (%f radians) in %f seconds\n", faces->cols/3, rad, ((float)t)/CLOCKS_PER_SEC);
   } while (((float)t)/CLOCKS_PER_SEC < 1);
@@ -75,6 +75,6 @@ void render_spin_test() {
 
 int main(int argc, char **argv) {
   srand(time(NULL));
-  render_spin_test();
+  spin_test();
   return 0;
 }
