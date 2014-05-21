@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char in_bounds(int x, int y, double bounds[4]) {
-  return x > bounds[0] && y > bounds[1] && x < bounds[2] && y < bounds[3];
-}
-
 void draw_triangle(int coors[6], uint32_t color) {
   int ax = coors[0];
   int ay = coors[1];
@@ -15,6 +11,10 @@ void draw_triangle(int coors[6], uint32_t color) {
   int cx = coors[4];
   int cy = coors[5];
 
+  setpix(ax, ay, color, 1);
+  setpix(bx, by, color, 1);
+  setpix(cx, cy, color, 1);
+  return;
   // find the mid y value
   /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
   /* max_y = coors[7] > max_y ? coors[7]:max_y; */

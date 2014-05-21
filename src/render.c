@@ -3,7 +3,7 @@
 #include "lines.h"
 #include "render.h"
 
-char enable_culling = 1;
+const char enable_culling = 0;
 
 // assumes x y z 1 pattern
 char culltri(double coors[12], double *eye) {
