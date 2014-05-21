@@ -10,11 +10,6 @@ void draw_triangle(int coors[6], uint32_t color) {
   int by = coors[3];
   int cx = coors[4];
   int cy = coors[5];
-
-  //setpix(ax, ay, color, 1);
-  //setpix(bx, by, color, 1);
-  //setpix(cx, cy, color, 1);
-  //return;
   // find the mid y value
   /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
   /* max_y = coors[7] > max_y ? coors[7]:max_y; */
@@ -71,6 +66,16 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(bc_y_points);
   free(ca_x_points);
   free(ca_y_points);
+
+  // if VERTICES_COLOR && color are set to non-black colors,
+  // vertices will be drawn
+  if (VERTICES_COLOR && color) {
+    setpix(ax, ay, VERTICES_COLOR, 1);
+    setpix(bx, by, VERTICES_COLOR, 1);
+    setpix(cx, cy, VERTICES_COLOR, 1);
+  }
+
+
 }
 
 void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
