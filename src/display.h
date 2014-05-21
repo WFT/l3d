@@ -8,6 +8,10 @@ double *screen;
 // returns 0 on success, 1 on fail and prints error
 int init_live_render(int w, int h);
 
+// setting a pixel for which this function returns 0 is undefined
+// will probably result in a segfault
+char pix_in_screen(int x, int y);
+
 // set and get pix from the surface
 void setpix(int x, int y, uint32_t color, char lock);
 uint32_t getpix(int x, int y, char lock);

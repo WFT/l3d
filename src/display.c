@@ -55,6 +55,10 @@ void mixcolors(char b) {
   mix = b;
 }
 
+char pix_in_screen(int x, int y) {
+  return x > 0 && y > 0 && x < surface->w && y < surface->h;
+}
+
 // set and get pix from the surface
 void setpix(int x, int y, uint32_t color, char lock) {
   if (x < 0 || y < 0 || x > surface->w || y > surface->h)

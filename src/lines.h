@@ -8,7 +8,8 @@ void draw_triangle(int coors[6], uint32_t color);
 void order_endpoints(int *x1, int *y1, int *x2, int *y2);
 
 // discover all points using the bresenham_step
-void find_points(int x1, int y1, int x2, int y2,
+// RETURNS: number of points actually found
+int find_points(int x1, int y1, int x2, int y2,
 		 int *x_points, int *y_points);
 
 // generalized bresenham line algorithm will advance one step for each call

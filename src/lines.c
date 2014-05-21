@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+char in_bounds(int x, int y, double bounds[4]) {
+  return x > bounds[0] && y > bounds[1] && x < bounds[2] && y < bounds[3];
+}
+
 void draw_triangle(int coors[6], uint32_t color) {
   int ax = coors[0];
   int ay = coors[1];
@@ -32,9 +36,9 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *x_points = malloc(count * sizeof(int));
   int *y_points = malloc(count * sizeof(int));
 
-  find_points(ax, ay, bx, by, 
+  count = find_points(ax, ay, bx, by, 
 	      x_points, y_points);
-  for (p = 0; p < count-1; p++)
+  for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   bx = coors[2];
@@ -45,9 +49,9 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(y_points);
   x_points = malloc(count * sizeof(int));
   y_points = malloc(count * sizeof(int));
-  find_points(bx, by,  cx, cy, 
+  count = find_points(bx, by,  cx, cy, 
 	      x_points, y_points);
-  for (p = 0; p < count-1; p++)
+  for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   ax = coors[0];
@@ -60,9 +64,9 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(y_points);
   x_points = malloc(count * sizeof(int));
   y_points = malloc(count * sizeof(int));
-  find_points(cx, cy, ax, ay,
+  count = find_points(cx, cy, ax, ay,
 	      x_points, y_points);
-  for (p = 0; p < count-1; p++)
+  for (p = 0; p < count; p++)
     setpix(x_points[p], y_points[p], color, 0);
 
   unlock_surface();
@@ -83,7 +87,7 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
   //printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
 }
 
-void find_points(int x1, int y1, int x2, int y2,
+int find_points(int x1, int y1, int x2, int y2,
 		 int *x_points, int *y_points) {
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
@@ -98,8 +102,8 @@ void find_points(int x1, int y1, int x2, int y2,
       y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
       p++;
+      if (!pix_in_screen(x, y)) break;
     }
-    printf("p(%d), count(%d)\n", p, point_count(x1, y1, x2, y2));
   } else {
     int  acc = dy/2;
     char up = y1 < y2;
@@ -108,8 +112,10 @@ void find_points(int x1, int y1, int x2, int y2,
       y_points[p] = y;
       bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
       p++;
+      if (!pix_in_screen(x, y)) break;
     }
   }
+  return p;
 }
 
 void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
