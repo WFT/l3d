@@ -48,17 +48,16 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
 	continue;
     }
     pz = mat_get_cell(faces, c, 2);
-    if (pz > eye[2]) continue;
     coors[0] = mat_get_cell(faces, c, 0);
     coors[1] = mat_get_cell(faces, c, 1);
     perspectify(coors, coors+1, pz, eye);
+
     pz = mat_get_cell(faces, c+1, 2);
-    if (pz > eye[2]) continue;
     coors[2] = mat_get_cell(faces, c+1, 0);
     coors[3] = mat_get_cell(faces, c+1, 1);
     perspectify(coors+2, coors+3, pz, eye);
+
     pz = mat_get_cell(faces, c+2, 2);
-    if (pz > eye[2]) continue;
     coors[4] = mat_get_cell(faces, c+2, 0);
     coors[5] = mat_get_cell(faces, c+2, 1);
     perspectify(coors+4, coors+5, pz, eye);
@@ -67,13 +66,9 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
     map_coors(coors+2, coors+3);
     map_coors(coors+4, coors+5);
 
-    // line 1
-    line[0] = coors[0];
-    line[1] = coors[1];
-    line[2] = coors[2];
-    line[3] = coors[3];
-    line[4] = coors[4];
-    line[5] = coors[5];
+    int i;
+    for (i = 0; i < 6; i++)
+      line[i] = coors[i];
     draw_triangle(line, color);
   }
 }
