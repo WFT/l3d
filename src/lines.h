@@ -11,8 +11,8 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2);
 
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
-int find_points(int x1, int y1, int x2, int y2,
-		 int *x_points, int *y_points);
+//static inline int find_points(int x1, int y1, int x2, int y2,
+//		 int *x_points, int *y_points);
 
 // generalized bresenham line algorithm will advance one step for each call
 void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step);

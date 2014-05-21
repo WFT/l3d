@@ -90,7 +90,7 @@ void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
   //printf("drawing (%d, %d) to (%d, %d)\n", *x1, *y1, *x2, *y2);
 }
 
-int find_points(int x1, int y1, int x2, int y2,
+inline int find_points(int x1, int y1, int x2, int y2,
 		 int *x_points, int *y_points) {
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
@@ -121,7 +121,7 @@ int find_points(int x1, int y1, int x2, int y2,
   return p;
 }
 
-void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
+inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
   *acc -= minor_delta;
   if (*acc < 0) {
     *minor_counter += minor_step;

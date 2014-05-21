@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include "matrix.h"
 
+#define ENABLE_CULLING 1
+
 // renders a single perspective -- access through render functions below
 void renderperspective(Matrix *faces, double *eye, uint32_t color);
 
