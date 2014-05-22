@@ -50,14 +50,13 @@ void render_spin_test() {
   screen[1] = -10;
   screen[2] = 10;
   screen[3] = 10;
-  if (init_live_render(300, 300))
+  if (init_live_render(600, 600))
     printf("live rendering setup failed... Exiting now.\n");
   clock_t t;
   Matrix *spin;
   double rad;
   unsigned long i;
   do {
-    //renderperspective(faces, eye, rgb(0, 0, 0));
     for (i=0; i < 30; i++) {
       rand_point(col);
       mat_add_column(faces, col);
@@ -65,8 +64,10 @@ void render_spin_test() {
     rad = rand_radian();
     spin = rotate_x_mat(rad);
     t = clock();
+    //renderperspective(faces, eye, rgb(0, 0, 0));
     apply_transform(spin, &faces);
-    renderperspective(faces, eye, rgb(255, 0, 0));
+    //renderperspective(faces, eye, rgb(255, 0, 0));
+    rendercyclops(faces, eye);
     t = clock() - t;
     printf("%d faces spun (%f radians) in %f seconds\n", faces->cols/3, rad, ((float)t)/CLOCKS_PER_SEC);
   } while (((float)t)/CLOCKS_PER_SEC < 1);
@@ -75,6 +76,6 @@ void render_spin_test() {
 
 int main(int argc, char **argv) {
   srand(time(NULL));
-  spin_test();
+  render_spin_test();
   return 0;
 }
