@@ -31,8 +31,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   order_endpoints(&ax, &ay, &bx, &by);
   int p;
   int ab_count = point_count(ax, ay, bx, by);
-  int *ab_x_points = malloc(count * sizeof(int));
-  int *ab_y_points = malloc(count * sizeof(int));
+  int *ab_x_points = malloc(ab_count * sizeof(int));
+  int *ab_y_points = malloc(ab_count * sizeof(int));
   ab_count = find_points(ax, ay, bx, by, 
 	      ab_x_points, ab_y_points);
   for (p = 0; p < ab_count; p++)
