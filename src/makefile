@@ -20,13 +20,13 @@ objects.o: objects.c objects.h
 display.o: display.c display.h
 	gcc display.c -o display.o -c $(STDFLAGS) $(SPECIALFLAGS)
 
-render.o: render.c render.h
+render.o: render.c render.h options.h
 	gcc render.c -o render.o -c $(STDFLAGS)
 
 matrix.o: matrix.c matrix.h
 	gcc matrix.c -o matrix.o -c $(STDFLAGS)
 
-lines.o: lines.c lines.h
+lines.o: lines.c lines.h options.h
 	gcc lines.c -o lines.o -c $(STDFLAGS)
 
 test: test.c matrix.o transform.o display.o render.o lines.o
