@@ -1,0 +1,21 @@
+frames 1 300
+screen -10 -10 10 10
+pixels 350 350
+
+vary whole_r 0 360 1 300 
+vary inner 0 15 1 150
+vary inner 15 0 151 300
+vary middle 30 0 1 200
+vary middle 0 30 201 300
+
+rotate-z whole_r
+rotate-y whole_r
+rotate-x whole_r
+
+sphere-t 2 2 2 inner inner inner 0 0 0
+sphere-t 4 4 4 middle middle middle 0 0 0
+sphere-t 6 6 6 90 90 10 0 0 0
+
+rcyclops 0 0 10
+files puzzle_
+end
