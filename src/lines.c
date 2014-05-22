@@ -88,11 +88,9 @@ void draw_triangle(int coors[6], uint32_t color) {
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 #if DRAW_VERTICES
-  if (color) {
-    setpix(ax, ay, VERTICES_COLOR, 1);
-    setpix(bx, by, VERTICES_COLOR, 1);
-    setpix(cx, cy, VERTICES_COLOR, 1);
-  }
+  setpix(ax, ay, color ? VERTICES_COLOR : color, 1);
+  setpix(bx, by, color ? VERTICES_COLOR : color, 1);
+  setpix(cx, cy, color ? VERTICES_COLOR : color, 1);
 #endif
 
   unlock_surface();
