@@ -137,14 +137,72 @@ void draw_triangle(int coors[6], uint32_t color) {
   for (p = 0; p < ca_count; p++)
    setpix(ca_x_points[p], ca_y_points[p], color, 0);
   
+  int *abxs;
+  int *abys;
+  int abinc;
+  if (ab_y_points[ab_count - 1] > ab_y_points[0]) {
+    abxs = ab_x_points + ab_count - 1;
+    abys = ab_y_points + ab_count - 1;
+    abinc = -1;
+  } else {
+    abxs = ab_x_points;
+    abys = ab_y_points;
+    abinc = 1;
+  }
+
+  int *bcxs;
+  int *bcys;
+  int bcinc;
+  if (bc_y_points[bc_count - 1] > bc_y_points[0]) {
+    bcxs = bc_x_points + bc_count - 1;
+    bcys = bc_y_points + bc_count - 1;
+    bcinc = -1;
+  } else {
+    bcxs = bc_x_points;
+    bcys = bc_y_points;
+    bcinc = 1;
+  }
+
+  int *caxs;
+  int *cays;
+  int cainc;
+  if (ca_y_points[ca_count - 1] > ca_y_points[0]) {
+    caxs = ca_x_points + ca_count - 1;
+    cays = ca_y_points + ca_count - 1;
+    cainc = -1;
+  } else {
+    caxs = ca_x_points;
+    cays = ca_y_points;
+    cainc = 1;
+  }
+  printf("here i am\n");
   if (mid_y == ay) {
     for (p = 0; p < bc_count; p++) {
       if (bc_y_points[p] == mid_y) break;
     }
     p++;
+    int oldy;
+    int j = 0;
     if (p != bc_count) {
-      
-    }
+      if (abys[0] > cays[0]) {
+	do {
+	  draw_horizontal(abxs[0], bcxs[0], abys[0], color);
+	  do {
+	    oldy = abys[0];
+	    abxs += abinc;
+	    abys += abinc;
+	  } while(abys[0] == oldy);
+	  do {
+	    oldy = bcys[0];
+	    bcxs += bcinc;
+	    bcys += bcinc;
+	  } while(bcys[0] == oldy);
+	  j++;
+	} while(j < ab_count);
+      } else {
+	
+      }
+    }      
   } else if (mid_y == by) {
     
   } else if (mid_y == cy) {
