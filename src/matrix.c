@@ -127,6 +127,7 @@ void mat_resize(struct matrix *mat, int c, int r) {
     int i;
     for (i = 0; i < newcols; i++) {
       mat->cells[c - newcols + i] = calloc(r, sizeof(double));
+      success = success && mat->cells[c-newcols+i];
     }
   }
   if (!success) {
