@@ -1,10 +1,6 @@
 #pragma once
 #include <inttypes.h>
 
-#define DRAW_LINES 1
-#define DRAW_VERTICES 0
-#define VERTICES_COLOR 0xFF0000
-
 // takes an array of six coordinates alternating x y z
 void draw_triangle(int coors[6], uint32_t color);
 
