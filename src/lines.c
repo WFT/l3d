@@ -12,31 +12,32 @@ void draw_triangle(int coors[6], uint32_t color) {
   int cx = coors[4];
   int cy = coors[5];
   // find the mid y value
-  /* int max_y = coors[1] > coors[4] ? coors[1]:coors[4]; */
-  /* max_y = coors[7] > max_y ? coors[7]:max_y; */
-  /* int min_y = coors[1] < coors[4] ? coors[1]:coors[4]; */
-  /* min_y = coors[7] < min_y ? coors[7]:min_y; */
-  /* int mid_y; */
-  /* if (coors[1] != max_y && coors[1] != min_y) */
-  /*   mid_y = coors[1]; */
-  /* else if (coors[4] != max_y && coors[4] != min_y) */
-  /*   mid_y = coors[4]; */
-  /* else if (coors[7] != max_y && coors[7] != min_y) */
-  /*   mid_y = coors[7]; */
-
+  int max_y = coors[1] > coors[4] ? coors[1]:coors[4];
+  max_y = coors[7] > max_y ? coors[7]:max_y;
+  int min_y = coors[1] < coors[4] ? coors[1]:coors[4];
+  min_y = coors[7] < min_y ? coors[7]:min_y;
+  int mid_y;
+  if (coors[1] != max_y && coors[1] != min_y)
+    mid_y = coors[1];
+  else if (coors[4] != max_y && coors[4] != min_y)
+    mid_y = coors[4];
+  else if (coors[7] != max_y && coors[7] != min_y)
+    mid_y = coors[7];
+  else 
+    return;
 
   lock_surface();
 
 #if DRAW_LINES
   order_endpoints(&ax, &ay, &bx, &by);
-  int p;
+  //int p;
   int ab_count = point_count(ax, ay, bx, by);
   int *ab_x_points = malloc(ab_count * sizeof(int));
   int *ab_y_points = malloc(ab_count * sizeof(int));
   ab_count = find_points(ax, ay, bx, by, 
 	      ab_x_points, ab_y_points);
-  for (p = 0; p < ab_count; p++)
-    setpix(ab_x_points[p], ab_y_points[p], color, 0);
+  //for (p = 0; p < ab_count; p++)
+  //  setpix(ab_x_points[p], ab_y_points[p], color, 0);
 
   bx = coors[2];
   by = coors[3];
@@ -46,8 +47,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *bc_y_points = malloc(bc_count * sizeof(int));
   bc_count = find_points(bx, by,  cx, cy, 
 	      bc_x_points, bc_y_points);
-  for (p = 0; p < bc_count; p++)
-    setpix(bc_x_points[p], bc_y_points[p], color, 0);
+  // for (p = 0; p < bc_count; p++)
+  //  setpix(bc_x_points[p], bc_y_points[p], color, 0);
 
   ax = coors[0];
   ay = coors[1];
@@ -59,8 +60,34 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *ca_y_points = malloc(ca_count * sizeof(int));
   ca_count = find_points(cx, cy, ax, ay,
 	      ca_x_points, ca_y_points);
-  for (p = 0; p < ca_count; p++)
-    setpix(ca_x_points[p], ca_y_points[p], color, 0);
+  // for (p = 0; p < ca_count; p++)
+  // setpix(ca_x_points[p], ca_y_points[p], color, 0);
+
+  if (mid_y == ay) {
+    if (bc_y_points[0] == ab_y_points[0]) {
+      
+    } else if (bc_y_points[0] == ca_y_points[0]) {
+      
+    } else {
+      printf("broke something\n");
+    }
+  } else if (mid_y == by) {
+    if (ca_y_points[0] == ab_y_points[0]) {
+      
+    } else if (ca_y_points[0] == bc_y_points[0]) {
+      
+    } else {
+      printf("broke something\n");
+    }
+  } else if (mid_y == cy) {
+    if (ab_y_points[0] == bc_y_points[0]) {
+      
+    } else if (ab_y_points[0] == ca_y_points[0]) {
+      
+    } else {
+      printf("broke something\n");
+    }
+  }
 
   free(ab_x_points);
   free(ab_y_points);
