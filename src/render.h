@@ -9,5 +9,5 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color);
 void rendercyclops(Matrix *faces, double *eye);
 void renderstereo(Matrix *faces, double *eyes);
 void renderparallel(Matrix *faces);
-void spincyclops(Matrix *edge, double *eye);
-void spinstereo(Matrix *edge, double *eyes);
+void spincyclops(Matrix *edge, double *eye, int del);
+void spinstereo(Matrix *edge, double *eyes, int del);

@@ -214,9 +214,15 @@ void interpret(char *l) {
     }
     renderparallel(tri);
   } else if (strcmp(list[0], "spinc") == 0) {
-    spincyclops(tri, args);
+    int delay = 13;
+    if (argc > 3)
+      delay = args[3];
+    spincyclops(tri, args, delay);
   } else if (strcmp(list[0], "spins") == 0) {
-    spinstereo(tri, args);
+    int delay = 13;
+    if (argc > 6)
+      delay = args[6];
+    spinstereo(tri, args, delay);
   } else if (strcmp(list[0], "stdin") == 0) {
     if (in != stdin)
       fclose(in);

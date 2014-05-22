@@ -148,7 +148,7 @@ Matrix *spinmat(int x, int y, int z) {
   return xyz;
 }
 
-void spincyclops(Matrix *faces, double *eye) {
+void spincyclops(Matrix *faces, double *eye, int del) {
   Matrix *xyz = spinmat(1, 1, 1);
   Matrix *rot;
   Matrix *unspun = faces;
@@ -162,7 +162,7 @@ void spincyclops(Matrix *faces, double *eye) {
     mat_destruct(faces);
     faces = rot;
     renderperspective(faces, eye, color);
-    SDL_Delay(50);
+    SDL_Delay(del);
     update_display();
     renderperspective(faces, eye, black);
   }
@@ -173,7 +173,7 @@ void spincyclops(Matrix *faces, double *eye) {
   mat_destruct(rot);
 }
 
-void spinstereo(Matrix *faces, double *eyes) {
+void spinstereo(Matrix *faces, double *eyes, int del) {
   Matrix *xyz = spinmat(1, 1, 1);
   double *el = eyes;
   double *er = eyes + 3;
@@ -194,7 +194,7 @@ void spinstereo(Matrix *faces, double *eyes) {
     mixcolors(1);
     renderperspective(faces, er, cyan);
     mixcolors(0);
-    SDL_Delay(50);
+    SDL_Delay(del);
     update_display();
   }
   clear_screen();
