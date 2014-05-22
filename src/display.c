@@ -192,8 +192,12 @@ void update_display() {
 }
 
 void clear_screen() {
-  SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
+  clear_pixel_buffer();
   update_display();
+}
+
+void clear_pixel_buffer() {
+  SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 }
 
 

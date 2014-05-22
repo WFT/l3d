@@ -39,6 +39,7 @@ void renderppm(char *path);
 
 void update_display();
 void clear_screen();
+void clear_pixel_buffer();
 
 void mixcolors(char b);
 

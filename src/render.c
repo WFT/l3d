@@ -73,13 +73,13 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
 }
 
 void rendercyclops(Matrix *faces, double *eye) {
-  clear_screen();
+  clear_pixel_buffer();
   renderperspective(faces, eye, rgb(255, 255, 255));
   update_display();
 }
 
 void renderstereo(Matrix *faces, double *eyes) {
-  clear_screen();
+  clear_pixel_buffer();
 
   // left -- red
   renderperspective(faces, eyes, rgb(127, 0, 0));
