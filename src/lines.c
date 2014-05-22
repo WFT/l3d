@@ -4,6 +4,74 @@
 #include "display.h"
 #include "options.h"
 
+inline void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
+  if (*x1 > *x2) {
+    int swap = *x1;
+    *x1 = *x2;
+    *x2 = swap;
+    swap = *y1;
+    *y1 = *y2;
+    *y2 = swap;
+  }
+}
+
+inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
+  *acc -= minor_delta;
+  if (*acc < 0) {
+    *minor_counter += minor_step;
+    *acc += major_delta;
+  }
+  *major_counter += major_step;
+}
+
+// points should be ordered first
+inline int point_count(int x1, int y1, int x2, int y2)  {
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+  if (dy < 0)
+    dy = -dy;
+  return (dx > dy ? dx : dy) + 1;
+}
+
+inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
+  int x = x1;
+  while (x <= x2) {
+    setpix(x, y, color, 0);
+    x++;
+  }
+}
+
+inline int find_points(int x1, int y1, int x2, int y2,
+		 int *x_points, int *y_points) {
+  int dx = x2 - x1;
+  int dy = y2 > y1?y2 - y1:y1 - y2;
+  int x = x1, y = y1;
+  // y goes up if y1 is smaller than y2, else it goes down
+  int ystep = y1 < y2 ? 1 : -1;
+  int p = 0;
+  if (dx > dy) {
+    int acc  = dx/2;
+    while (x < x2) {
+      x_points[p] = x;
+      y_points[p] = y;
+      bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
+      p++;
+      if (!pix_in_screen(x, y)) break;
+    }
+  } else {
+    int  acc = dy/2;
+    char up = y1 < y2;
+    while (up ? y <= y2 : y >= y2) {
+      x_points[p] = x;
+      y_points[p] = y;
+      bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
+      p++;
+      if (!pix_in_screen(x, y)) break;
+    }
+  }
+  return p;
+}
+
 void draw_triangle(int coors[6], uint32_t color) {
   int ax = coors[0];
   int ay = coors[1];
@@ -96,72 +164,3 @@ void draw_triangle(int coors[6], uint32_t color) {
   unlock_surface();
 
 }
-
-inline void order_endpoints(int *x1, int *y1, int *x2, int *y2) {
-  if (*x1 > *x2) {
-    int swap = *x1;
-    *x1 = *x2;
-    *x2 = swap;
-    swap = *y1;
-    *y1 = *y2;
-    *y2 = swap;
-  }
-}
-
-inline int find_points(int x1, int y1, int x2, int y2,
-		 int *x_points, int *y_points) {
-  int dx = x2 - x1;
-  int dy = y2 > y1?y2 - y1:y1 - y2;
-  int x = x1, y = y1;
-  // y goes up if y1 is smaller than y2, else it goes down
-  int ystep = y1 < y2 ? 1 : -1;
-  int p = 0;
-  if (dx > dy) {
-    int acc  = dx/2;
-    while (x < x2) {
-      x_points[p] = x;
-      y_points[p] = y;
-      bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
-      p++;
-      if (!pix_in_screen(x, y)) break;
-    }
-  } else {
-    int  acc = dy/2;
-    char up = y1 < y2;
-    while (up ? y <= y2 : y >= y2) {
-      x_points[p] = x;
-      y_points[p] = y;
-      bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
-      p++;
-      if (!pix_in_screen(x, y)) break;
-    }
-  }
-  return p;
-}
-
-inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
-  *acc -= minor_delta;
-  if (*acc < 0) {
-    *minor_counter += minor_step;
-    *acc += major_delta;
-  }
-  *major_counter += major_step;
-}
-
-// points should be ordered first
-inline int point_count(int x1, int y1, int x2, int y2)  {
-  int dx = x2 - x1;
-  int dy = y2 - y1;
-  if (dy < 0)
-    dy = -dy;
-  return (dx > dy ? dx : dy) + 1;
-}
-
-inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
-  int x = x1;
-  while (x <= x2) {
-    setpix(x, y, color, 0);
-    x++;
-  }
-}
-
