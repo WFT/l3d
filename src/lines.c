@@ -1,7 +1,8 @@
-#include "lines.h"
-#include "display.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "lines.h"
+#include "display.h"
+#include "options.h"
 
 void draw_triangle(int coors[6], uint32_t color) {
   int ax = coors[0];

@@ -1,9 +1,8 @@
 #include "display.h"
 #include "transform.h"
 #include "lines.h"
+#include "options.h"
 #include "render.h"
-
-#define ENABLE_CULLING 1
 
 // assumes x y z 1 pattern
 char culltri(double coors[12], double *eye) {
