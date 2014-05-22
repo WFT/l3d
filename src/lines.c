@@ -27,25 +27,25 @@ void draw_triangle(int coors[6], uint32_t color) {
   lock_surface();
 
 #if DRAW_LINES
-
   order_endpoints(&ax, &ay, &bx, &by);
-  int p, count = point_count(ax, ay, bx, by);
+  int p;
+  int ab_count = point_count(ax, ay, bx, by);
   int *ab_x_points = malloc(count * sizeof(int));
   int *ab_y_points = malloc(count * sizeof(int));
-  count = find_points(ax, ay, bx, by, 
+  ab_count = find_points(ax, ay, bx, by, 
 	      ab_x_points, ab_y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < ab_count; p++)
     setpix(ab_x_points[p], ab_y_points[p], color, 0);
 
   bx = coors[2];
   by = coors[3];
   order_endpoints(&bx, &by, &cx, &cy);
-  count = point_count(bx, by, cx, cy);
-  int *bc_x_points = malloc(count * sizeof(int));
-  int *bc_y_points = malloc(count * sizeof(int));
-  count = find_points(bx, by,  cx, cy, 
+  int bc_count = point_count(bx, by, cx, cy);
+  int *bc_x_points = malloc(bc_count * sizeof(int));
+  int *bc_y_points = malloc(bc_count * sizeof(int));
+  bc_count = find_points(bx, by,  cx, cy, 
 	      bc_x_points, bc_y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < bc_count; p++)
     setpix(bc_x_points[p], bc_y_points[p], color, 0);
 
   ax = coors[0];
@@ -53,12 +53,12 @@ void draw_triangle(int coors[6], uint32_t color) {
   cx = coors[4];
   cy = coors[5];
   order_endpoints(&cx, &cy, &ax, &ay);
-  count = point_count(cx, cy, ax, ay);
-  int *ca_x_points = malloc(count * sizeof(int));
-  int *ca_y_points = malloc(count * sizeof(int));
-  count = find_points(cx, cy, ax, ay,
+  int ca_count = point_count(cx, cy, ax, ay);
+  int *ca_x_points = malloc(ca_count * sizeof(int));
+  int *ca_y_points = malloc(ca_count * sizeof(int));
+  ca_count = find_points(cx, cy, ax, ay,
 	      ca_x_points, ca_y_points);
-  for (p = 0; p < count; p++)
+  for (p = 0; p < ca_count; p++)
     setpix(ca_x_points[p], ca_y_points[p], color, 0);
 
   free(ab_x_points);
