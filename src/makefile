@@ -31,7 +31,6 @@ lines.o: lines.c lines.h options.h
 
 test: test.c matrix.o transform.o display.o render.o lines.o
 	gcc test.c display.o render.o matrix.o transform.o lines.o -o test $(SPECIALFLAGS) $(STDFLAGS)
-	./test
 
 clean:
 	rm -r *.o 3D*
