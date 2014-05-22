@@ -11,7 +11,7 @@
 void rand_point(double p[4]) {
   int i;
   for (i=0; i < 3; i++)
-    p[i] = rand() % 18 - 9;
+    p[i] = (((double)rand()/(double)RAND_MAX) * 20) - 10;
   p[3] = 1;
 }
 
@@ -23,20 +23,17 @@ void spin_test() {
   Matrix *faces = mat_construct(0, 4);
   double col[4] = {0, 0, 0, 1};
   clock_t t;
-  Matrix *spin;
-  double rad;
+  double rad = rand_radian();
   unsigned long i;
   do {
     for (i=0; i < 3000; i++) {
       rand_point(col);
       mat_add_column(faces, col);
     }
-    rad = rand_radian();
-    spin = rotate_x_mat(rad);
     t = clock();
-    apply_transform(spin, &faces);
+    apply_transform(rotate_z_mat(rad), &faces);
     t = clock() - t;
-    printf("%d faces spun (%f radians) in %f seconds\n", faces->cols/3, rad, ((float)t)/CLOCKS_PER_SEC);
+    printf("%d faces spun in %f seconds\n", faces->cols/3,((float)t)/CLOCKS_PER_SEC);
   } while (((float)t)/CLOCKS_PER_SEC < 1);
   mat_destruct(faces);
 }
@@ -53,24 +50,20 @@ void render_spin_test() {
   if (init_live_render(600, 600))
     printf("live rendering setup failed... Exiting now.\n");
   clock_t t;
-  Matrix *spin;
-  double rad;
+  double rad = rand_radian();
   unsigned long i;
   do {
-    for (i=0; i < 30; i++) {
+    for (i=0; i < 3000; i++) {
       rand_point(col);
       mat_add_column(faces, col);
     }
-    rad = rand_radian();
-    spin = rotate_x_mat(rad);
     t = clock();
-    //renderperspective(faces, eye, rgb(0, 0, 0));
-    apply_transform(spin, &faces);
-    //renderperspective(faces, eye, rgb(255, 0, 0));
+    apply_transform(rotate_y_mat(rad), &faces);
     rendercyclops(faces, eye);
     t = clock() - t;
-    printf("%d faces spun (%f radians) in %f seconds\n", faces->cols/3, rad, ((float)t)/CLOCKS_PER_SEC);
+    printf("%d faces spun in %f seconds\n", faces->cols/3, ((float)t)/CLOCKS_PER_SEC);
   } while (((float)t)/CLOCKS_PER_SEC < 1);
+  renderppm("test.ppm");
   mat_destruct(faces);
 }
 

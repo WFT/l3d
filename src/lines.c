@@ -57,21 +57,21 @@ inline int find_points(int x1, int y1, int x2, int y2,
   if (dx > dy) {
     int acc  = dx/2;
     while (x < x2) {
+      if (!pix_in_screen(x, y)) break;
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
       p++;
-      if (!pix_in_screen(x, y)) break;
     }
   } else {
     int  acc = dy/2;
     char up = y1 < y2;
     while (up ? y <= y2 : y >= y2) {
+      if (!pix_in_screen(x, y)) break;
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
       p++;
-      if (!pix_in_screen(x, y)) break;
     }
   }
   return p;
@@ -162,9 +162,12 @@ void draw_triangle(int coors[6], uint32_t color) {
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 #if DRAW_VERTICES
-  setpix(ax, ay, color ? VERTICES_COLOR : color, 1);
-  setpix(bx, by, color ? VERTICES_COLOR : color, 1);
-  setpix(cx, cy, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(ax, ay))
+    setpix(ax, ay, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(bx, by))
+    setpix(bx, by, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(cx, cy))
+    setpix(cx, cy, color ? VERTICES_COLOR : color, 1);
 #endif
 
   unlock_surface();
