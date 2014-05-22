@@ -175,30 +175,30 @@ void draw_triangle(int coors[6], uint32_t color) {
     cays = ca_y_points;
     cainc = 1;
   }
-  printf("here i am\n");
   if (mid_y == ay) {
-    for (p = 0; p < bc_count; p++) {
-      if (bc_y_points[p] == mid_y) break;
-    }
-    p++;
+    /* for (p = 0; p < bc_count; p++) { */
+    /*   if (bc_y_points[p] == mid_y) break; */
+    /* } */
+    /* p++; */
     int oldy;
-    int j = 0;
     if (p != bc_count) {
-      if (abys[0] > cays[0]) {
+      if (abys[0] == max_y) {
+	int xtrack = 0, ytrack = 0;
 	do {
 	  draw_horizontal(abxs[0], bcxs[0], abys[0], color);
 	  do {
 	    oldy = abys[0];
 	    abxs += abinc;
 	    abys += abinc;
-	  } while(abys[0] == oldy);
+	    xtrack++;
+	  } while(abys[0] == oldy && xtrack < ab_count);
 	  do {
 	    oldy = bcys[0];
 	    bcxs += bcinc;
 	    bcys += bcinc;
-	  } while(bcys[0] == oldy);
-	  j++;
-	} while(j < ab_count);
+	    ytrack++;
+	  } while(bcys[0] == oldy && ytrack < bc_count);
+	} while(oldy != mid_y);
       } else {
 	
       }
