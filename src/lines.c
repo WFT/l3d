@@ -257,9 +257,7 @@ void draw_triangle(int coors[6], uint32_t color) {
       lower_segment_x = caxs;
       lower_segment_y = cays;
     }
-  } else 
-    printf("midy(%d)!=ay(%d), by(%d), or cy(%d)\n", mid_y, ay, by, cy);
-    printf("lower: %p, upper: %p, long: %p\n", lower_segment_x, upper_segment_x, long_segment_x);
+  }
   int longi = 0, shorti = 0, oldy = -1;
   do {
     draw_horizontal(upper_segment_x[shorti],
