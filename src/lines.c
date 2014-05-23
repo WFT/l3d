@@ -38,9 +38,10 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
   int x = x1;
+  int step = x1 < x2 ? 1 : -1;
   while (x <= x2) {
     setpix(x, y, color, 0);
-    x++;
+    x+=step;
   }
 }
 
