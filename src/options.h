@@ -6,5 +6,5 @@
 // Line drawing:
 
 #define DRAW_LINES 1
-#define DRAW_VERTICES 0
+#define DRAW_VERTICES 1
 #define VERTICES_COLOR 0xFF0000

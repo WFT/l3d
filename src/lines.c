@@ -40,7 +40,8 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
   int x = x1;
   int step = x1 < x2 ? 1 : -1;
   while (x <= x2) {
-    setpix(x, y, color, 0);
+    if (pix_in_screen(x, y))
+      setpix(x, y, color, 0);
     x+=step;
   }
 }
@@ -58,7 +59,6 @@ inline int find_points(int x1, int y1, int x2, int y2,
   if (dx > dy) {
     int acc  = dx/2;
     while (x < x2) {
-      if (!pix_in_screen(x, y)) break;
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
@@ -68,7 +68,6 @@ inline int find_points(int x1, int y1, int x2, int y2,
     int  acc = dy/2;
     char up = y1 < y2;
     while (up ? y <= y2 : y >= y2) {
-      if (!pix_in_screen(x, y)) break;
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
@@ -97,8 +96,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *ab_y_points = malloc(ab_count * sizeof(int));
   ab_count = find_points(ax, ay, bx, by, 
 	      ab_x_points, ab_y_points);
-  for (p = 0; p < ab_count; p++)
-    setpix(ab_x_points[p], ab_y_points[p], color, 0);
+  // for (p = 0; p < ab_count; p++)
+  //  setpix(ab_x_points[p], ab_y_points[p], color, 0);
 
   bx = coors[2];
   by = coors[3];
@@ -108,8 +107,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *bc_y_points = malloc(bc_count * sizeof(int));
   bc_count = find_points(bx, by,  cx, cy, 
 	      bc_x_points, bc_y_points);
-  for (p = 0; p < bc_count; p++)
-    setpix(bc_x_points[p], bc_y_points[p], color, 0);
+  // for (p = 0; p < bc_count; p++)
+  //  setpix(bc_x_points[p], bc_y_points[p], color, 0);
 
   ax = coors[0];
   ay = coors[1];
@@ -121,9 +120,11 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *ca_y_points = malloc(ca_count * sizeof(int));
   ca_count = find_points(cx, cy, ax, ay,
 	      ca_x_points, ca_y_points);
-  for (p = 0; p < ca_count; p++)
-   setpix(ca_x_points[p], ca_y_points[p], color, 0);
+  // for (p = 0; p < ca_count; p++)
+  //  setpix(ca_x_points[p], ca_y_points[p], color, 0);
   
+  printf("boop\n");
+
   int *abxs;
   int *abys;
   int abinc;
@@ -182,94 +183,147 @@ void draw_triangle(int coors[6], uint32_t color) {
     mid_y = by;
   else if (cy != max_y && cy != min_y)
     mid_y = cy;
-  else 
+  else {
+    printf("huh?");
     return;
+  }
 
   int *upper_segment_x = NULL;
   int *upper_segment_y = NULL;
   int upper_inc = 0;
+  int upper_count = 0;
   int *lower_segment_x = NULL;
   int *lower_segment_y = NULL;
   int lower_inc = 0;
+  int lower_count = 0;
   int *long_segment_x = NULL;
   int *long_segment_y = NULL;
   int long_inc = 0;
+  int long_count = 0;
 
   if (mid_y == ay) {
     long_inc = bcinc;
     long_segment_x = bcxs;
     long_segment_y = bcys;
+    long_count = bc_count;
     if (max_y == by) {
       upper_inc = abinc;
       upper_segment_x = abxs;
       upper_segment_y = abys;
+      upper_count = ab_count;
 
       lower_inc = cainc;
       lower_segment_x = caxs;
       lower_segment_y = cays;
+      lower_count = ca_count;
     } else if (max_y == cy) {
       upper_inc = cainc;
       upper_segment_x = caxs;
       upper_segment_y = cays;
+      upper_count = ca_count;
 
       lower_inc = abinc;
       lower_segment_x = abxs;
       lower_segment_y = abys;
+      lower_count = ab_count;
     }
   } else if (mid_y == by) {
     long_inc = cainc;
     long_segment_x = caxs;
     long_segment_y = cays;
+    long_count = ca_count;
     if (max_y == ay) {
       upper_inc = abinc;
       upper_segment_x = abxs;
       upper_segment_y = abys;
+      upper_count = ab_count;
 
       lower_inc = bcinc;
       lower_segment_x = bcxs;
       lower_segment_y = bcys;
+      lower_count = bc_count;
     } else if (max_y == cy) {
       upper_inc = bcinc;
       upper_segment_x = bcxs;
       upper_segment_y = bcys;
+      upper_count = bc_count;
 
       lower_inc = abinc;
       lower_segment_x = abxs;
       lower_segment_y = abys;
+      lower_count = ab_count;
     }
   } else if (mid_y == cy) {
     long_inc = abinc;
     long_segment_x = abxs;
     long_segment_y = abys;
+    long_count = ab_count;
     if (max_y == ay) {
       upper_inc = cainc;
       upper_segment_x = caxs;
       upper_segment_y = cays;
+      upper_count = ca_count;
 
       lower_inc = bcinc;
       lower_segment_x = bcxs;
       lower_segment_y = bcys;
+      lower_count = bc_count;
     } else if (max_y == by) {
       upper_inc = bcinc;
       upper_segment_x = bcxs;
       upper_segment_y = bcys;
+      upper_count = bc_count;
  
       lower_inc = cainc;
       lower_segment_x = caxs;
       lower_segment_y = cays;
+      lower_count = ca_count;
     }
   }
   int longi = 0, shorti = 0, oldy = -1;
   do {
+    printf("drawing (%d, %d) (%d, %d)\n", upper_segment_x[shorti],
+	   upper_segment_y[shorti], long_segment_x[longi],
+	   long_segment_y[longi]);
     draw_horizontal(upper_segment_x[shorti],
 		    long_segment_x[longi],
 		    upper_segment_y[shorti],
 		    color);
-    longi++;
-    shorti++;
+    printf("advancing\n");
+    do {
+      oldy = long_segment_y[longi];
+      longi+=long_inc;
+    } while (long_segment_y[longi] == oldy && long_segment_y[longi] != mid_y);
+    do {
+      oldy = upper_segment_y[shorti];
+      shorti+=upper_inc;
+    } while (upper_segment_y[shorti] == oldy && upper_segment_y[shorti] != long_segment_y[longi]);
     
-  } while (long_segment_y[longi] > mid_y);
+    printf("advanced\n");
+  } while (shorti * upper_inc < upper_count);
+  shorti = 0;
+  do {
+    printf("drawing (%d, %d) (%d, %d)\n", lower_segment_x[shorti],
+	   lower_segment_y[shorti], long_segment_x[longi],
+	   long_segment_y[longi]);
+    draw_horizontal(lower_segment_x[shorti],
+		    long_segment_x[longi],
+		    lower_segment_y[shorti],
+		    color);
+    printf("advancing\n");
+    do {
+      oldy = long_segment_y[longi];
+      longi+=long_inc;
+    } while (long_segment_y[longi] == oldy && long_segment_y[longi] != mid_y);
+    do {
+      oldy = lower_segment_y[shorti];
+      shorti+=lower_inc;
+    } while (lower_segment_y[shorti] == oldy && lower_segment_y[shorti] != long_segment_y[longi]);
     
+    printf("advanced\n");
+  } while (shorti * lower_inc < lower_count);
+
+
   free(ab_x_points);
   free(ab_y_points);
   free(bc_x_points);
@@ -290,5 +344,5 @@ void draw_triangle(int coors[6], uint32_t color) {
 #endif
 
   unlock_surface();
-
+  printf("drew triangle\n");
 }
