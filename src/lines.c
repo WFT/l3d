@@ -85,20 +85,6 @@ void draw_triangle(int coors[6], uint32_t color) {
   int by = coors[3];
   int cx = coors[4];
   int cy = coors[5];
-  // find the mid y value
-  int max_y = coors[1] > coors[4] ? coors[1]:coors[4];
-  max_y = coors[7] > max_y ? coors[7]:max_y;
-  int min_y = coors[1] < coors[4] ? coors[1]:coors[4];
-  min_y = coors[7] < min_y ? coors[7]:min_y;
-  int mid_y;
-  if (coors[1] != max_y && coors[1] != min_y)
-    mid_y = coors[1];
-  else if (coors[4] != max_y && coors[4] != min_y)
-    mid_y = coors[4];
-  else if (coors[7] != max_y && coors[7] != min_y)
-    mid_y = coors[7];
-  else 
-    return;
 
   lock_surface();
 
@@ -175,40 +161,116 @@ void draw_triangle(int coors[6], uint32_t color) {
     cays = ca_y_points;
     cainc = 1;
   }
-  if (mid_y == ay) {
-    /* for (p = 0; p < bc_count; p++) { */
-    /*   if (bc_y_points[p] == mid_y) break; */
-    /* } */
-    /* p++; */
-    int oldy;
-    if (p != bc_count) {
-      if (abys[0] == max_y) {
-	int xtrack = 0, ytrack = 0;
-	do {
-	  draw_horizontal(abxs[0], bcxs[0], abys[0], color);
-	  do {
-	    oldy = abys[0];
-	    abxs += abinc;
-	    abys += abinc;
-	    xtrack++;
-	  } while(abys[0] == oldy && xtrack < ab_count);
-	  do {
-	    oldy = bcys[0];
-	    bcxs += bcinc;
-	    bcys += bcinc;
-	    ytrack++;
-	  } while(bcys[0] == oldy && ytrack < bc_count);
-	} while(oldy != mid_y);
-      } else {
-	
-      }
-    }      
-  } else if (mid_y == by) {
-    
-  } else if (mid_y == cy) {
-    
-  }
 
+  ax = coors[0];
+  ay = coors[1];
+  bx = coors[2];
+  by = coors[3];
+  cx = coors[4];
+  cy = coors[5];
+
+  // find the mid y value
+  int max_y = ay > by ? ay:by;
+  max_y = cy > max_y ? cy:max_y;
+  int min_y = ay < by ? ay:by;
+  min_y = cy < min_y ? cy:min_y;
+  int mid_y;
+  if (ay != max_y && ay != min_y)
+    mid_y = ay;
+  else if (by != max_y && by != min_y)
+    mid_y = by;
+  else if (cy != max_y && cy != min_y)
+    mid_y = cy;
+  else 
+    return;
+
+  int *upper_segment_x = NULL;
+  int *upper_segment_y = NULL;
+  int upper_inc = 0;
+  int *lower_segment_x = NULL;
+  int *lower_segment_y = NULL;
+  int lower_inc = 0;
+  int *long_segment_x = NULL;
+  int *long_segment_y = NULL;
+  int long_inc = 0;
+
+  if (mid_y == ay) {
+    long_inc = bcinc;
+    long_segment_x = bcxs;
+    long_segment_y = bcys;
+    if (max_y == by) {
+      upper_inc = abinc;
+      upper_segment_x = abxs;
+      upper_segment_y = abys;
+
+      lower_inc = cainc;
+      lower_segment_x = caxs;
+      lower_segment_y = cays;
+    } else if (max_y == cy) {
+      upper_inc = cainc;
+      upper_segment_x = caxs;
+      upper_segment_y = cays;
+
+      lower_inc = abinc;
+      lower_segment_x = abxs;
+      lower_segment_y = abys;
+    }
+  } else if (mid_y == by) {
+    long_inc = cainc;
+    long_segment_x = caxs;
+    long_segment_y = cays;
+    if (max_y == ay) {
+      upper_inc = abinc;
+      upper_segment_x = abxs;
+      upper_segment_y = abys;
+
+      lower_inc = bcinc;
+      lower_segment_x = bcxs;
+      lower_segment_y = bcys;
+    } else if (max_y == cy) {
+      upper_inc = bcinc;
+      upper_segment_x = bcxs;
+      upper_segment_y = bcys;
+
+      lower_inc = abinc;
+      lower_segment_x = abxs;
+      lower_segment_y = abys;
+    }
+  } else if (mid_y == cy) {
+    long_inc = abinc;
+    long_segment_x = abxs;
+    long_segment_y = abys;
+    if (max_y == ay) {
+      upper_inc = cainc;
+      upper_segment_x = caxs;
+      upper_segment_y = cays;
+
+      lower_inc = bcinc;
+      lower_segment_x = bcxs;
+      lower_segment_y = bcys;
+    } else if (max_y == by) {
+      upper_inc = bcinc;
+      upper_segment_x = bcxs;
+      upper_segment_y = bcys;
+ 
+      lower_inc = cainc;
+      lower_segment_x = caxs;
+      lower_segment_y = cays;
+    }
+  } else 
+    printf("midy(%d)!=ay(%d), by(%d), or cy(%d)\n", mid_y, ay, by, cy);
+    printf("lower: %p, upper: %p, long: %p\n", lower_segment_x, upper_segment_x, long_segment_x);
+  int longi = 0, shorti = 0, oldy = -1;
+  do {
+    draw_horizontal(upper_segment_x[shorti],
+		    long_segment_x[longi],
+		    upper_segment_y[shorti],
+		    color);
+    longi++;
+    shorti++;
+    
+  } while (long_segment_y[longi] > mid_y);
+    
   free(ab_x_points);
   free(ab_y_points);
   free(bc_x_points);
