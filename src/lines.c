@@ -37,6 +37,10 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
 }
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
+  if (x1 == x2) {
+    setpix(x1, y, color, 0);
+    return;
+  }
   int x = x1;
   int step = x1 < x2 ? 1 : -1;
   while (x <= x2) {
@@ -174,19 +178,15 @@ void draw_triangle(int coors[6], uint32_t color) {
   // find the mid y value
   int max_y = ay > by ? ay:by;
   max_y = cy > max_y ? cy:max_y;
-  int min_y = ay < by ? ay:by;
-  min_y = cy < min_y ? cy:min_y;
   int mid_y;
-  if (ay != max_y && ay != min_y)
-    mid_y = ay;
-  else if (by != max_y && by != min_y)
-    mid_y = by;
-  else if (cy != max_y && cy != min_y)
-    mid_y = cy;
-  else {
-    printf("huh?");
-    return;
+  if (max_y == ay) {
+    mid_y = by > cy ? by : cy;
+  } else if (max_y == by) {
+    mid_y = ay > cy ? ay : cy;
+  } else if (max_y == cy) {
+    mid_y = by > ay ? by : ay;
   }
+
 
   int *upper_segment_x = NULL;
   int *upper_segment_y = NULL;
@@ -310,7 +310,6 @@ void draw_triangle(int coors[6], uint32_t color) {
 		    long_segment_x[longi],
 		    lower_segment_y[shorti],
 		    color);
-    printf("advancing\n");
     do {
       oldy = long_segment_y[longi];
       longi+=long_inc;
@@ -319,9 +318,7 @@ void draw_triangle(int coors[6], uint32_t color) {
       oldy = lower_segment_y[shorti];
       shorti+=lower_inc;
     } while (lower_segment_y[shorti] == oldy && lower_segment_y[shorti] != long_segment_y[longi]);
-    
-    printf("advanced\n");
-  } while (shorti * lower_inc < lower_count);
+      } while (shorti * lower_inc < lower_count);
 
 
   free(ab_x_points);
