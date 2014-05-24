@@ -310,7 +310,8 @@ void draw_triangle(int coors[6], uint32_t color) {
 		 || upper_segment_y[shorti] != long_segment_y[longi]));
   } while (shorti * upper_inc < upper_count);
   if (longi * long_inc < long_count) {
-    longi -= long_inc;
+    while (long_segment_y[longi] < lower_segment_y[0]) 
+      longi -= long_inc;
     shorti = 0;
     do {
       printf("drawing lower (%d, %d) (%d, %d)\n", lower_segment_x[shorti],
