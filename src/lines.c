@@ -41,6 +41,10 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
     setpix(x1, y, color, 0);
     return;
   }
+  if (x1 < x2 && x1 < 0)
+    x1 = 0;
+  else if (x2 <= x1 && x2 < 0)
+    x2 = 0;
   char has_drawn = 0;
   int x = x1;
   int step = x1 < x2 ? 1 : -1;
@@ -194,6 +198,9 @@ void draw_triangle(int coors[6], uint32_t color) {
     mid_y = ay > cy ? ay : cy;
   } else if (max_y == cy) {
     mid_y = by > ay ? by : ay;
+  } else {
+    printf("mid_y can't be found\n");
+    return;
   }
 
 
@@ -312,7 +319,10 @@ void draw_triangle(int coors[6], uint32_t color) {
   if (longi * long_inc < long_count) {
     //while (long_segment_y[longi] < lower_segment_y[0]) 
     //  longi -= long_inc;
-    shorti = lower_inc;
+    shorti = 0;
+    while (shorti * lower_inc < lower_count &&
+	   (lower_segment_y[shorti ] == lower_segment_y[shorti + lower_inc]))
+      shorti += lower_inc;
     do {
       printf("drawing lower (%d, %d) (%d, %d)\n", lower_segment_x[shorti],
 	     lower_segment_y[shorti], long_segment_x[longi],
