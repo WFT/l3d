@@ -41,11 +41,16 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
     setpix(x1, y, color, 0);
     return;
   }
+  char has_drawn = 0;
   int x = x1;
   int step = x1 < x2 ? 1 : -1;
   while (x <= x2) {
-    if (pix_in_screen(x, y))
+    if (pix_in_screen(x, y)) {
       setpix(x, y, color, 0);
+      has_drawn = 1;
+    } else if (has_drawn) {
+      break;
+    }
     x+=step;
   }
 }
@@ -291,15 +296,17 @@ void draw_triangle(int coors[6], uint32_t color) {
 		    color);
     do {
       longi+=long_inc;
-    } while (long_segment_y[longi] == long_segment_y[longi + long_inc] && long_segment_y[longi] > mid_y);
+    } while ((long_segment_y[longi] == long_segment_y[longi + long_inc]
+	     && long_segment_y[longi] > mid_y)
+	     && longi * long_inc < lower_count);
     do {
       shorti+=upper_inc;
-    } while (upper_segment_y[shorti] == upper_segment_y[shorti + upper_inc] || upper_segment_y[shorti] != long_segment_y[longi]);
+    } while (longi * long_inc < long_count && shorti * upper_inc < upper_count
+	     && (upper_segment_y[shorti] == upper_segment_y[shorti + upper_inc]
+		 || upper_segment_y[shorti] != long_segment_y[longi]));
   } while (shorti * upper_inc < upper_count);
   if (longi * long_inc < long_count) {
-    do {
-      longi -= long_inc;
-    } while (lower_segment_y[0] != long_segment_y[longi]); // lower_segment_x[0] != long_segment_x[longi] || 
+    longi -= long_inc;
     shorti = 0;
     do {
       printf("drawing lower (%d, %d) (%d, %d)\n", lower_segment_x[shorti],
@@ -311,10 +318,13 @@ void draw_triangle(int coors[6], uint32_t color) {
 		      color);
       do {
 	longi+=long_inc;
-      } while (long_segment_y[longi] == long_segment_y[longi + long_inc] && long_segment_y[longi] <= mid_y);
+      } while (long_segment_y[longi] == long_segment_y[longi + long_inc] && 
+	       longi * long_inc < long_count);
       do {
 	shorti+=lower_inc;
-      } while (lower_segment_y[shorti] == lower_segment_y[shorti + lower_inc] || lower_segment_y[shorti] != long_segment_y[longi]);
+      } while (longi * long_inc < long_count && shorti * lower_inc < lower_count
+	       && (lower_segment_y[shorti] == lower_segment_y[shorti + lower_inc]
+		   || lower_segment_y[shorti] != long_segment_y[longi]));
     } while (shorti * lower_inc < lower_count);
   }
   
