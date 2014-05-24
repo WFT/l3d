@@ -51,7 +51,7 @@ Matrix * rotate_z_mat(double rad) {
   return ret;
 }
 
-Matrix * apply_transform(Matrix *transform, Matrix **obj) {
+void apply_transform(Matrix *transform, Matrix **obj) {
   Matrix *ret = mat_multiply(transform, *obj);
   mat_destruct(*obj);
   mat_destruct(transform);

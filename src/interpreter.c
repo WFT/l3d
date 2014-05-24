@@ -107,6 +107,26 @@ void interpret(char *l) {
     mat_extend(tri, obj);
     mat_destruct(cube);
     mat_destruct(obj);
+  } else if (strcmp(list[0], "tri") == 0) {
+    printf("drawing some triangle\n");
+    double col[4] = {0, 0, 0, 1};
+    Matrix *triangle = mat_construct(0, 4);
+    col[0] = args[0];
+    col[1] = args[1];
+    col[2] = args[2];
+    mat_add_column(triangle, col);
+    col[0] = args[3];
+    col[1] = args[4];
+    col[2] = args[5];
+    mat_add_column(triangle, col); 
+    col[0] = args[6];
+    col[1] = args[7];
+    col[2] = args[8];
+    mat_add_column(triangle, col);
+    Matrix *obj = mat_multiply(tform, triangle);
+    mat_extend(tri, obj);
+    mat_destruct(triangle);
+    mat_destruct(obj);
   } else if (strcmp(list[0], "identity") == 0) {
     tform = identity_mat();
   } else if (strcmp(list[0], "move") == 0) {
