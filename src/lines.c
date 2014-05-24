@@ -53,6 +53,10 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
     }
     x+=step;
   }
+#if DRAW_EDGES
+  setpix(x1, y, EDGE_COLOR, 0);
+  setpix(x2, y, EDGE_COLOR, 0);
+#endif
 }
 
 // discover all points using the bresenham_step
@@ -97,7 +101,7 @@ void draw_triangle(int coors[6], uint32_t color) {
 
   lock_surface();
 
-#if DRAW_LINES
+#if DRAW_HORIZONTALS
   int p;
   order_endpoints(&ax, &ay, &bx, &by);
   int ab_count = point_count(ax, ay, bx, by);
