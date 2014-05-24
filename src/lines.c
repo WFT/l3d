@@ -331,7 +331,6 @@ void draw_triangle(int coors[6], uint32_t color) {
 		   || lower_segment_y[shorti] != long_segment_y[longi]));
     } while (shorti * lower_inc < lower_count);
   }
-  
   free(ab_x_points);
   free(ab_y_points);
   free(bc_x_points);
