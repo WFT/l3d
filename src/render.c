@@ -154,7 +154,6 @@ void spincyclops(Matrix *faces, double *eye, int del) {
   Matrix *unspun = faces;
   faces = mat_multiply(xyz, faces);
   uint32_t color = rgb(0, 200, 0);
-  uint32_t black = rgb(0, 0, 0);
   clear_screen();
   mixcolors(0);
   while(!endspin()) {
@@ -164,7 +163,7 @@ void spincyclops(Matrix *faces, double *eye, int del) {
     renderperspective(faces, eye, color);
     SDL_Delay(del);
     update_display();
-    renderperspective(faces, eye, black);
+    clear_pixel_buffer();
   }
   clear_screen();
   printf("Spin finished... Resetting display.\n");
@@ -182,11 +181,8 @@ void spinstereo(Matrix *faces, double *eyes, int del) {
   faces = mat_multiply(xyz, faces);
   uint32_t red = rgb(127, 0, 0);
   uint32_t cyan = rgb(0, 127, 127);
-  uint32_t black = rgb(0, 0, 0);
   clear_screen();
   while(!endspin()) {
-    renderperspective(faces, el, black);
-    renderperspective(faces, er, black);
     rot = mat_multiply(xyz, faces);
     mat_destruct(faces);
     faces = rot;
@@ -196,6 +192,7 @@ void spinstereo(Matrix *faces, double *eyes, int del) {
     mixcolors(0);
     SDL_Delay(del);
     update_display();
+    clear_pixel_buffer();
   }
   clear_screen();
   printf("Spin finished... Resetting display.\n");
