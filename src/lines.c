@@ -44,7 +44,7 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
   char has_drawn = 0;
   int x = x1;
   int step = x1 < x2 ? 1 : -1;
-  while (x <= x2) {
+  while (x1 < x2 ? x <= x2 : x >= x2) {
     if (pix_in_screen(x, y)) {
       setpix(x, y, color, 0);
       has_drawn = 1;
