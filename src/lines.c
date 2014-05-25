@@ -320,6 +320,16 @@ void draw_triangle(int coors[6], uint32_t color) {
   }
 #endif
 
+#if DRAW_EDGES
+  int p;
+  for (p = 0; p < ab_count; p++)
+    setpix(ab_x_points[p], ab_y_points[p], EDGE_COLOR, 0);
+  for (p = 0; p < bc_count; p++)
+    setpix(bc_x_points[p], bc_y_points[p], EDGE_COLOR, 0);
+  for (p = 0; p < ca_count; p++)
+    setpix(ca_x_points[p], ca_y_points[p], EDGE_COLOR, 0);
+#endif  
+
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 
@@ -331,16 +341,6 @@ void draw_triangle(int coors[6], uint32_t color) {
   if (pix_in_screen(cx, cy))
     setpix(cx, cy, color ? VERTICES_COLOR : color, 1);
 #endif
-
-#if DRAW_EDGES
-  int p;
-  for (p = 0; p < ab_count; p++)
-    setpix(ab_x_points[p], ab_y_points[p], EDGE_COLOR, 0);
-  for (p = 0; p < bc_count; p++)
-    setpix(bc_x_points[p], bc_y_points[p], EDGE_COLOR, 0);
-  for (p = 0; p < ca_count; p++)
-    setpix(ca_x_points[p], ca_y_points[p], EDGE_COLOR, 0);
-#endif  
 
   free(ab_x_points);
   free(ab_y_points);
