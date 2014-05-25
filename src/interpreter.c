@@ -225,14 +225,6 @@ void interpret(char *l) {
       return;
     }
     renderstereo(tri, args);
-  } else if (strcmp(list[0], "render-parallel") == 0 ||
-	     strcmp(list[0], "rparallel") == 0) {
-    if (!screen) {
-      printf("ERROR: screen not set\n");
-      free(args);
-      return;
-    }
-    renderparallel(tri);
   } else if (strcmp(list[0], "spinc") == 0) {
     int delay = 13;
     if (argc > 3)

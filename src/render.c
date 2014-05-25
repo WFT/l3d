@@ -92,35 +92,6 @@ void renderstereo(Matrix *faces, double *eyes) {
   update_display();
 }
 
-void renderparallel(Matrix *faces) {
-  uint32_t color = rgb(255, 255, 255);
-  int i;
-  double tri[12];
-  int coors[4];
-  double eye[3] = {0, 0, 100};  
-  clear_screen();
-  for (i = 0; i < faces->cols; i+= 3) {
-    mat_get_column(faces, i, tri);
-    mat_get_column(faces, i+1, tri+4);
-    mat_get_column(faces, i+2, tri+8);
-    if (culltri(tri, eye)) continue;
-    map_coors(tri, tri+1);
-    map_coors(tri+4, tri+5);
-    map_coors(tri+8, tri+9);
-    coors[0] = tri[0];
-    coors[1] = tri[1];
-    coors[2] = tri[4];
-    coors[3] = tri[5];
-    dline(coors, color);
-    coors[0] = tri[8];
-    coors[1] = tri[9];
-    dline(coors, color);
-    coors[2] = tri[0];
-    coors[3] = tri[1];
-  }
-  update_display();
-}
-
 char endspin() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -153,14 +124,13 @@ void spincyclops(Matrix *faces, double *eye, int del) {
   Matrix *rot;
   Matrix *unspun = faces;
   faces = mat_multiply(xyz, faces);
-  uint32_t color = rgb(0, 200, 0);
   clear_screen();
   mixcolors(0);
   while(!endspin()) {
     rot = mat_multiply(xyz, faces);
     mat_destruct(faces);
     faces = rot;
-    renderperspective(faces, eye, color);
+    renderperspective(faces, eye, SPIN_FILL_COLOR);
     SDL_Delay(del);
     update_display();
     clear_pixel_buffer();
