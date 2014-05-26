@@ -62,7 +62,7 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
 inline int find_points(int x1, int y1, int x2, int y2,
-		 int *x_points, int *y_points) {
+                       int *x_points, int *y_points) {
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
   int x = x1, y = y1;
@@ -105,8 +105,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int ab_count = point_count(ax, ay, bx, by);
   int *ab_x_points = malloc(ab_count * sizeof(int));
   int *ab_y_points = malloc(ab_count * sizeof(int));
-  ab_count = find_points(ax, ay, bx, by, 
-	      ab_x_points, ab_y_points);
+  ab_count = find_points(ax, ay, bx, by,
+                         ab_x_points, ab_y_points);
 
 
   bx = coors[2];
@@ -115,8 +115,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int bc_count = point_count(bx, by, cx, cy);
   int *bc_x_points = malloc(bc_count * sizeof(int));
   int *bc_y_points = malloc(bc_count * sizeof(int));
-  bc_count = find_points(bx, by,  cx, cy, 
-	      bc_x_points, bc_y_points);
+  bc_count = find_points(bx, by,  cx, cy,
+                         bc_x_points, bc_y_points);
 
   ax = coors[0];
   ay = coors[1];
@@ -127,7 +127,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *ca_x_points = malloc(ca_count * sizeof(int));
   int *ca_y_points = malloc(ca_count * sizeof(int));
   ca_count = find_points(cx, cy, ax, ay,
-	      ca_x_points, ca_y_points);
+                         ca_x_points, ca_y_points);
 
 #if DRAW_FILL
 
@@ -278,7 +278,7 @@ void draw_triangle(int coors[6], uint32_t color) {
       upper_segment_x = bcxs;
       upper_segment_y = bcys;
       upper_count = bc_count;
- 
+
       lower_inc = cainc;
       lower_segment_x = caxs;
       lower_segment_y = cays;
@@ -288,37 +288,37 @@ void draw_triangle(int coors[6], uint32_t color) {
   int longi = 0, shorti = 0;
   while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
     draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
-		    upper_segment_y[shorti], color);
+                    upper_segment_y[shorti], color);
     do
       shorti += upper_inc;
     while (shorti * upper_inc < upper_count
-	   && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]);
+           && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]);
     if (shorti * upper_inc < upper_count) {
-    do
-      longi += long_inc;
-    while (longi * long_inc < long_count
-      	   && long_segment_y[longi + long_inc] == long_segment_y[longi] 
-      	   && long_segment_y[longi] != upper_segment_y[shorti]);
+      do
+        longi += long_inc;
+      while (longi * long_inc < long_count
+             && long_segment_y[longi + long_inc] == long_segment_y[longi]
+             && long_segment_y[longi] != upper_segment_y[shorti]);
     }
   }
   shorti = 0;
   while (shorti * lower_inc < lower_count
-	 && (lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
-	     && lower_segment_y[shorti] != long_segment_y[longi]))
+         && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
+         && lower_segment_y[shorti] != long_segment_y[longi])
     shorti += lower_inc;
 
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
-		    lower_segment_y[shorti], color);
+                    lower_segment_y[shorti], color);
     do
       shorti += lower_inc;
     while (shorti * lower_inc < lower_count
-	   && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]);
+           && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]);
     do
       longi += long_inc;
     while (longi * long_inc < long_count
-      	   && long_segment_y[longi + long_inc] == long_segment_y[longi] 
-      	   && long_segment_y[longi] != lower_segment_y[shorti]);
+           && long_segment_y[longi + long_inc] == long_segment_y[longi]
+           && long_segment_y[longi] != lower_segment_y[shorti]);
   }
 #endif
 
@@ -330,7 +330,7 @@ void draw_triangle(int coors[6], uint32_t color) {
     setpix(bc_x_points[p], bc_y_points[p], EDGE_COLOR, 0);
   for (p = 0; p < ca_count; p++)
     setpix(ca_x_points[p], ca_y_points[p], EDGE_COLOR, 0);
-#endif  
+#endif
 
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
