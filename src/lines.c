@@ -302,10 +302,11 @@ void draw_triangle(int coors[6], uint32_t color) {
     }
   }
   shorti = 0;
-  /*do
-    shorti += lower_inc;
   while (shorti * lower_inc < lower_count
-  && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]);*/
+	 && (lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
+	     && lower_segment_y[shorti] != long_segment_y[longi]))
+    shorti += lower_inc;
+
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
 		    lower_segment_y[shorti], color);
