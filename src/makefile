@@ -1,12 +1,9 @@
 DEPENDENCIES = transform.o parse_util.o display.o render.o matrix.o objects.o lines.o
-SPECIALFLAGS = `sdl2-config --cflags --static-libs` -lm
-STDFLAGS = -g -O3 -std=gnu99
+SDLFLAGS = `sdl2-config --cflags --static-libs`
+STDFLAGS = -g -O3
 
-build:  $(DEPENDENCIES) interpreter.c
-	gcc interpreter.c $(DEPENDENCIES) -lSDL2 -o 3D $(STDFLAGS)
-
-buildf: $(DEPENDENCIES) interpreter.c
-	gcc interpreter.c $(DEPENDENCIES) $(SPECIALFLAGS) -o 3D $(STDFLAGS)
+build: $(DEPENDENCIES) interpreter.c
+	gcc interpreter.c $(DEPENDENCIES) $(STDFLAGS) $(SDLFLAGS) -lm -o 3D 
 
 transform.o: transform.c transform.h
 	gcc transform.c -o transform.o -c $(STDFLAGS)
@@ -18,7 +15,7 @@ objects.o: objects.c objects.h
 	gcc objects.c -o objects.o -c $(STDFLAGS)
 
 display.o: display.c display.h
-	gcc display.c -o display.o -c $(STDFLAGS) $(SPECIALFLAGS)
+	gcc display.c -o display.o -c $(STDFLAGS) $(SDLFLAGS)
 
 render.o: render.c render.h options.h
 	gcc render.c -o render.o -c $(STDFLAGS)
@@ -30,7 +27,7 @@ lines.o: lines.c lines.h options.h
 	gcc lines.c -o lines.o -c $(STDFLAGS)
 
 test: test.c matrix.o transform.o display.o render.o lines.o
-	gcc test.c display.o render.o matrix.o transform.o lines.o -o test $(SPECIALFLAGS) $(STDFLAGS)
+	gcc test.c display.o render.o matrix.o transform.o lines.o -o test $(SDLFLAGS) $(STDFLAGS)
 
 clean:
 	rm -r *.o 3D*
