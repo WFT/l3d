@@ -243,7 +243,7 @@ void interpret(char *l) {
     if (!autocyclops)
       autocyclops = malloc(3 * sizeof(double));
     memcpy(autocyclops, args, 3 * sizeof(double));
-    if (autostereo) {
+    if (autostereo != NULL) {
       free(autostereo);
       autostereo = NULL;
     }
@@ -251,7 +251,7 @@ void interpret(char *l) {
     if (!autostereo)
       autostereo = malloc(6 * sizeof(double));
     memcpy(autostereo, args, 6 * sizeof(double));
-    if (autocyclops) {
+    if (autocyclops != NULL) {
       free(autocyclops);
       autocyclops = NULL;
     }
@@ -302,9 +302,9 @@ int main(int argc, char **argv) {
     if (!fgets(inbuf, MAX_LINE, in))
       return 0;
     interpret(inbuf);
-    if (autocyclops)
+    if (autocyclops != NULL)
       rendercyclops(tri, autocyclops);
-    else if (autostereo)
+    else if (autostereo != NULL)
       renderstereo(tri, autostereo);
     if (nowframe == totalframes)
       quit = 1;
