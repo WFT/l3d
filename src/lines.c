@@ -37,6 +37,7 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
 }
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
+  printf("x1:%d x2:%d at y:%d\n", x1, x2, y);
   if (x1 == x2) {
     setpix(x1, y, color, 0);
     return;
@@ -304,9 +305,12 @@ void draw_triangle(int coors[6], uint32_t color) {
   shorti = 0;
   while (shorti * lower_inc < lower_count
          && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
-         && lower_segment_y[shorti] != long_segment_y[longi])
+         && lower_segment_y[shorti] != long_segment_y[longi]) {
+    //    printf("skipping (%d, %d)\n", lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
-
+    
+  }
+  //  printf("arrived (%d, %d)\n", lower_segment_x[shorti], lower_segment_y[shorti]);
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
                     lower_segment_y[shorti], color);
@@ -352,4 +356,5 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(ca_y_points);
 
   unlock_surface();
+  printf("drew triangle\n");
 }
