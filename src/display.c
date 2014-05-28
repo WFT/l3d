@@ -200,7 +200,6 @@ void clear_pixel_buffer() {
   SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
 }
 
-
 // call to clean up
 void finish_live_display() {
   SDL_DestroyWindow(win);
@@ -214,8 +213,6 @@ char should_quit() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
-      finish_live_display();
-      SDL_Quit();
       return 1;
     }
   }

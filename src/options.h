@@ -9,7 +9,7 @@
 
 #define DRAW_FILL 1
 
-#define DRAW_VERTICES 1
+#define DRAW_VERTICES 0
 #define VERTICES_COLOR 0xFF00FF
 
 #define DRAW_EDGES 1
