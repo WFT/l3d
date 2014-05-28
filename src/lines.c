@@ -295,7 +295,13 @@ void draw_triangle(int coors[6], uint32_t color) {
     printf("skipping (%d, %d)\n", upper_segment_x[shorti], upper_segment_y[shorti]);
     shorti += upper_inc;
     
+  }  
+  while (longi * long_inc < long_count
+	 && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	 || long_segment_y[longi] != upper_segment_y[shorti])) {
+    longi += long_inc;
   }
+
   while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
     printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
@@ -307,8 +313,8 @@ void draw_triangle(int coors[6], uint32_t color) {
     do
       longi += long_inc;
     while (longi * long_inc < long_count
-	   && long_segment_y[longi + long_inc] == long_segment_y[longi]
-	   && (long_segment_y[longi] != upper_segment_y[shorti]));
+	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	   || long_segment_y[longi] != upper_segment_y[shorti]));
   }
   shorti = 0;
   while (shorti * lower_inc < lower_count
@@ -330,8 +336,8 @@ void draw_triangle(int coors[6], uint32_t color) {
     do
       longi += long_inc;
     while (longi * long_inc < long_count
-           && long_segment_y[longi + long_inc] == long_segment_y[longi]
-           && long_segment_y[longi] != lower_segment_y[shorti]);
+           && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	       || long_segment_y[longi] != lower_segment_y[shorti]));
   }
 #endif
 
