@@ -18,11 +18,11 @@ if len(sys.argv) > 1:
             if y == -1:
                 y = newy
             else:
-                if newy != y - 1:
+                if newy - 1 != y:
                     if y == newy:
                         print 'eq',
                     else:
                         print 'nequals',
-                    print 'found on line ', i
+                    print 'found on line ', i - 1
 
 print 'done;'
