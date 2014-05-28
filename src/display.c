@@ -213,9 +213,8 @@ void finish_live_display() {
 char should_quit() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-    if ( event.type == SDL_QUIT ) {
-      SDL_DestroyRenderer(ren);
-      SDL_DestroyWindow(win);
+    if (event.type == SDL_QUIT) {
+      finish_live_display();
       SDL_Quit();
       return 1;
     }
