@@ -291,7 +291,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   int longi = 0, shorti = 0;
   while (shorti * upper_inc < upper_count
          && (upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]
-	     && upper_segment_y[shorti] != long_segment_y[longi])) {
+	     || upper_segment_y[shorti] != long_segment_y[longi])) {
     printf("skipping (%d, %d)\n", upper_segment_x[shorti], upper_segment_y[shorti]);
     shorti += upper_inc;
     
@@ -312,8 +312,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   }
   shorti = 0;
   while (shorti * lower_inc < lower_count
-         && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
-         && lower_segment_y[shorti] != long_segment_y[longi]) {
+         && (lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
+	     || lower_segment_y[shorti] != long_segment_y[longi])) {
     printf("skipping %d/%d: (%d, %d)\n", shorti, lower_count, lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
     
@@ -365,5 +365,5 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(ca_y_points);
 
   unlock_surface();
-  //printf("drew triangle\n");
+  printf("drew triangle\n");
 }
