@@ -33,11 +33,11 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
   int dy = y2 - y1;
   if (dy < 0)
     dy = -dy;
-  return (dx > dy ? dx : dy) + 1;
+  return (dx > dy ? dx : dy) + 2;
 }
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
-  printf("x1:%d x2:%d at y:%d\n", x1, x2, y);
+  //printf("x1:%d x2:%d at y:%d\n", x1, x2, y);
   if (x1 == x2) {
     setpix(x1, y, color, 0);
     return;
@@ -88,6 +88,8 @@ inline int find_points(int x1, int y1, int x2, int y2,
       p++;
     }
   }
+  x_points[p] = x;
+  y_points[p] = y;
   return p;
 }
 
@@ -288,7 +290,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   }
   int longi = 0, shorti = 0;
   while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
-    printf("longy: %d\n", long_segment_y[longi]);
+    //printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
                     upper_segment_y[shorti], color);
     do
@@ -307,13 +309,13 @@ void draw_triangle(int coors[6], uint32_t color) {
   while (shorti * lower_inc < lower_count
          && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]
          && lower_segment_y[shorti] != long_segment_y[longi]) {
-    printf("skipping (%d, %d)\n", lower_segment_x[shorti], lower_segment_y[shorti]);
+    //printf("skipping (%d, %d)\n", lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
     
   }
-  printf("arrived %d: (%d, %d) (longy:%d)\n", shorti, lower_segment_x[shorti], lower_segment_y[shorti], long_segment_y[longi]);
+  //printf("arrived %d: (%d, %d) (longy:%d)\n", shorti, lower_segment_x[shorti], lower_segment_y[shorti], long_segment_y[longi]);
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
-    printf("longy: %d\n", long_segment_y[longi]);
+    //printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
                     lower_segment_y[shorti], color);
     do
@@ -358,5 +360,5 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(ca_y_points);
 
   unlock_surface();
-  printf("drew triangle\n");
+  //printf("drew triangle\n");
 }
