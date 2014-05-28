@@ -12,9 +12,7 @@ if len(sys.argv) > 1:
             elif l == 'drew triangle':
                 y = -1
                 continue
-            elif 'arrived' in l:
-                continue
-            elif 'skipping' in l:
+            elif l[0:2] != 'x1':
                 continue
             newy = int(l.split(':')[-1])
             if y == -1:
