@@ -327,7 +327,7 @@ void draw_triangle(int coors[6], uint32_t color) {
     longi += long_inc;
   }
   while (shorti * lower_inc < lower_count - 1
-	 && (lower_segment_y[shorti] >= stopper
+	 && (lower_segment_y[shorti] > stopper
 	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
     printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
 	   lower_segment_x[shorti], lower_segment_y[shorti]);
