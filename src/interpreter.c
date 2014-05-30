@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
-#include <fcntl.h>
+//#include <fcntl.h>
 #include "display.h"
 #include "render.h"
 #include "matrix.h"
@@ -260,10 +260,10 @@ void interpret(char *l) {
     if (in != stdin)
       fclose(in);
     in = fopen(list[1], "r");
-    int fd = fileno(in);
-    int flags = fcntl(fd, F_GETFL, 0);
-    flags |= O_NONBLOCK;
-    fcntl(fd, F_SETFL, flags);
+    //    int fd = fileno(in);
+    //int flags = fcntl(fd, F_GETFL, 0);
+    //flags |= O_NONBLOCK;
+    //fcntl(fd, F_SETFL, flags);
   } else if (strcmp(list[0], "files") == 0) {
     char *fname;
     if (asprintf(&fname, "%s%03d.ppm", list[1], nowframe) == -1) {
@@ -297,18 +297,18 @@ int main(int argc, char **argv) {
   tri = mat_construct(0, 4);
   tform = identity_mat();
   in = stdin;
-  int fd = fileno(in);
-  int flags = fcntl(fd, F_GETFL, 0);
-  flags |= O_NONBLOCK;
-  fcntl(fd, F_SETFL, flags);
+  //int fd = fileno(in);
+  //int flags = fcntl(fd, F_GETFL, 0);
+  //flags |= O_NONBLOCK;
+  //fcntl(fd, F_SETFL, flags);
   screen = 0;
   rendering_initialized = 0;
   if (argc > 1) {
     in = fopen(argv[1], "r");
-    fd = fileno(in);
-    flags = fcntl(fd, F_GETFL, 0);
-    flags |= O_NONBLOCK;
-    fcntl(fd, F_SETFL, flags);
+    //fd = fileno(in);
+    //flags = fcntl(fd, F_GETFL, 0);
+    //flags |= O_NONBLOCK;
+    //fcntl(fd, F_SETFL, flags);
   }
   char inbuf[MAX_LINE + 1];
   while (!quit) {
