@@ -318,16 +318,17 @@ void draw_triangle(int coors[6], uint32_t color) {
     }
   }
   shorti = 0;
+  int stopper = long_segment_y[longi];
   while (longi * long_inc < long_count - 1
-	 && (long_segment_y[longi] != mid_y - 1
-	     || long_segment_y[longi + long_inc] == mid_y - 1)) {
+	 && (long_segment_y[longi] >= stopper
+	     || long_segment_y[longi + long_inc] == long_segment_y[longi])) {
     printf("skipping long %d/%d: (%d, %d)\n", longi, long_count - 1,
 	   long_segment_x[longi], long_segment_y[longi]);
     longi += long_inc;
   }
   while (shorti * lower_inc < lower_count - 1
-	 && (lower_segment_y[shorti] !=  mid_y - 1
-	     || lower_segment_y[shorti + lower_inc] == mid_y - 1)) {
+	 && (lower_segment_y[shorti] >= stopper
+	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
     printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
 	   lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
