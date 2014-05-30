@@ -33,7 +33,7 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
   int dy = y2 - y1;
   if (dy < 0)
     dy = -dy;
-  return (dx > dy ? dx : dy) + 2;
+  return (dx > dy ? dx : dy) + 1;
 }
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
@@ -106,8 +106,8 @@ void draw_triangle(int coors[6], uint32_t color) {
 
   order_endpoints(&ax, &ay, &bx, &by);
   int ab_count = point_count(ax, ay, bx, by);
-  int *ab_x_points = malloc(ab_count * sizeof(int));
-  int *ab_y_points = malloc(ab_count * sizeof(int));
+  int *ab_x_points = malloc((ab_count + 1) * sizeof(int));
+  int *ab_y_points = malloc((ab_count + 1) * sizeof(int));
   ab_count = find_points(ax, ay, bx, by,
                          ab_x_points, ab_y_points);
 
@@ -116,8 +116,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   by = coors[3];
   order_endpoints(&bx, &by, &cx, &cy);
   int bc_count = point_count(bx, by, cx, cy);
-  int *bc_x_points = malloc(bc_count * sizeof(int));
-  int *bc_y_points = malloc(bc_count * sizeof(int));
+  int *bc_x_points = malloc((bc_count + 1) * sizeof(int));
+  int *bc_y_points = malloc((bc_count + 1) * sizeof(int));
   bc_count = find_points(bx, by,  cx, cy,
                          bc_x_points, bc_y_points);
 
@@ -127,8 +127,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   cy = coors[5];
   order_endpoints(&cx, &cy, &ax, &ay);
   int ca_count = point_count(cx, cy, ax, ay);
-  int *ca_x_points = malloc(ca_count * sizeof(int));
-  int *ca_y_points = malloc(ca_count * sizeof(int));
+  int *ca_x_points = malloc((ca_count + 1) * sizeof(int));
+  int *ca_y_points = malloc((ca_count + 1) * sizeof(int));
   ca_count = find_points(cx, cy, ax, ay,
                          ca_x_points, ca_y_points);
 
@@ -301,24 +301,41 @@ void draw_triangle(int coors[6], uint32_t color) {
     longi += long_inc;
   }
 
-  while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
+  while (shorti * upper_inc < upper_count - 1 && longi * long_inc < long_count - 1) {
     printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
                     upper_segment_y[shorti], color);
     do
       shorti += upper_inc;
-    while (shorti * upper_inc < upper_count
+    while (shorti * upper_inc < upper_count - 1
            && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]);
-    if (shorti * upper_inc < upper_count) {
+    if (shorti * upper_inc < upper_count - 1) {
       do
 	longi += long_inc;
-      while (longi * long_inc < long_count
+      while (longi * long_inc < long_count - 1
 	     && (long_segment_y[longi + long_inc] == long_segment_y[longi]
 		 || long_segment_y[longi] != upper_segment_y[shorti]));
     }
   }
   shorti = 0;
-  
+  while (longi * long_inc < long_count - 1
+	 && (long_segment_y[longi] != mid_y - 1
+	     || long_segment_y[longi + long_inc] == mid_y - 1)) {
+    printf("skipping long %d/%d: (%d, %d)\n", longi, long_count - 1,
+	   long_segment_x[longi], long_segment_y[longi]);
+    longi += long_inc;
+  }
+  while (shorti * lower_inc < lower_count - 1
+	 && (lower_segment_y[shorti] !=  mid_y - 1
+	     || lower_segment_y[shorti + lower_inc] == mid_y - 1)) {
+    printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
+	   lower_segment_x[shorti], lower_segment_y[shorti]);
+    shorti += lower_inc;
+  }
+  printf("longy: %d\n", long_segment_y[longi]);
+  draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
+		  lower_segment_y[shorti], color);
+
 #endif
 
 #if DRAW_EDGES
