@@ -89,8 +89,6 @@ inline int find_points(int x1, int y1, int x2, int y2,
       p++;
     }
   }
-  x_points[p] = x;
-  y_points[p] = y;
   return p;
 }
 
@@ -324,34 +322,37 @@ void draw_triangle(int coors[6], uint32_t color) {
 	       || (shorti * upper_inc >= upper_count
 		   && long_segment_y[longi] > mid_y)));
   }
-  /*draw_horizontal(upper_segment_x[upper_count - 1],
-		  long_segment_x[longi],
-		  upper_segment_y[upper_count - 1],
-		  color);*/
   shorti = 0;
   int stopper = long_segment_y[longi];
-  /*while (longi * long_inc < long_count - 1
-	 && (long_segment_y[longi] >= stopper
-	     || long_segment_y[longi + long_inc] == long_segment_y[longi])) {
-    printf("skipping long %d/%d: (%d, %d)\n", longi, long_count - 1,
-	   long_segment_x[longi], long_segment_y[longi]);
-    longi += long_inc;
-    }*/
+  printf("long: (%d, %d) -> (%d, %d)\n", long_segment_x[0], long_segment_y[0],
+	 long_segment_x[long_count * long_inc - 1],
+	 long_segment_y[long_count * long_inc - 1]);
+  printf("stopper: %d\n", stopper);
   while (shorti * lower_inc < lower_count - 1
-	 && (lower_segment_y[shorti] > stopper
-	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
+ 	 && (lower_segment_y[shorti] > stopper
+	       || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
     printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
 	   lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
   }
-  if (shorti * lower_inc < lower_count 
-      && longi * long_inc < long_count) {
+  while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
     printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
 		    lower_segment_y[shorti], color);
-  } else {
-    printf("couldn't draw\n");
+    do
+      shorti += lower_inc;
+    while (shorti * lower_inc < lower_count
+	   && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]);
+    do
+      longi += long_inc;
+    while (longi * long_inc < long_count
+	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	       || (shorti * lower_inc < lower_count
+		   && long_segment_y[longi] != lower_segment_y[shorti])
+	       || (shorti * lower_inc >= lower_count
+		   && long_segment_y[longi] > mid_y)));
   }
+  printf("shorti: %d/%d, longi: %d/%d\n", shorti, lower_count, longi, long_count);
 
 #endif
 
