@@ -142,8 +142,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *abys;
   int abinc;
   if (ab_y_points[ab_count - 1] > ab_y_points[0]) {
-    abxs = ab_x_points + ab_count;
-    abys = ab_y_points + ab_count;
+    abxs = ab_x_points + ab_count - 1;
+    abys = ab_y_points + ab_count - 1;
     abinc = -1;
   } else {
     abxs = ab_x_points;
@@ -155,8 +155,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *bcys;
   int bcinc;
   if (bc_y_points[bc_count  - 1] > bc_y_points[0]) {
-    bcxs = bc_x_points + bc_count;
-    bcys = bc_y_points + bc_count;
+    bcxs = bc_x_points + bc_count - 1;
+    bcys = bc_y_points + bc_count - 1;
     bcinc = -1;
   } else {
     bcxs = bc_x_points;
@@ -168,8 +168,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *cays;
   int cainc;
   if (ca_y_points[ca_count  - 1] > ca_y_points[0]) {
-    caxs = ca_x_points + ca_count;
-    cays = ca_y_points + ca_count;
+    caxs = ca_x_points + ca_count - 1;
+    cays = ca_y_points + ca_count - 1;
     cainc = -1;
   } else {
     caxs = ca_x_points;
@@ -316,6 +316,7 @@ void draw_triangle(int coors[6], uint32_t color) {
     do
 	longi += long_inc;
     while (longi * long_inc < long_count - 1
+	   && long_segment_y[longi + long_inc] >= mid_y
 	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
 	       || (shorti * upper_inc < upper_count
 		   && long_segment_y[longi] != upper_segment_y[shorti])
@@ -325,8 +326,11 @@ void draw_triangle(int coors[6], uint32_t color) {
   shorti = 0;
   int stopper = long_segment_y[longi];
   printf("long: (%d, %d) -> (%d, %d)\n", long_segment_x[0], long_segment_y[0],
-	 long_segment_x[long_count * long_inc - 1],
-	 long_segment_y[long_count * long_inc - 1]);
+	 long_segment_x[(long_count - 1) * long_inc],
+	 long_segment_y[(long_count - 1) * long_inc]);
+  printf("lower: (%d, %d) -> (%d, %d)\n", lower_segment_x[0], lower_segment_y[0],
+	 lower_segment_x[(lower_count - 1) * lower_inc],
+	 lower_segment_y[(lower_count - 1) * lower_inc]);
   printf("stopper: %d\n", stopper);
   while (shorti * lower_inc < lower_count - 1
  	 && (lower_segment_y[shorti] > stopper
