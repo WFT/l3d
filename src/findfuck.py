@@ -10,6 +10,8 @@ if len(sys.argv) > 1:
             if l == 'MAN DOWN':
                 break
             elif l == 'drew triangle':
+                if y == -1:
+                    print 'empty triangle on line', i
                 y = -1
                 continue
             elif l[0:2] != 'x1':
