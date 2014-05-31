@@ -64,6 +64,7 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
 // RETURNS: number of points actually found
 inline int find_points(int x1, int y1, int x2, int y2,
                        int *x_points, int *y_points) {
+  printf("finding from (%d, %d) to (%d, %d)\n", x1, y1, x2, y2);
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
   int x = x1, y = y1;
@@ -137,12 +138,14 @@ void draw_triangle(int coors[6], uint32_t color) {
 
 #if DRAW_FILL
 
+  // order arrays by y descending
+
   int *abxs;
   int *abys;
   int abinc;
   if (ab_y_points[ab_count - 1] > ab_y_points[0]) {
-    abxs = ab_x_points + ab_count - 1;
-    abys = ab_y_points + ab_count - 1;
+    abxs = ab_x_points + ab_count;
+    abys = ab_y_points + ab_count;
     abinc = -1;
   } else {
     abxs = ab_x_points;
@@ -154,8 +157,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *bcys;
   int bcinc;
   if (bc_y_points[bc_count  - 1] > bc_y_points[0]) {
-    bcxs = bc_x_points + bc_count - 1;
-    bcys = bc_y_points + bc_count - 1;
+    bcxs = bc_x_points + bc_count;
+    bcys = bc_y_points + bc_count;
     bcinc = -1;
   } else {
     bcxs = bc_x_points;
@@ -167,8 +170,8 @@ void draw_triangle(int coors[6], uint32_t color) {
   int *cays;
   int cainc;
   if (ca_y_points[ca_count  - 1] > ca_y_points[0]) {
-    caxs = ca_x_points + ca_count - 1;
-    cays = ca_y_points + ca_count - 1;
+    caxs = ca_x_points + ca_count;
+    cays = ca_y_points + ca_count;
     cainc = -1;
   } else {
     caxs = ca_x_points;
@@ -198,6 +201,7 @@ void draw_triangle(int coors[6], uint32_t color) {
     return;
   }
 
+  //categorize lines by upper, lower, long
 
   int *upper_segment_x = NULL;
   int *upper_segment_y = NULL;
@@ -316,7 +320,9 @@ void draw_triangle(int coors[6], uint32_t color) {
     while (longi * long_inc < long_count - 1
 	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
 	       || (shorti * upper_inc < upper_count
-		   && long_segment_y[longi] != upper_segment_y[shorti])));
+		   && long_segment_y[longi] != upper_segment_y[shorti])
+	       || (shorti * upper_inc >= upper_count
+		   && long_segment_y[longi] > mid_y)));
   }
   /*draw_horizontal(upper_segment_x[upper_count - 1],
 		  long_segment_x[longi],
