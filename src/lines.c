@@ -37,7 +37,6 @@ inline int point_count(int x1, int y1, int x2, int y2)  {
 }
 
 inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
-  printf("x1:%d x2:%d at y:%d\n", x1, x2, y);
   if (x1 == x2) {
     setpix(x1, y, color, 0);
     return;
@@ -64,7 +63,6 @@ inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
 // RETURNS: number of points actually found
 inline int find_points(int x1, int y1, int x2, int y2,
                        int *x_points, int *y_points) {
-  printf("finding from (%d, %d) to (%d, %d)\n", x1, y1, x2, y2);
   int dx = x2 - x1;
   int dy = y2 > y1?y2 - y1:y1 - y2;
   int x = x1, y = y1;
@@ -89,8 +87,6 @@ inline int find_points(int x1, int y1, int x2, int y2,
       p++;
     }
   }
-  
-  printf("last point: (%d, %d)\n", x_points[p-1], y_points[p-1]);
   return p;
 }
 
@@ -102,9 +98,6 @@ void draw_triangle(int coors[6], uint32_t color) {
   int by = coors[3];
   int cx = coors[4];
   int cy = coors[5];
-
-  printf("triangle A(%d, %d) B(%d, %d) C(%d, %d)\n",
-	 ax, ay, bx, by, cx, cy);
 
   lock_surface();
 
@@ -298,9 +291,7 @@ void draw_triangle(int coors[6], uint32_t color) {
   int longi = 0, shorti = 0;
   while (shorti * upper_inc < upper_count
          && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]) {
-    printf("skipping (%d, %d)\n", upper_segment_x[shorti], upper_segment_y[shorti]);
     shorti += upper_inc;
-    
   }  
   while (longi * long_inc < long_count
 	 && (long_segment_y[longi + long_inc] == long_segment_y[longi]
@@ -308,7 +299,6 @@ void draw_triangle(int coors[6], uint32_t color) {
     longi += long_inc;
   }
   while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
-    printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
                     upper_segment_y[shorti], color);
     do
@@ -327,28 +317,16 @@ void draw_triangle(int coors[6], uint32_t color) {
   }
   while (longi * long_inc < long_count - 1
 	 && (long_segment_y[longi + long_inc] >= mid_y)) {
-    printf("skipping long %d/%d: (%d, %d)\n", longi, long_count - 1,
-	   long_segment_x[longi], long_segment_y[longi]);
     longi += long_inc;
   }
   shorti = 0;
   int stopper = long_segment_y[longi];
-  printf("long: (%d, %d) -> (%d, %d)\n", long_segment_x[0], long_segment_y[0],
-	 long_segment_x[(long_count - 1) * long_inc],
-	 long_segment_y[(long_count - 1) * long_inc]);
-  printf("lower: (%d, %d) -> (%d, %d)\n", lower_segment_x[0], lower_segment_y[0],
-	 lower_segment_x[(lower_count - 1) * lower_inc],
-	 lower_segment_y[(lower_count - 1) * lower_inc]);
-  printf("stopper: %d, mid_y: %d\n", stopper, mid_y);
   while (shorti * lower_inc < lower_count - 1
  	 && (lower_segment_y[shorti] > stopper
 	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
-    printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
-	   lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
   }
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
-    printf("longy: %d\n", long_segment_y[longi]);
     draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
 		    lower_segment_y[shorti], color);
     do
@@ -364,8 +342,6 @@ void draw_triangle(int coors[6], uint32_t color) {
 	       || (shorti * lower_inc >= lower_count
 		   && long_segment_y[longi] > mid_y)));
   }
-  printf("shorti: %d/%d, longi: %d/%d\n", shorti, lower_count, longi, long_count);
-
 #endif
 
 #if DRAW_EDGES
@@ -398,5 +374,4 @@ void draw_triangle(int coors[6], uint32_t color) {
   free(ca_y_points);
 
   unlock_surface();
-  printf("drew triangle\n");
 }
