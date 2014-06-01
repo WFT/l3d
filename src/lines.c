@@ -315,10 +315,6 @@ void draw_triangle(int coors[6], uint32_t color) {
 	       || (shorti * upper_inc >= upper_count
 		   && long_segment_y[longi] > mid_y)));
   }
-  while (longi * long_inc < long_count - 1
-	 && (long_segment_y[longi + long_inc] >= mid_y)) {
-    longi += long_inc;
-  }
   shorti = 0;
   int stopper = long_segment_y[longi];
   while (shorti * lower_inc < lower_count - 1
