@@ -73,7 +73,7 @@ inline int find_points(int x1, int y1, int x2, int y2,
   int p = 0;
   if (dx > dy) {
     int acc  = dx/2;
-    while (x < x2) {
+    while (x <= x2) {
       x_points[p] = x;
       y_points[p] = y;
       bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
@@ -89,6 +89,8 @@ inline int find_points(int x1, int y1, int x2, int y2,
       p++;
     }
   }
+  
+  printf("last point: (%d, %d)\n", x_points[p-1], y_points[p-1]);
   return p;
 }
 
@@ -323,6 +325,12 @@ void draw_triangle(int coors[6], uint32_t color) {
 	       || (shorti * upper_inc >= upper_count
 		   && long_segment_y[longi] > mid_y)));
   }
+  while (longi * long_inc < long_count - 1
+	 && (long_segment_y[longi + long_inc] >= mid_y)) {
+    printf("skipping long %d/%d: (%d, %d)\n", longi, long_count - 1,
+	   long_segment_x[longi], long_segment_y[longi]);
+    longi += long_inc;
+  }
   shorti = 0;
   int stopper = long_segment_y[longi];
   printf("long: (%d, %d) -> (%d, %d)\n", long_segment_x[0], long_segment_y[0],
@@ -331,10 +339,10 @@ void draw_triangle(int coors[6], uint32_t color) {
   printf("lower: (%d, %d) -> (%d, %d)\n", lower_segment_x[0], lower_segment_y[0],
 	 lower_segment_x[(lower_count - 1) * lower_inc],
 	 lower_segment_y[(lower_count - 1) * lower_inc]);
-  printf("stopper: %d\n", stopper);
+  printf("stopper: %d, mid_y: %d\n", stopper, mid_y);
   while (shorti * lower_inc < lower_count - 1
  	 && (lower_segment_y[shorti] > stopper
-	       || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
+	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
     printf("skipping lower %d/%d: (%d, %d)\n", shorti, lower_count - 1,
 	   lower_segment_x[shorti], lower_segment_y[shorti]);
     shorti += lower_inc;
