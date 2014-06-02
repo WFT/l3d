@@ -91,13 +91,14 @@ inline int find_points(int x1, int y1, int x2, int y2,
 }
 
 // takes an array of six coordinates alternating x y z
-void draw_triangle(int coors[6], uint32_t color) {
-  int ax = coors[0];
-  int ay = coors[1];
-  int bx = coors[2];
-  int by = coors[3];
-  int cx = coors[4];
-  int cy = coors[5];
+void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
+		   uint32_t color) {
+  int ax = a.x;
+  int ay = a.y;
+  int bx = b.x;
+  int by = b.y;
+  int cx = c.x;
+  int cy = c.y;
 
   lock_surface();
 
@@ -109,8 +110,8 @@ void draw_triangle(int coors[6], uint32_t color) {
                          ab_x_points, ab_y_points);
 
 
-  bx = coors[2];
-  by = coors[3];
+  bx = b.x;
+  by = b.y;
   order_endpoints(&bx, &by, &cx, &cy);
   int bc_count = point_count(bx, by, cx, cy);
   int *bc_x_points = malloc((bc_count + 1) * sizeof(int));
@@ -118,10 +119,10 @@ void draw_triangle(int coors[6], uint32_t color) {
   bc_count = find_points(bx, by,  cx, cy,
                          bc_x_points, bc_y_points);
 
-  ax = coors[0];
-  ay = coors[1];
-  cx = coors[4];
-  cy = coors[5];
+  ax = a.x;
+  ay = a.y;
+  cx = c.x;
+  cy = c.y;
   order_endpoints(&cx, &cy, &ax, &ay);
   int ca_count = point_count(cx, cy, ax, ay);
   int *ca_x_points = malloc((ca_count + 1) * sizeof(int));
@@ -172,12 +173,12 @@ void draw_triangle(int coors[6], uint32_t color) {
     cainc = 1;
   }
 
-  ax = coors[0];
-  ay = coors[1];
-  bx = coors[2];
-  by = coors[3];
-  cx = coors[4];
-  cy = coors[5];
+  ax = a.x;
+  ay = a.y;
+  bx = b.x;
+  by = b.y;
+  cx = c.x;
+  cy = c.y;
 
   // find the mid y value
   int max_y = ay > by ? ay:by;
