@@ -8,6 +8,9 @@ SDL_Surface *surface = NULL;
 SDL_Renderer *ren = NULL;
 SDL_Texture *tex = NULL;
 
+// the kz_buf for lighting + z-buf (to later be pushed to screen)
+KZ_Point **kz_buf;
+
 // should mix colors when adding new pixel
 char mix = 0;
 
@@ -16,7 +19,8 @@ void log_SDL_error(const char *e) {
 }
 
 int init_live_render(int w, int h) {
-
+  // init kz_buf
+  // TODO
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
     log_SDL_error("SDL_Init()");
     return 1;
@@ -45,7 +49,6 @@ int init_live_render(int w, int h) {
     log_SDL_error("SDL_CreateTextureFromSurface()");
     return 1;
   }
-  //SDL_RenderClear(ren);
   clear_screen();
   rendering_initialized = 1;
   return 0;
@@ -88,6 +91,12 @@ uint32_t getpix(int x, int y, char lock) {
 
   return *((uint32_t *)p);
 }
+
+// inserts this point into the kz buffer if it isn't occluded
+void consider_KZ_Point(KZ_Point p) {
+
+}
+
 
 void lock_surface() {
   if (SDL_MUSTLOCK(surface))
