@@ -35,26 +35,33 @@ inline int point_count(KZ_Point p1, KZ_Point p2)  {
   return (dx > dy ? dx : dy) + 1;
 }
 
-inline void draw_horizontal(int x1, int x2, int y, uint32_t color) {
-  if (x1 == x2) {
-    setpix(x1, y, color, 0);
+inline void draw_horizontal(KZ_Point p1, KZ_Point p2, uint32_t color) {
+  if (p1.x == p2.x) {
+    setpix(p1.x, y, color, 0);
     return;
   }
-  if (x1 < x2 && x1 < 0)
-    x1 = 0;
-  else if (x2 <= x1 && x2 < 0)
-    x2 = 0;
+  if (p1.x < p2.x && p1.x < 0)
+    p1.x = 0;
+  else if (p2.x <= p1.x && p2.x < 0)
+    p2.x = 0;
   char has_drawn = 0;
-  int x = x1;
-  int step = x1 < x2 ? 1 : -1;
-  while (x1 < x2 ? x <= x2 : x >= x2) {
+  int x = p1.x;
+  int xstep = p1.x < p2.x ? 1 : -1;
+  double r = p1.x < p2.x ? p1.kr : p2.kr;
+  double g = p1.x < p2.x ? p1.kg : p2.kg;
+  double b = p1.x < p2.x ? p1.kb : p2.kb;
+  double rstep = p1.x < p2.x ? (p2.kr - p1.kr) * (
+  KZ_Point p;
+  p.y = p1.y;
+  while (p1.x < p2.x ? x <= p2.x : x >= p2.x) {
     if (pix_in_screen(x, y)) {
+      p.x = x;
       setpix(x, y, color, 0);
       has_drawn = 1;
     } else if (has_drawn) {
       break;
     }
-    x+=step;
+    x+=xstep;
   }
 }
 
