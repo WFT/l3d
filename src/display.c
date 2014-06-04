@@ -86,6 +86,7 @@ void setpix(int x, int y, uint32_t color, char lock) {
   if (lock)
     unlock_surface();
 }
+
 uint32_t getpix(int x, int y, char lock) {
   if (lock)
     lock_surface();
@@ -153,8 +154,7 @@ void dline(int *coors, uint32_t color) {
   int x = x1, y = y1;
   int acc = dx/2;
   int step = y1 < y2 ? 1 : -1;
-  if (SDL_MUSTLOCK(surface))
-    SDL_LockSurface(surface);
+  lock_surface();
   if (xMaj) {
     while (x <= x2) {
       setpix(x, y, color, 0);
@@ -178,8 +178,7 @@ void dline(int *coors, uint32_t color) {
       y += step;
     }
   }
-  if (SDL_MUSTLOCK(surface))
-    SDL_UnlockSurface(surface);
+  unlock_surface();
 }
 
 // rendering functions
