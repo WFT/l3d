@@ -4,18 +4,16 @@
 #include "display.h"
 #include "options.h"
 
- void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
-  if (p2->x > p1->x) {
+inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
+  if (p2->x < p1->x) {
     KZ_Point swap = *p1;
     *p1 = *p2;
     *p2 = swap;
-  printf("swapped\n");
   }
-  printf("ordered\n");
 }
 
 // generalized bresenham line algorithm will advance one step for each call
- void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
+inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
   *acc -= minor_delta;
   if (*acc < 0) {
     *minor_counter += minor_step;
@@ -25,7 +23,7 @@
 }
 
 // predicts how many points there will be
- int point_count(KZ_Point p1, KZ_Point p2)  {
+inline int point_count(KZ_Point p1, KZ_Point p2)  {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
@@ -37,7 +35,7 @@
   return (dx > dy ? dx : dy) + 1;
 }
 
- void draw_horizontal(KZ_Point p1, KZ_Point p2) {
+inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   if (p1.x == p2.x) {
     consider_KZ_Point(p1);
     return;
@@ -80,23 +78,15 @@
 
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
- int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
+inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
-  printf("%d > %d\n", greatP.x, littleP.x);
-  int dx = greatP.x - p1.x;
+  int dx = greatP.x - littleP.x;
   int dy = greatP.y > littleP.y?greatP.y - littleP.y:littleP.y - greatP.y;
-  int x = p1.x, y = littleP.y;
   // y goes up if littleP.y is smaller than greatP.y, else it goes down
   int ystep = littleP.y < greatP.y ? 1 : -1;
-  KZ_Point p;
-  p.x = littleP.x;
-  p.y = littleP.y;
-  p.kr = littleP.kr;
-  p.kg = littleP.kg;
-  p.kb = littleP.kb;
-  p.r = littleP.r;
+  KZ_Point p = littleP;
 
   double radstep = (greatP.r - littleP.r) / (greatP.x - littleP.x);
   double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
@@ -106,7 +96,8 @@
   int i = 0;
   if (dx > dy) {
     int acc  = dx/2;
-    while (x <= greatP.x) {
+    while (p.x <= greatP.x) {
+      printf("%d <= %d\n", p.x, greatP.x);
       points[i] = p;
       bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
       p.kr += rstep;
@@ -118,7 +109,7 @@
   } else {
     int  acc = dy/2;
     char up = littleP.y < greatP.y;
-    while (up ? y <= greatP.y : y >= greatP.y) {
+    while (up ? p.y <= greatP.y : p.y >= greatP.y) {
       points[i] = p;
       bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
       p.kr += rstep;
