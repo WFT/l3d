@@ -51,10 +51,10 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   double g = littleP.kg;
   double b = littleP.kb;
   double radius = littleP.r;
-  double radstep = (greatP.r - littleP.r) / (greatP.x - littleP.x);
-  double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
-  double gstep = (greatP.kg - littleP.kg) / (greatP.x - littleP.x);
-  double bstep = (greatP.kb - littleP.kb) / (greatP.x - littleP.x);
+  double radstep = (greatP.r - littleP.r) / (double)(greatP.x - littleP.x);
+  double rstep = (greatP.kr - littleP.kr) / (double)(greatP.x - littleP.x);
+  double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
+  double bstep = (greatP.kb - littleP.kb) / (double)(greatP.x - littleP.x);
   KZ_Point p = littleP;
   while (x <= greatP.x) {
     if (pix_in_screen(p.x, p.y)) {
@@ -92,6 +92,9 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
   double gstep = (greatP.kg - littleP.kg) / (greatP.x - littleP.x);
   double bstep = (greatP.kb - littleP.kb) / (greatP.x - littleP.x);
+  
+  if (greatP.x == littleP.x)
+    radstep = rstep = gstep = bstep = 0;
 
   int i = 0;
   if (dx > dy) {

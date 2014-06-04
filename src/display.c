@@ -29,7 +29,7 @@ int init_live_render(int w, int h) {
   for (i = 0; i < w; i++) {
     kz_buf[i] = calloc(h, sizeof(KZ_Point));
     for (j = 0; j < h; j++) {
-      kz_buf[i][j] = (KZ_Point){-1, -1, 0, 0, 0, 0};
+      kz_buf[i][j] = (KZ_Point){-1, -1, 0.0, 0.0, 0.0, 0.0};
     }
   }
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -106,10 +106,12 @@ uint32_t getpix(int x, int y, char lock) {
 
 // inserts this point into the kz buffer if it isn't occluded
 void consider_KZ_Point(KZ_Point p) {
-  if (kz_buf[p.x][p.y].x >= 0 && p.x < surface->w && p.y < surface->h
-      && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r < p.r)) {
+  if (p.x >= 0 && p.x < surface->w && p.y < surface->h
+      && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r > p.r)) {
     kz_buf[p.x][p.y] = p;
     printf("adding (%d/%d, %d/%d)\n", p.x, surface->w, p.y, surface->h);
+  } else {
+    printf("r rejected %.2f >= %.2f (%d, %d)\n", p.r, kz_buf[p.x][p.y].r, kz_buf[p.x][p.y].x, kz_buf[p.x][p.y].y);
   }
 }
 
@@ -227,6 +229,7 @@ void renderppm(char *path) {
 }
 
 void update_display() {
+  printf("%p\n", surface->pixels);
   SDL_UpdateTexture(tex, NULL, surface->pixels, surface->pitch);
   SDL_RenderCopy(ren, tex, NULL, NULL);
   SDL_RenderPresent(ren);
