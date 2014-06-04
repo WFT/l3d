@@ -29,6 +29,9 @@ uint32_t getpix(int x, int y, char lock);
 // inserts this point into the kz buffer if it isn't occluded
 void consider_KZ_Point(KZ_Point p);
 
+// draw the KZ_buffer to the screen
+void flip_KZ_buffer();
+
 // lock the surface prior to drawing
 // if setting many pixels, lock first and tell setpix()
 // not to lock by passing 0 as the last parameter

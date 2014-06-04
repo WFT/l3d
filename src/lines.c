@@ -4,16 +4,18 @@
 #include "display.h"
 #include "options.h"
 
-inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
+ void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
   if (p2->x > p1->x) {
     KZ_Point swap = *p1;
     *p1 = *p2;
     *p2 = swap;
+  printf("swapped\n");
   }
+  printf("ordered\n");
 }
 
 // generalized bresenham line algorithm will advance one step for each call
-inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
+ void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
   *acc -= minor_delta;
   if (*acc < 0) {
     *minor_counter += minor_step;
@@ -23,7 +25,7 @@ inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int
 }
 
 // predicts how many points there will be
-inline int point_count(KZ_Point p1, KZ_Point p2)  {
+ int point_count(KZ_Point p1, KZ_Point p2)  {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
@@ -35,7 +37,7 @@ inline int point_count(KZ_Point p1, KZ_Point p2)  {
   return (dx > dy ? dx : dy) + 1;
 }
 
-inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
+ void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   if (p1.x == p2.x) {
     consider_KZ_Point(p1);
     return;
@@ -78,11 +80,11 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
 
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
-inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
+ int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
-
+  printf("%d > %d\n", greatP.x, littleP.x);
   int dx = greatP.x - p1.x;
   int dy = greatP.y > littleP.y?greatP.y - littleP.y:littleP.y - greatP.y;
   int x = p1.x, y = littleP.y;
@@ -130,12 +132,8 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
 }
 
 // takes an array of six coordinates alternating x y z
-void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
-		   uint32_t color) {
+void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
 
-  lock_surface();
-  
-  
   int ab_count = point_count(a, b);
   KZ_Point *ab_points = malloc((ab_count + 1) * sizeof(KZ_Point));
   ab_count = find_points(a, b, ab_points);
@@ -323,6 +321,7 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
   }
 #endif
 
+  /*
 #if DRAW_EDGES
   int p;
   for (p = 0; p < ab_count; p++)
@@ -332,10 +331,12 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
   for (p = 0; p < ca_count; p++)
     setpix(ca_points[p].x, ca_points[p].y, EDGE_COLOR, 0);
 #endif
-
+  */
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 
+  /*
+    // to be thought about later
 #if DRAW_VERTICES
   if (pix_in_screen(a.x, a.y))
     setpix(a.x, a.y, color ? VERTICES_COLOR : color, 1);
@@ -344,10 +345,9 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
   if (pix_in_screen(c.x, c.y))
     setpix(c.x, c.y, color ? VERTICES_COLOR : color, 1);
 #endif
+  */
 
   free(ab_points);
   free(bc_points);
   free(ca_points);
-
-  unlock_surface();
 }
