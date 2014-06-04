@@ -40,49 +40,39 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     consider_KZ_Point(p1);
     return;
   }
-  if (p1.x < p2.x && p1.x < 0)
-    p1.x = 0;
-  else if (p2.x <= p1.x && p2.x < 0)
-    p2.x = 0;
+  KZ_Point littleP = p1, greatP = p2;
+  order_endpoints(&littleP, &greatP);
+  if (littleP.x < 0)
+    littleP.x = 0;
+  
   char has_drawn = 0;
   int x = p1.x;
-  int xstep = p1.x < p2.x ? 1 : -1;
-  double r, g, b;
-  int rstep, gstep, bstep;
-  if (p1.x < p2.x) {
-    r = p1.kr;
-    g = p1.kg;
-    b = p1.kb;
-
-    rstep = (p2.kr - p1.kr) / (p2.x - p1.x);
-    gstep = (p2.kg - p1.kg) / (p2.x - p1.x);
-    bstep = (p2.kb - p1.kb) / (p2.x - p1.x);
-  } else {
-    r = p2.kr;
-    g = p2.kg;
-    b = p2.kb;
-
-    rstep = (p1.kr - p2.kr) / (p1.x - p2.x);
-    gstep = (p1.kg - p2.kg) / (p1.x - p2.x);
-    bstep = (p1.kb - p2.kb) / (p1.x - p2.x);
-  }
-  KZ_Point p;
-  p.y = p1.y;
-  while (p1.x < p2.x ? x <= p2.x : x >= p2.x) {
+  double r = littleP.kr;
+  double g = littleP.kg;
+  double b = littleP.kb;
+  double radius = littleP.r;
+  double radstep = (greatP.r - littleP.r) / (greatP.x - littleP.x);
+  double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
+  double gstep = (greatP.kg - littleP.kg) / (greatP.x - littleP.x);
+  double bstep = (greatP.kb - littleP.kb) / (greatP.x - littleP.x);
+  KZ_Point p = littleP;
+  while (x <= greatP.x) {
     if (pix_in_screen(p.x, p.y)) {
       p.x = x;
       p.kr = r;
       p.kg = g;
       p.kb = b;
+      p.r = radius;
       consider_KZ_Point(p);
       has_drawn = 1;
     } else if (has_drawn) {
       break;
     }
-    x += xstep;
+    x++;
     r += rstep;
     g += gstep;
     b += bstep;
+    radius += radstep;
   }
 }
 
@@ -104,10 +94,12 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   p.kr = littleP.kr;
   p.kg = littleP.kg;
   p.kb = littleP.kb;
-  
-  double rstep = (p1.kr - littleP.kr) / (p1.x - littleP.x);
-  double gstep = (p1.kg - littleP.kg) / (p1.x - littleP.x);
-  double bstep = (p1.kb - littleP.kb) / (p1.x - littleP.x);
+  p.r = littleP.r;
+
+  double radstep = (greatP.r - littleP.r) / (greatP.x - littleP.x);
+  double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
+  double gstep = (greatP.kg - littleP.kg) / (greatP.x - littleP.x);
+  double bstep = (greatP.kb - littleP.kb) / (greatP.x - littleP.x);
 
   int i = 0;
   if (dx > dy) {
@@ -118,6 +110,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
       p.kr += rstep;
       p.kg += gstep;
       p.kb += bstep;
+      p.r += radstep;
       i++;
     }
   } else {
@@ -129,6 +122,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
       p.kr += rstep;
       p.kg += gstep;
       p.kb += bstep;
+      p.r += radstep;
       i++;
     }
   }
