@@ -83,7 +83,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
   int dx = greatP.x - littleP.x;
-  int dy = greatP.y > littleP.y?greatP.y - littleP.y:littleP.y - greatP.y;
+  int dy = greatP.y > littleP.y ? greatP.y - littleP.y : littleP.y - greatP.y;
   // y goes up if littleP.y is smaller than greatP.y, else it goes down
   int ystep = littleP.y < greatP.y ? 1 : -1;
   KZ_Point p = littleP;
@@ -110,8 +110,9 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
     int  acc = dy/2;
     char up = littleP.y < greatP.y;
     while (up ? p.y <= greatP.y : p.y >= greatP.y) {
+      printf("%d satisfies %d (up: %s)\n", p.y, greatP.y, up ? "true": "false");
       points[i] = p;
-      bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
+      bresenham_step(&acc, &p.y, &p.x, dy, dx, ystep, 1);
       p.kr += rstep;
       p.kg += gstep;
       p.kb += bstep;

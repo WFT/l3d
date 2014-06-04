@@ -82,6 +82,7 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
     p3.x = coors[4];
     p3.y = coors[5];
     draw_triangle(p1, p2, p3);
+    printf("drew triangle\n");
   }
   flip_KZ_buffer();
 }

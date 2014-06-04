@@ -106,9 +106,10 @@ uint32_t getpix(int x, int y, char lock) {
 
 // inserts this point into the kz buffer if it isn't occluded
 void consider_KZ_Point(KZ_Point p) {
-  if (kz_buf[p.x][p.y].x < 0
-      || kz_buf[p.x][p.y].r > p.r) {
+  if (kz_buf[p.x][p.y].x >= 0 && p.x < surface->w && p.y < surface->h
+      && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r < p.r)) {
     kz_buf[p.x][p.y] = p;
+    printf("adding (%d/%d, %d/%d)\n", p.x, surface->w, p.y, surface->h);
   }
 }
 
@@ -121,7 +122,10 @@ void flip_KZ_buffer() {
       color = rgb(kz_buf[x][y].kr * ambient_red,
 		  kz_buf[x][y].kg * ambient_green,
 		  kz_buf[x][y].kb * ambient_blue);
-      setpix(x, y, color, 0);
+      if (color > 0) {
+	setpix(x, y, color, 0);
+	printf("%d, %d\n", x, y);
+      }
     }
   }
   unlock_surface();
