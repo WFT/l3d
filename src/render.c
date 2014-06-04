@@ -5,7 +5,7 @@
 #include "render.h"
 
 // assumes x y z 1 pattern
-char culltri(double coors[12], double *eye) {
+inline char culltri(double coors[12], double *eye) {
   //backface culling
   double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
   double a[3], b[3], cross[3];
