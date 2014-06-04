@@ -27,7 +27,7 @@ char culltri(double coors[12], double *eye) {
 }
 
 // modifies the pointed to x and y with a perspective transform
-void perspectify(double *x, double *y, double pz, double *eye) {
+inline void perspectify(double *x, double *y, double pz, double *eye) {
   *x = eye[0] - (eye[2] * (*x-eye[0]) / (pz - eye[2]));
   *y = eye[1] - (eye[2] * (*y-eye[1]) / (pz - eye[2]));
 }
