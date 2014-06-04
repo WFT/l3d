@@ -26,18 +26,18 @@ inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int
 inline int point_count(KZ_Point p1, KZ_Point p2)  {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
-  order_endpoints(*littleP, *greatP);
+  order_endpoints(&littleP, &greatP);
 
-  int dx = x2 - x1;
-  int dy = y2 - y1;
+  int dx = p2.x - p1.x;
+  int dy = p2.y - p1.y;
   if (dy < 0)
     dy = -dy;
   return (dx > dy ? dx : dy) + 1;
 }
 
-inline void draw_horizontal(KZ_Point p1, KZ_Point p2, uint32_t color) {
+inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   if (p1.x == p2.x) {
-    setpix(p1.x, y, color, 0);
+    consider_KZ_Point(p1);
     return;
   }
   if (p1.x < p2.x && p1.x < 0)
@@ -47,56 +47,92 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2, uint32_t color) {
   char has_drawn = 0;
   int x = p1.x;
   int xstep = p1.x < p2.x ? 1 : -1;
-  double r = p1.x < p2.x ? p1.kr : p2.kr;
-  double g = p1.x < p2.x ? p1.kg : p2.kg;
-  double b = p1.x < p2.x ? p1.kb : p2.kb;
-  double rstep = p1.x < p2.x ? (p2.kr - p1.kr) * (
+  double r, g, b;
+  int rstep, gstep, bstep;
+  if (p1.x < p2.x) {
+    r = p1.kr;
+    g = p1.kg;
+    b = p1.kb;
+
+    rstep = (p2.kr - p1.kr) / (p2.x - p1.x);
+    gstep = (p2.kg - p1.kg) / (p2.x - p1.x);
+    bstep = (p2.kb - p1.kb) / (p2.x - p1.x);
+  } else {
+    r = p2.kr;
+    g = p2.kg;
+    b = p2.kb;
+
+    rstep = (p1.kr - p2.kr) / (p1.x - p2.x);
+    gstep = (p1.kg - p2.kg) / (p1.x - p2.x);
+    bstep = (p1.kb - p2.kb) / (p1.x - p2.x);
+  }
   KZ_Point p;
   p.y = p1.y;
   while (p1.x < p2.x ? x <= p2.x : x >= p2.x) {
-    if (pix_in_screen(x, y)) {
+    if (pix_in_screen(p.x, p.y)) {
       p.x = x;
-      setpix(x, y, color, 0);
+      p.kr = r;
+      p.kg = g;
+      p.kb = b;
+      consider_KZ_Point(p);
       has_drawn = 1;
     } else if (has_drawn) {
       break;
     }
-    x+=xstep;
+    x += xstep;
+    r += rstep;
+    g += gstep;
+    b += bstep;
   }
 }
 
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
-inline int find_points(KZ_Point p1, KZ_Point p2, int *points) {
+inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
-  order_endpoints(*littleP, *greatP);
+  order_endpoints(&littleP, &greatP);
 
   int dx = greatP.x - p1.x;
-  int dy = greatP.y > littlP.y?greatP.y - littlP.y:littlP.y - greatP.y;
-  int x = p1.x, y = littlP.y;
-  // y goes up if littlP.y is smaller than greatP.y, else it goes down
-  int ystep = littlP.y < greatP.y ? 1 : -1;
-  int p = 0;
+  int dy = greatP.y > littleP.y?greatP.y - littleP.y:littleP.y - greatP.y;
+  int x = p1.x, y = littleP.y;
+  // y goes up if littleP.y is smaller than greatP.y, else it goes down
+  int ystep = littleP.y < greatP.y ? 1 : -1;
+  KZ_Point p;
+  p.x = littleP.x;
+  p.y = littleP.y;
+  p.kr = littleP.kr;
+  p.kg = littleP.kg;
+  p.kb = littleP.kb;
+  
+  double rstep = (p1.kr - littleP.kr) / (p1.x - littleP.x);
+  double gstep = (p1.kg - littleP.kg) / (p1.x - littleP.x);
+  double bstep = (p1.kb - littleP.kb) / (p1.x - littleP.x);
+
+  int i = 0;
   if (dx > dy) {
     int acc  = dx/2;
     while (x <= greatP.x) {
-      x_points[p] = x;
-      y_points[p] = y;
-      bresenham_step(&acc, &x, &y, dx, dy, 1, ystep);
-      p++;
+      points[i] = p;
+      bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
+      p.kr += rstep;
+      p.kg += gstep;
+      p.kb += bstep;
+      i++;
     }
   } else {
     int  acc = dy/2;
-    char up = littlP.y < greatP.y;
+    char up = littleP.y < greatP.y;
     while (up ? y <= greatP.y : y >= greatP.y) {
-      x_points[p] = x;
-      y_points[p] = y;
-      bresenham_step(&acc, &y, &x, dy, dx, ystep, 1);
-      p++;
+      points[i] = p;
+      bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
+      p.kr += rstep;
+      p.kg += gstep;
+      p.kb += bstep;
+      i++;
     }
   }
-  return p;
+  return i;
 }
 
 // takes an array of six coordinates alternating x y z
@@ -111,20 +147,20 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
   ab_count = find_points(a, b, ab_points);
 
   int bc_count = point_count(b, c);
-  *bc_points = malloc((bc_count + 1) * sizeof(KZ_Point));
+  KZ_Point *bc_points = malloc((bc_count + 1) * sizeof(KZ_Point));
   bc_count = find_points(b, c, bc_points);
 
   int ca_count = point_count(c, a);
-  *ca_points = malloc((ca_count + 1) * sizeof(KZ_Point));
+  KZ_Point *ca_points = malloc((ca_count + 1) * sizeof(KZ_Point));
   ca_count = find_points(c, a, ca_points);
 
 #if DRAW_FILL
 
   // order arrays by y descending
 
-  int *abs;
+  KZ_Point *abs;
   int abinc;
-  if (ab_y_points[ab_count - 1] > ab_y_points[0]) {
+  if (ab_points[ab_count - 1].y > ab_points[0].y) {
     abs = ab_points + ab_count - 1;
     abinc = -1;
   } else {
@@ -132,9 +168,9 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
     abinc = 1;
   }
 
-  int *bcs;
+  KZ_Point *bcs;
   int bcinc;
-  if (bc_y_points[bc_count  - 1] > bc_y_points[0]) {
+  if (bc_points[bc_count  - 1].y > bc_points[0].y) {
     bcs = bc_points + bc_count - 1;
     bcinc = -1;
   } else {
@@ -142,9 +178,9 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
     bcinc = 1;
   }
 
-  int *cas;
+  KZ_Point *cas;
   int cainc;
-  if (ca_y_points[ca_count  - 1] > ca_y_points[0]) {
+  if (ca_points[ca_count  - 1].y > ca_points[0].y) {
     cas = ca_points + ca_count - 1;
     cainc = -1;
   } else {
@@ -169,21 +205,21 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
 
   //categorize lines by upper, lower, long
 
-  int *upper_segment = NULL;
+  KZ_Point *upper_segment = NULL;
   int upper_inc = 0;
   int upper_count = 0;
-  int *lower_segment = NULL;
+  KZ_Point *lower_segment = NULL;
   int lower_inc = 0;
   int lower_count = 0;
-  int *long_segment = NULL;
+  KZ_Point *long_segment = NULL;
   int long_inc = 0;
   int long_count = 0;
 
-  if (mid_y == ay) {
+  if (mid_y == a.y) {
     long_inc = bcinc;
     long_segment = bcs;
     long_count = bc_count;
-    if (max_y == by) {
+    if (max_y == b.y) {
       upper_inc = abinc;
       upper_segment = abs;
       upper_count = ab_count;
@@ -191,7 +227,7 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
       lower_inc = cainc;
       lower_segment = cas;
       lower_count = ca_count;
-    } else if (max_y == cy) {
+    } else if (max_y == c.y) {
       upper_inc = cainc;
       upper_segment = cas;
       upper_count = ca_count;
@@ -200,11 +236,11 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
       lower_segment = abs;
       lower_count = ab_count;
     }
-  } else if (mid_y == by) {
+  } else if (mid_y == b.y) {
     long_inc = cainc;
     long_segment = cas;
     long_count = ca_count;
-    if (max_y == ay) {
+    if (max_y == a.y) {
       upper_inc = abinc;
       upper_segment = abs;
       upper_count = ab_count;
@@ -212,7 +248,7 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
       lower_inc = bcinc;
       lower_segment = bcs;
       lower_count = bc_count;
-    } else if (max_y == cy) {
+    } else if (max_y == c.y) {
       upper_inc = bcinc;
       upper_segment = bcs;
       upper_count = bc_count;
@@ -221,11 +257,11 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
       lower_segment = abs;
       lower_count = ab_count;
     }
-  } else if (mid_y == cy) {
+  } else if (mid_y == c.y) {
     long_inc = abinc;
     long_segment = abs;
     long_count = ab_count;
-    if (max_y == ay) {
+    if (max_y == a.y) {
       upper_inc = cainc;
       upper_segment = cas;
       upper_count = ca_count;
@@ -233,7 +269,7 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
       lower_inc = bcinc;
       lower_segment = bcs;
       lower_count = bc_count;
-    } else if (max_y == by) {
+    } else if (max_y == b.y) {
       upper_inc = bcinc;
       upper_segment = bcs;
       upper_count = bc_count;
@@ -245,84 +281,79 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c,
   }
   int longi = 0, shorti = 0;
   while (shorti * upper_inc < upper_count
-         && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]) {
+         && upper_segment[shorti + upper_inc].y == upper_segment[shorti].y) {
     shorti += upper_inc;
   }  
   while (longi * long_inc < long_count
-	 && (long_segment_y[longi + long_inc] == long_segment_y[longi]
-	     || long_segment_y[longi] != upper_segment_y[shorti])) {
+	 && (long_segment[longi + long_inc].y == long_segment[longi].y
+	     || long_segment[longi].y != upper_segment[shorti].y)) {
     longi += long_inc;
   }
   while (shorti * upper_inc < upper_count && longi * long_inc < long_count) {
-    draw_horizontal(upper_segment_x[shorti], long_segment_x[longi],
-                    upper_segment_y[shorti], color);
+    draw_horizontal(upper_segment[shorti], long_segment[longi]);
     do
       shorti += upper_inc;
     while (shorti * upper_inc < upper_count - 1
-           && upper_segment_y[shorti + upper_inc] == upper_segment_y[shorti]);
+           && upper_segment[shorti + upper_inc].y == upper_segment[shorti].y);
     do
 	longi += long_inc;
     while (longi * long_inc < long_count - 1
-	   && long_segment_y[longi + long_inc] >= mid_y
-	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	   && long_segment[longi + long_inc].y >= mid_y
+	   && (long_segment[longi + long_inc].y == long_segment[longi].y
 	       || (shorti * upper_inc < upper_count
-		   && long_segment_y[longi] != upper_segment_y[shorti])
+		   && long_segment[longi].y != upper_segment[shorti].y)
 	       || (shorti * upper_inc >= upper_count
-		   && long_segment_y[longi] > mid_y)));
+		   && long_segment[longi].y > mid_y)));
   }
   shorti = 0;
-  int stopper = long_segment_y[longi];
+  int stopper = long_segment[longi].y;
   while (shorti * lower_inc < lower_count - 1
- 	 && (lower_segment_y[shorti] > stopper
-	     || lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti])) {
+ 	 && (lower_segment[shorti].y > stopper
+	     || lower_segment[shorti + lower_inc].y == lower_segment[shorti].y)) {
     shorti += lower_inc;
   }
   while (shorti * lower_inc < lower_count && longi * long_inc < long_count) {
-    draw_horizontal(lower_segment_x[shorti], long_segment_x[longi],
-		    lower_segment_y[shorti], color);
+    draw_horizontal(lower_segment[shorti], long_segment[longi]);
     do
       shorti += lower_inc;
     while (shorti * lower_inc < lower_count
-	   && lower_segment_y[shorti + lower_inc] == lower_segment_y[shorti]);
+	   && lower_segment[shorti + lower_inc].y == lower_segment[shorti].y);
     do
       longi += long_inc;
     while (longi * long_inc < long_count
-	   && (long_segment_y[longi + long_inc] == long_segment_y[longi]
+	   && (long_segment[longi + long_inc].y == long_segment[longi].y
 	       || (shorti * lower_inc < lower_count
-		   && long_segment_y[longi] != lower_segment_y[shorti])
+		   && long_segment[longi].y != lower_segment[shorti].y)
 	       || (shorti * lower_inc >= lower_count
-		   && long_segment_y[longi] > mid_y)));
+		   && long_segment[longi].y > mid_y)));
   }
 #endif
 
 #if DRAW_EDGES
   int p;
   for (p = 0; p < ab_count; p++)
-    setpix(ab_x_points[p], ab_y_points[p], EDGE_COLOR, 0);
+    setpix(ab_points[p].x, ab_points[p].y, EDGE_COLOR, 0);
   for (p = 0; p < bc_count; p++)
-    setpix(bc_x_points[p], bc_y_points[p], EDGE_COLOR, 0);
+    setpix(bc_points[p].x, bc_points[p].y, EDGE_COLOR, 0);
   for (p = 0; p < ca_count; p++)
-    setpix(ca_x_points[p], ca_y_points[p], EDGE_COLOR, 0);
+    setpix(ca_points[p].x, ca_points[p].y, EDGE_COLOR, 0);
 #endif
 
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 
 #if DRAW_VERTICES
-  if (pix_in_screen(ax, ay))
-    setpix(ax, ay, color ? VERTICES_COLOR : color, 1);
-  if (pix_in_screen(bx, by))
-    setpix(bx, by, color ? VERTICES_COLOR : color, 1);
-  if (pix_in_screen(cx, cy))
-    setpix(cx, cy, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(a.x, a.y))
+    setpix(a.x, a.y, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(b.x, b.y))
+    setpix(b.x, b.y, color ? VERTICES_COLOR : color, 1);
+  if (pix_in_screen(c.x, c.y))
+    setpix(c.x, c.y, color ? VERTICES_COLOR : color, 1);
 #endif
 
-  free(ab_x_points);
-  free(ab_y_points);
-  free(bc_x_points);
-  free(bc_y_points);
-  free(ca_x_points);
-  free(ca_y_points);
+  free(ab_points);
+  free(bc_points);
+  free(ca_points);
 
   unlock_surface();
 }
