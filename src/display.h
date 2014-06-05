@@ -55,6 +55,7 @@ void renderppm(char *path);
 
 void update_display();
 void clear_screen();
+// also clears the kz_buf
 void clear_pixel_buffer();
 
 void mixcolors(char b);

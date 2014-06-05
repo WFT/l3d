@@ -109,9 +109,9 @@ void consider_KZ_Point(KZ_Point p) {
   if (p.x >= 0 && p.x < surface->w && p.y < surface->h
       && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r > p.r)) {
     kz_buf[p.x][p.y] = p;
-    printf("adding (%d/%d, %d/%d)\n", p.x, surface->w, p.y, surface->h);
+    //printf("adding (%d/%d, %d/%d)\n", p.x, surface->w, p.y, surface->h);
   } else {
-    printf("r rejected %.2f >= %.2f (%d, %d)\n", p.r, kz_buf[p.x][p.y].r, kz_buf[p.x][p.y].x, kz_buf[p.x][p.y].y);
+    //printf("r rejected %.2f >= %.2f (%d, %d)\n", p.r, kz_buf[p.x][p.y].r, kz_buf[p.x][p.y].x, kz_buf[p.x][p.y].y);
   }
 }
 
@@ -121,13 +121,12 @@ void flip_KZ_buffer() {
   uint32_t color;
   for (x = 0; x < surface->w; x ++) {
     for (y = 0; y < surface->h; y++) {
+      if (kz_buf[x][y].x < 0) continue;
       color = rgb(kz_buf[x][y].kr * ambient_red,
 		  kz_buf[x][y].kg * ambient_green,
 		  kz_buf[x][y].kb * ambient_blue);
-      if (color > 0) {
 	setpix(x, y, color, 0);
-	printf("%d, %d\n", x, y);
-      }
+	//printf("%d, %d\n", x, y);
     }
   }
   unlock_surface();
@@ -242,6 +241,12 @@ void clear_screen() {
 
 void clear_pixel_buffer() {
   SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
+  int i, j;
+  for (i = 0; i < surface->w; i++) {
+    for (j = 0; j < surface->h; j++) {
+      kz_buf[i][j] = (KZ_Point){-1, -1, 0, 0, 0, 0};
+    }
+  }
 }
 
 // call to clean up

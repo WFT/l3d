@@ -46,7 +46,6 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     littleP.x = 0;
   
   char has_drawn = 0;
-  int x = p1.x;
   double r = littleP.kr;
   double g = littleP.kg;
   double b = littleP.kb;
@@ -56,24 +55,20 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
   double bstep = (greatP.kb - littleP.kb) / (double)(greatP.x - littleP.x);
   KZ_Point p = littleP;
-  while (x <= greatP.x) {
+  while (p.x <= greatP.x) {
     if (pix_in_screen(p.x, p.y)) {
-      p.x = x;
-      p.kr = r;
-      p.kg = g;
-      p.kb = b;
-      p.r = radius;
       consider_KZ_Point(p);
       has_drawn = 1;
     } else if (has_drawn) {
       break;
     }
-    x++;
-    r += rstep;
-    g += gstep;
-    b += bstep;
-    radius += radstep;
+    p.x++;
+    p.kr += rstep;
+    p.kg += gstep;
+    p.kb += bstep;
+    p.r += radstep;
   }
+
 }
 
 // discover all points using the bresenham_step
@@ -100,7 +95,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   if (dx > dy) {
     int acc  = dx/2;
     while (p.x <= greatP.x) {
-      printf("%d <= %d\n", p.x, greatP.x);
+      //printf("%d <= %d\n", p.x, greatP.x);
       points[i] = p;
       bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
       p.kr += rstep;
@@ -113,7 +108,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
     int  acc = dy/2;
     char up = littleP.y < greatP.y;
     while (up ? p.y <= greatP.y : p.y >= greatP.y) {
-      printf("%d satisfies %d (up: %s)\n", p.y, greatP.y, up ? "true": "false");
+      //printf("%d satisfies %d (up: %s)\n", p.y, greatP.y, up ? "true": "false");
       points[i] = p;
       bresenham_step(&acc, &p.y, &p.x, dy, dx, ystep, 1);
       p.kr += rstep;
