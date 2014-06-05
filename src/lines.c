@@ -68,7 +68,8 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     p.kb += bstep;
     p.r += radstep;
   }
-
+  if (p.kr - rstep != greatP.kr)
+    printf("r doesn't match: %.2f / %.2f\n", p.kr - rstep, greatP.kr);
 }
 
 // discover all points using the bresenham_step
