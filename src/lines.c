@@ -28,8 +28,8 @@ inline int point_count(KZ_Point p1, KZ_Point p2)  {
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
 
-  int dx = p2.x - p1.x;
-  int dy = p2.y - p1.y;
+  int dx = greatP.x - littleP.x;
+  int dy = greatP.y - littleP.y;
   if (dy < 0)
     dy = -dy;
   return (dx > dy ? dx : dy) + 1;
