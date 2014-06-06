@@ -39,9 +39,9 @@ FILE *in;
 
 inline void add_colors_for_obj(Matrix *obj) {
   int c;
-  double *r = {1, 0, 0};
-  double *g = {0, 1, 0};
-  double *b = {0, 0, 1};
+  double r[] = {1, 0, 0};
+  double g[] = {0, 1, 0};
+  double b[] = {0, 0, 1};
   for (c = 0; c < obj->cols; c++) {
     switch (c%3) {
     case 0:
@@ -244,7 +244,7 @@ void interpret(char *l) {
       free(args);
       return;
     }
-    rendercyclops(tri, args, colors);
+    rendercyclops(tri, args, color);
   } /*else if (strcmp(list[0], "render-perspective-stereo") == 0 ||
 	     strcmp(list[0], "rstereo") == 0) {
     if (!screen) {
@@ -273,9 +273,9 @@ void interpret(char *l) {
     if (!autocyclops)
       autocyclops = malloc(3 * sizeof(double));
     memcpy(autocyclops, args, 3 * sizeof(double));
-    if (autostereo != NULL) {
+    /*if (autostereo != NULL) {
       free(autostereo);
-      autostereo = NULL;
+      autostereo = NULL;*/
     }
   } /*else if (strcmp(list[0], "autors") == 0) {
     if (!autostereo)
