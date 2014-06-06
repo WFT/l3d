@@ -31,14 +31,37 @@ char tform_keys[100][25];
 Matrix *tform_mats[100];
 int lastmdex = -1;
 
+Matrix *color;
 Matrix *tri;
 Matrix *tform;
 char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
+inline void add_colors_for_obj(Matrix *obj) {
+  int c;
+  double *r = {1, 0, 0};
+  double *g = {0, 1, 0};
+  double *b = {0, 0, 1};
+  for (c = 0; c < obj->cols; c++) {
+    switch (c%3) {
+    case 0:
+      mat_add_column(color, r);
+      break;
+    case 1:
+      mat_add_column(color, g);
+      break;
+    case 2:
+      mat_add_column(color, b);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
 // will destroy the transform
-void multiply_transform(Matrix *transform) {
+inline void multiply_transform(Matrix *transform) {
   Matrix *temp = mat_multiply(tform, transform);
   mat_destruct(tform);
   tform = temp;
@@ -100,12 +123,14 @@ void interpret(char *l) {
     Matrix *sphere = sphere_t(args);
     Matrix *obj = mat_multiply(tform, sphere);
     mat_extend(tri, obj);
+    add_colors_for_obj( obj);
     mat_destruct(sphere);
     mat_destruct(obj);
   } else if (strcmp(list[0], "box-t") == 0) {
     Matrix *cube = box_t(args);
     Matrix *obj = mat_multiply(tform, cube);
     mat_extend(tri, obj);
+    add_colors_for_obj( obj);
     mat_destruct(cube);
     mat_destruct(obj);
   } else if (strcmp(list[0], "tri") == 0) {
@@ -126,6 +151,7 @@ void interpret(char *l) {
     mat_add_column(triangle, col);
     Matrix *obj = mat_multiply(tform, triangle);
     mat_extend(tri, obj);
+    add_colors_for_obj( obj);
     mat_destruct(triangle);
     mat_destruct(obj);
   } else if (strcmp(list[0], "identity") == 0) {
@@ -143,7 +169,9 @@ void interpret(char *l) {
   } else if (strcmp(list[0], "import") == 0) {
     //Matrix *obj = tri_file(list[1], args);
     //mat_extend(tri, obj);
+    //add_colors_for_obj( obj);
     //mat_destruct(obj);
+    printf("not implemented\n");
   } else if (strcmp(list[0], "save") == 0) {
     if (lastmdex >= 99) {
       printf("Up to 100 transform saves allowed. This is number %d\n", lastmdex + 1);
@@ -294,21 +322,14 @@ void interpret(char *l) {
 }
 
 int main(int argc, char **argv) {  
+  color = mat_construct(0, 3);
   tri = mat_construct(0, 4);
   tform = identity_mat();
   in = stdin;
-  //int fd = fileno(in);
-  //int flags = fcntl(fd, F_GETFL, 0);
-  //flags |= O_NONBLOCK;
-  //fcntl(fd, F_SETFL, flags);
   screen = 0;
   rendering_initialized = 0;
   if (argc > 1) {
     in = fopen(argv[1], "r");
-    //fd = fileno(in);
-    //flags = fcntl(fd, F_GETFL, 0);
-    //flags |= O_NONBLOCK;
-    //fcntl(fd, F_SETFL, flags);
   }
   char inbuf[MAX_LINE + 1];
   while (!quit) {
