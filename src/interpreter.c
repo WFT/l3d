@@ -245,8 +245,8 @@ void interpret(char *l) {
       free(args);
       return;
     }
-    rendercyclops(tri, args);
-  } else if (strcmp(list[0], "render-perspective-stereo") == 0 ||
+    rendercyclops(tri, args, colors);
+  } /*else if (strcmp(list[0], "render-perspective-stereo") == 0 ||
 	     strcmp(list[0], "rstereo") == 0) {
     if (!screen) {
       printf("ERROR: screen not set\n");
@@ -254,17 +254,19 @@ void interpret(char *l) {
       return;
     }
     renderstereo(tri, args);
-  } else if (strcmp(list[0], "spinc") == 0) {
+    } */
+  else if (strcmp(list[0], "spinc") == 0) {
     int delay = 13;
     if (argc > 3)
       delay = args[3];
     spincyclops(tri, args, delay);
-  } else if (strcmp(list[0], "spins") == 0) {
+  }/* else if (strcmp(list[0], "spins") == 0) {
     int delay = 13;
     if (argc > 6)
       delay = args[6];
     spinstereo(tri, args, delay);
-  } else if (strcmp(list[0], "stdin") == 0) {
+    }*/ 
+  else if (strcmp(list[0], "stdin") == 0) {
     if (in != stdin)
       fclose(in);
     in = stdin;
@@ -276,7 +278,7 @@ void interpret(char *l) {
       free(autostereo);
       autostereo = NULL;
     }
-  } else if (strcmp(list[0], "autors") == 0) {
+  } /*else if (strcmp(list[0], "autors") == 0) {
     if (!autostereo)
       autostereo = malloc(6 * sizeof(double));
     memcpy(autostereo, args, 6 * sizeof(double));
@@ -284,7 +286,8 @@ void interpret(char *l) {
       free(autocyclops);
       autocyclops = NULL;
     }
-  } else if (strcmp(list[0], "filein") == 0) {
+    }*/
+  else if (strcmp(list[0], "filein") == 0) {
     if (in != stdin)
       fclose(in);
     in = fopen(list[1], "r");
