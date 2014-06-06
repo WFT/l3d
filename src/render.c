@@ -43,7 +43,7 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
   double pz;
-  KZ_Point p1 = (KZ_Point){0,0,0,1,0,0}, p2 = (KZ_Point){0,0,0,0,1,0}, p3 = (KZ_Point){0,0,0,1,0,0};
+  KZ_Point p1 = (KZ_Point){0,0,0,1,0,0}, p2 = (KZ_Point){0,0,0,0,1,0}, p3 = (KZ_Point){0,0,0,0,0,1};
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
 #if ENABLE_CULLING
