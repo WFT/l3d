@@ -117,6 +117,8 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
 void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
   int ab_count = point_count(a, b);
   KZ_Point *ab_points = malloc((ab_count + 1) * sizeof(KZ_Point));
+  if (ab_points == NULL)
+    printf("I'm broking\n");
   ab_count = find_points(a, b, ab_points);
 
   int bc_count = point_count(b, c);

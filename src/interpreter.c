@@ -275,8 +275,8 @@ void interpret(char *l) {
     memcpy(autocyclops, args, 3 * sizeof(double));
     /*if (autostereo != NULL) {
       free(autostereo);
-      autostereo = NULL;*/
-    }
+      autostereo = NULL;
+      }*/
   } /*else if (strcmp(list[0], "autors") == 0) {
     if (!autostereo)
       autostereo = malloc(6 * sizeof(double));
