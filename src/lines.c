@@ -44,12 +44,7 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   order_endpoints(&littleP, &greatP);
   if (littleP.x < 0)
     littleP.x = 0;
-  
   char has_drawn = 0;
-  double r = littleP.kr;
-  double g = littleP.kg;
-  double b = littleP.kb;
-  double radius = littleP.r;
   double radstep = (greatP.r - littleP.r) / (double)(greatP.x - littleP.x);
   double rstep = (greatP.kr - littleP.kr) / (double)(greatP.x - littleP.x);
   double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
@@ -68,8 +63,6 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     p.kb += bstep;
     p.r += radstep;
   }
-  if (p.kr - rstep != greatP.kr)
-    printf("r doesn't match: %.2f / %.2f\n", p.kr - rstep, greatP.kr);
 }
 
 // discover all points using the bresenham_step
@@ -96,7 +89,6 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   if (dx > dy) {
     int acc  = dx/2;
     while (p.x <= greatP.x) {
-      //printf("%d <= %d\n", p.x, greatP.x);
       points[i] = p;
       bresenham_step(&acc, &p.x, &p.y, dx, dy, 1, ystep);
       p.kr += rstep;
@@ -109,7 +101,6 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
     int  acc = dy/2;
     char up = littleP.y < greatP.y;
     while (up ? p.y <= greatP.y : p.y >= greatP.y) {
-      //printf("%d satisfies %d (up: %s)\n", p.y, greatP.y, up ? "true": "false");
       points[i] = p;
       bresenham_step(&acc, &p.y, &p.x, dy, dx, ystep, 1);
       p.kr += rstep;
@@ -124,7 +115,6 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
 
 // takes an array of six coordinates alternating x y z
 void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
-
   int ab_count = point_count(a, b);
   KZ_Point *ab_points = malloc((ab_count + 1) * sizeof(KZ_Point));
   ab_count = find_points(a, b, ab_points);
@@ -312,31 +302,41 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
   }
 #endif
 
-  /*
+  
 #if DRAW_EDGES
   int p;
-  for (p = 0; p < ab_count; p++)
-    setpix(ab_points[p].x, ab_points[p].y, EDGE_COLOR, 0);
-  for (p = 0; p < bc_count; p++)
-    setpix(bc_points[p].x, bc_points[p].y, EDGE_COLOR, 0);
-  for (p = 0; p < ca_count; p++)
-    setpix(ca_points[p].x, ca_points[p].y, EDGE_COLOR, 0);
+  for (p = 0; p < ab_count; p++) {
+    ab_points[p].r = -1;
+    consider_KZ_Point(ab_points[p]);
+  }
+  for (p = 0; p < bc_count; p++) {
+    bc_points[p].r = -1;
+    consider_KZ_Point(bc_points[p]);
+  }
+  for (p = 0; p < ca_count; p++) {
+    ca_points[p].r = -1;
+    consider_KZ_Point(ca_points[p]);
+  }
 #endif
-  */
+  
   // if color is set to non-black colors
   // and DRAW_VERTICES is true, vertices will be drawn
 
-  /*
+  
     // to be thought about later
 #if DRAW_VERTICES
+  a.r = b.r = c.r = -1;
+  a.kr = b.kr = c.kr = VERTICES_RED;
+  a.kg = b.kg = c.kg = VERTICES_BLUE;
+  a.kb = b.kb = c.kb = VERTICES_GREEN;
   if (pix_in_screen(a.x, a.y))
-    setpix(a.x, a.y, color ? VERTICES_COLOR : color, 1);
+    consider_KZ_Point(a);
   if (pix_in_screen(b.x, b.y))
-    setpix(b.x, b.y, color ? VERTICES_COLOR : color, 1);
+    consider_KZ_Point(b);
   if (pix_in_screen(c.x, c.y))
-    setpix(c.x, c.y, color ? VERTICES_COLOR : color, 1);
+    consider_KZ_Point(c);
 #endif
-  */
+  
 
   free(ab_points);
   free(bc_points);

@@ -107,11 +107,8 @@ uint32_t getpix(int x, int y, char lock) {
 // inserts this point into the kz buffer if it isn't occluded
 void consider_KZ_Point(KZ_Point p) {
   if (p.x >= 0 && p.x < surface->w && p.y < surface->h
-      && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r > p.r)) {
+      && (kz_buf[p.x][p.y].x < 0 || kz_buf[p.x][p.y].r >= p.r)) {
     kz_buf[p.x][p.y] = p;
-    //printf("adding (%d/%d, %d/%d)\n", p.x, surface->w, p.y, surface->h);
-  } else {
-    //printf("r rejected %.2f >= %.2f (%d, %d)\n", p.r, kz_buf[p.x][p.y].r, kz_buf[p.x][p.y].x, kz_buf[p.x][p.y].y);
   }
 }
 
@@ -126,7 +123,6 @@ void flip_KZ_buffer() {
 		  kz_buf[x][y].kg * ambient_green,
 		  kz_buf[x][y].kb * ambient_blue);
 	setpix(x, y, color, 0);
-	//printf("%d, %d\n", x, y);
     }
   }
   unlock_surface();
@@ -228,7 +224,6 @@ void renderppm(char *path) {
 }
 
 void update_display() {
-  printf("%p\n", surface->pixels);
   SDL_UpdateTexture(tex, NULL, surface->pixels, surface->pitch);
   SDL_RenderCopy(ren, tex, NULL, NULL);
   SDL_RenderPresent(ren);
