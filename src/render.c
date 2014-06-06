@@ -43,7 +43,7 @@ void renderperspective(Matrix *faces, double *eye, uint32_t color) {
   double coors[6];
   int c;
   double pz;
-  KZ_Point p1 = {0,0,0,.5, .5, 0}, p2 = {0,0,0,0,.75,0}, p3 = {0,0,0,.3,0,.5};
+  KZ_Point p1 = (KZ_Point){0,0,0,1,0,0}, p2 = (KZ_Point){0,0,0,0,1,0}, p3 = (KZ_Point){0,0,0,0,0,1};
   double tri[12];
   for (c = 0; c < faces->cols; c += 3) {
 #if ENABLE_CULLING
@@ -144,7 +144,7 @@ void spincyclops(Matrix *faces, double *eye, int del) {
     rot = mat_multiply(xyz, faces);
     mat_destruct(faces);
     faces = rot;
-    renderperspective(faces, eye, SPIN_FILL_COLOR);
+    renderperspective(faces, eye, 0);
     SDL_Delay(del);
     update_display();
     clear_pixel_buffer();

@@ -54,7 +54,7 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     if (pix_in_screen(p.x, p.y)) {
       consider_KZ_Point(p);
       has_drawn = 1;
-    } else if (has_drawn) {
+     } else if (has_drawn) {
       break;
     }
     p.x++;
@@ -307,23 +307,27 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
   int p;
   for (p = 0; p < ab_count; p++) {
     ab_points[p].r = -1;
+    ab_points[p].kr = EDGE_RED;
+    ab_points[p].kg = EDGE_GREEN;
+    ab_points[p].kb = EDGE_BLUE;
     consider_KZ_Point(ab_points[p]);
   }
   for (p = 0; p < bc_count; p++) {
     bc_points[p].r = -1;
+    bc_points[p].kr = EDGE_RED;
+    bc_points[p].kg = EDGE_GREEN;
+    bc_points[p].kb = EDGE_BLUE;
     consider_KZ_Point(bc_points[p]);
   }
   for (p = 0; p < ca_count; p++) {
     ca_points[p].r = -1;
+    ca_points[p].kr = EDGE_RED;
+    ca_points[p].kg = EDGE_GREEN;
+    ca_points[p].kb = EDGE_BLUE;
     consider_KZ_Point(ca_points[p]);
   }
 #endif
   
-  // if color is set to non-black colors
-  // and DRAW_VERTICES is true, vertices will be drawn
-
-  
-    // to be thought about later
 #if DRAW_VERTICES
   a.r = b.r = c.r = -1;
   a.kr = b.kr = c.kr = VERTICES_RED;
