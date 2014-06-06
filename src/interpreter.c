@@ -8,7 +8,6 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
-//#include <fcntl.h>
 #include "display.h"
 #include "render.h"
 #include "matrix.h"
@@ -19,7 +18,7 @@
 #define TO_RAD(deg) (deg * M_PI / 180)
 
 double *autocyclops = NULL;
-double *autostereo = NULL;
+// double *autostereo = NULL;
 
 int startframe = 0, nowframe = 0, totalframes = -1;
 
@@ -259,7 +258,7 @@ void interpret(char *l) {
     int delay = 13;
     if (argc > 3)
       delay = args[3];
-    spincyclops(tri, args, delay);
+    spincyclops(tri, args, color, delay);
   }/* else if (strcmp(list[0], "spins") == 0) {
     int delay = 13;
     if (argc > 6)
@@ -346,9 +345,10 @@ int main(int argc, char **argv) {
     }
     interpret(inbuf);
     if (autocyclops != NULL)
-      rendercyclops(tri, autocyclops);
-    else if (autostereo != NULL)
+      rendercyclops(tri, autocyclops, color);
+    /*else if (autostereo != NULL)
       renderstereo(tri, autostereo);
+    */
     if (nowframe == totalframes)
       quit = 1;
   }
