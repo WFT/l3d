@@ -29,7 +29,7 @@ int init_live_render(int w, int h) {
   for (i = 0; i < w; i++) {
     kz_buf[i] = calloc(h, sizeof(KZ_Point));
     for (j = 0; j < h; j++) {
-      kz_buf[i][j] = (KZ_Point){-1, -1, 0.0, 0.0, 0.0, 0.0};
+      kz_buf[i][j] = (KZ_Point){-1, -1, 0.0, 0.0, 0.0, 0.0, 0, 0, 0};
     }
   }
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {

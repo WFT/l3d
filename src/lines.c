@@ -77,10 +77,10 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   int ystep = littleP.y < greatP.y ? 1 : -1;
   KZ_Point p = littleP;
 
-  double radstep = (greatP.r - littleP.r) / (greatP.x - littleP.x);
-  double rstep = (greatP.kr - littleP.kr) / (greatP.x - littleP.x);
-  double gstep = (greatP.kg - littleP.kg) / (greatP.x - littleP.x);
-  double bstep = (greatP.kb - littleP.kb) / (greatP.x - littleP.x);
+  double radstep = (greatP.r - littleP.r) / (double)(greatP.x - littleP.x);
+  double rstep = (greatP.kr - littleP.kr) / (double)(greatP.x - littleP.x);
+  double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
+  double bstep = (greatP.kb - littleP.kb) / (double)(greatP.x - littleP.x);
   
   if (greatP.x == littleP.x)
     radstep = rstep = gstep = bstep = 0;
@@ -117,14 +117,20 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
 void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
   int ab_count = point_count(a, b);
   KZ_Point *ab_points = malloc((ab_count + 1) * sizeof(KZ_Point));
+  if (ab_points == NULL)
+    printf("ab broking\n");
   ab_count = find_points(a, b, ab_points);
 
   int bc_count = point_count(b, c);
   KZ_Point *bc_points = malloc((bc_count + 1) * sizeof(KZ_Point));
+  if (bc_points == NULL)
+    printf("bc broking\n");
   bc_count = find_points(b, c, bc_points);
 
   int ca_count = point_count(c, a);
   KZ_Point *ca_points = malloc((ca_count + 1) * sizeof(KZ_Point));
+  if (ca_points == NULL)
+    printf("ca broking\n");
   ca_count = find_points(c, a, ca_points);
 
 #if DRAW_FILL

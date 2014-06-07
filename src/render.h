@@ -3,11 +3,10 @@
 #include "matrix.h"
 
 // renders a single perspective -- access through render functions below
-void renderperspective(Matrix *faces, double *eye, uint32_t color);
+void renderperspective(Matrix *faces, double *eye, Matrix *colors);
 
 // rendering functions for screen
-void rendercyclops(Matrix *faces, double *eye);
-void renderstereo(Matrix *faces, double *eyes);
-void renderparallel(Matrix *faces);
-void spincyclops(Matrix *edge, double *eye, int del);
-void spinstereo(Matrix *edge, double *eyes, int del);
+void rendercyclops(Matrix *faces, double *eye, Matrix *colors);
+//void renderstereo(Matrix *faces, double *eyes);
+void spincyclops(Matrix *edge, double *eye, Matrix *colors, int del);
+//void spinstereo(Matrix *edge, double *eyes, int del);
