@@ -115,14 +115,10 @@ void consider_KZ_Point(KZ_Point p) {
 void flip_KZ_buffer() {
   lock_surface();
   int x, y;
-  uint32_t color;
   for (x = 0; x < surface->w; x ++) {
     for (y = 0; y < surface->h; y++) {
       if (kz_buf[x][y].x < 0) continue;
-      color = rgb( kz_buf[x][y].kr * ambient_red,
-		   kz_buf[x][y].kg * ambient_green,
-		   kz_buf[x][y].kb * ambient_blue);
-      setpix(x, y, color, 0);
+      setpix(x, y, kz_buf[x][y].ambient, 0);
     }
   }
   unlock_surface();
