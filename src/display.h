@@ -11,7 +11,9 @@ typedef struct kz_point {
   // k values for lighting model (one for each rgb channel)
   double kr, kg, kb;
   // ambient light
-  uint32_t ambient;
+  uint32_t ared;
+  uint32_t ablue;
+  uint32_t agreen;
 } KZ_Point;
 
 char rendering_initialized;

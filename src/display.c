@@ -14,10 +14,6 @@ KZ_Point **kz_buf;
 // should mix colors when adding new pixel
 char mix = 0;
 
-int ambient_red = 255;
-int ambient_green = 255;
-int ambient_blue = 255;
-
 void log_SDL_error(const char *e) {
   printf("%s failed:\n\t%s\n", e, SDL_GetError());
 }
@@ -29,7 +25,7 @@ int init_live_render(int w, int h) {
   for (i = 0; i < w; i++) {
     kz_buf[i] = calloc(h, sizeof(KZ_Point));
     for (j = 0; j < h; j++) {
-      kz_buf[i][j] = (KZ_Point){-1, -1, 0.0, 0.0, 0.0, 0.0, 0, 0, 0};
+      kz_buf[i][j] = (KZ_Point){-1, -1, 0.0, 0.0, 0.0, 0.0, 0};
     }
   }
   if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -115,10 +111,14 @@ void consider_KZ_Point(KZ_Point p) {
 void flip_KZ_buffer() {
   lock_surface();
   int x, y;
+  uint32_t color;
   for (x = 0; x < surface->w; x ++) {
     for (y = 0; y < surface->h; y++) {
       if (kz_buf[x][y].x < 0) continue;
-      setpix(x, y, kz_buf[x][y].ambient, 0);
+      color = rgb((uint32_t)kz_buf[x][y].ared, 
+		  (uint32_t)kz_buf[x][y].agreen, 
+		  (uint32_t)kz_buf[x][y].ablue);
+      setpix(x, y, color, 0);
     }
   }
   unlock_surface();

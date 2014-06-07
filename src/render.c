@@ -60,6 +60,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p1.kr = mat_get_cell(colors, c, 0);
     p1.kg = mat_get_cell(colors, c, 1);
     p1.kb = mat_get_cell(colors, c, 2);
+    p1.ared = p1.kr * ambient_red;
+    p1.agreen = p1.kg * ambient_green;
+    p1.ablue = p1.kb * ambient_blue;
     perspectify(coors, coors+1, pz, eye);
 
     pz = mat_get_cell(faces, c+1, 2);
@@ -69,6 +72,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p2.kr = mat_get_cell(colors, c+1, 0);
     p2.kg = mat_get_cell(colors, c+1, 1);
     p2.kb = mat_get_cell(colors, c+1, 2);
+    p2.ared = p2.kr * ambient_red;
+    p2.agreen = p2.kg * ambient_green;
+    p2.ablue = p2.kb * ambient_blue;
     perspectify(coors+2, coors+3, pz, eye);
 
     pz = mat_get_cell(faces, c+2, 2);
@@ -78,6 +84,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p3.kr = mat_get_cell(colors, c+2, 0);
     p3.kg = mat_get_cell(colors, c+2, 1);
     p3.kb = mat_get_cell(colors, c+2, 2);
+    p3.ared = p3.kr * ambient_red;
+    p3.agreen = p3.kg * ambient_green;
+    p3.ablue = p3.kb * ambient_blue;
     perspectify(coors+4, coors+5, pz, eye);
 
     map_coors(coors, coors+1);

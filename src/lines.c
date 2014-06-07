@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "lines.h"
 #include "display.h"
+#include "render.h"
 #include "options.h"
 
 inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
@@ -45,10 +46,11 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   if (littleP.x < 0)
     littleP.x = 0;
   char has_drawn = 0;
-  double radstep = (greatP.r - littleP.r) / (double)(greatP.x - littleP.x);
-  double rstep = (greatP.kr - littleP.kr) / (double)(greatP.x - littleP.x);
-  double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
-  double bstep = (greatP.kb - littleP.kb) / (double)(greatP.x - littleP.x);
+  double dx = greatP.x - littleP.x;
+  double radstep = (greatP.r - littleP.r) / dx;
+  double rstep = (greatP.kr - littleP.kr) / dx;
+  double gstep = (greatP.kg - littleP.kg) / dx;
+  double bstep = (greatP.kb - littleP.kb) / dx;
   KZ_Point p = littleP;
   while (p.x <= greatP.x) {
     if (pix_in_screen(p.x, p.y)) {
@@ -62,6 +64,9 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     p.kg += gstep;
     p.kb += bstep;
     p.r += radstep;
+    p.ared  = p.kr * ambient_red;
+    p.agreen = p.kg * ambient_green;
+    p.ablue = p.kb * ambient_blue;
   }
 }
 
@@ -77,11 +82,10 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   int ystep = littleP.y < greatP.y ? 1 : -1;
   KZ_Point p = littleP;
 
-  double radstep = (greatP.r - littleP.r) / (double)(greatP.x - littleP.x);
-  double rstep = (greatP.kr - littleP.kr) / (double)(greatP.x - littleP.x);
-  double gstep = (greatP.kg - littleP.kg) / (double)(greatP.x - littleP.x);
-  double bstep = (greatP.kb - littleP.kb) / (double)(greatP.x - littleP.x);
-  
+  double radstep = (greatP.r - littleP.r) / (double)dx;
+  double rstep = (greatP.kr - littleP.kr) / (double)dx;
+  double gstep = (greatP.kg - littleP.kg) / (double)dx;
+  double bstep = (greatP.kb - littleP.kb) / (double)dx;
   if (greatP.x == littleP.x)
     radstep = rstep = gstep = bstep = 0;
 
@@ -95,6 +99,9 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
       p.kg += gstep;
       p.kb += bstep;
       p.r += radstep;
+      p.ared = p.kr * ambient_red;
+      p.agreen = p.kg * ambient_green;
+      p.ablue = p.kb * ambient_blue;
       i++;
     }
   } else {
@@ -107,6 +114,9 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
       p.kg += gstep;
       p.kb += bstep;
       p.r += radstep;
+      p.ared = p.kr * ambient_red;
+      p.agreen = p.kg * ambient_green;
+      p.ablue = p.kb * ambient_blue;
       i++;
     }
   }
