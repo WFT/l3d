@@ -61,6 +61,17 @@ int init_live_render(int w, int h) {
   return 0;
 }
 
+void set_screen(double xmin, double ymin,
+		double xmax, double ymax) {
+  if (!screen) {
+    screen = malloc(4 * sizeof(double));
+  }
+  screen[0] = xmin;
+  screen[1] = ymin;
+  screen[2] = xmax;
+  screen[3] = ymax;
+}
+
 void mixcolors(char b) {
   mix = b;
 }

@@ -114,8 +114,7 @@ void interpret(char *l) {
     if (quit)
       printf("live rendering setup failed... Exiting now.\n");
   } else if (strcmp(list[0], "screen") == 0) {
-    screen = malloc(4 * sizeof(double));
-    memcpy(screen, args, 4 * sizeof(double));
+    set_screen(args[0], args[1], args[2], args[3]);
   } else if (strcmp(list[0], "sphere-t") == 0) {
     Matrix *sphere = sphere_t(args);
     Matrix *obj = mat_multiply(tform, sphere);
