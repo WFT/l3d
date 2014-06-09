@@ -1,0 +1,6 @@
+screen -10 -10 10 10
+pixels 300 300
+box-t 4 4 4 0 0 0 0 0 0
+autorc 0 0 10
+spinc 0 0 10
+stdin
