@@ -128,19 +128,19 @@ void draw_triangle(KZ_Point a, KZ_Point b, KZ_Point c) {
   int ab_count = point_count(a, b);
   KZ_Point *ab_points = malloc((ab_count + 1) * sizeof(KZ_Point));
   if (ab_points == NULL)
-    printf("ab broking\n");
+    printf("ab broken\n");
   ab_count = find_points(a, b, ab_points);
 
   int bc_count = point_count(b, c);
   KZ_Point *bc_points = malloc((bc_count + 1) * sizeof(KZ_Point));
   if (bc_points == NULL)
-    printf("bc broking\n");
+    printf("bc broken\n");
   bc_count = find_points(b, c, bc_points);
 
   int ca_count = point_count(c, a);
   KZ_Point *ca_points = malloc((ca_count + 1) * sizeof(KZ_Point));
   if (ca_points == NULL)
-    printf("ca broking\n");
+    printf("ca broken\n");
   ca_count = find_points(c, a, ca_points);
 
 #if DRAW_FILL
