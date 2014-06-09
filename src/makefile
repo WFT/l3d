@@ -5,6 +5,9 @@ STDFLAGS = -g -O3
 build: $(DEPENDENCIES) interpreter.c
 	gcc interpreter.c $(DEPENDENCIES) $(STDFLAGS) $(SDLFLAGS) -lm -o 3D 
 
+run: build
+	./3D ../examples/tinycube.l3d
+
 transform.o: transform.c transform.h
 	gcc transform.c -o transform.o -c $(STDFLAGS)
 

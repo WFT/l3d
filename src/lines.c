@@ -81,11 +81,12 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   // y goes up if littleP.y is smaller than greatP.y, else it goes down
   int ystep = littleP.y < greatP.y ? 1 : -1;
   KZ_Point p = littleP;
-
-  double radstep = (greatP.r - littleP.r) / (double)dx;
-  double rstep = (greatP.kr - littleP.kr) / (double)dx;
-  double gstep = (greatP.kg - littleP.kg) / (double)dx;
-  double bstep = (greatP.kb - littleP.kb) / (double)dx;
+  
+  double pcount = point_count(p1, p2);
+  double radstep = (greatP.r - littleP.r) / pcount;
+  double rstep = (greatP.kr - littleP.kr) / pcount;
+  double gstep = (greatP.kg - littleP.kg) / pcount;
+  double bstep = (greatP.kb - littleP.kb) / pcount;
   if (greatP.x == littleP.x)
     radstep = rstep = gstep = bstep = 0;
 
