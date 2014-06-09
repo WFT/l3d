@@ -5,7 +5,7 @@
 #include "render.h"
 #include "options.h"
 
-inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
+static inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
   if (p2->x < p1->x) {
     KZ_Point swap = *p1;
     *p1 = *p2;
@@ -14,7 +14,7 @@ inline void order_endpoints(KZ_Point *p1, KZ_Point *p2) {
 }
 
 // generalized bresenham line algorithm will advance one step for each call
-inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
+static inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int major_delta, int minor_delta, int major_step, int minor_step) {
   *acc -= minor_delta;
   if (*acc < 0) {
     *minor_counter += minor_step;
@@ -24,7 +24,7 @@ inline void bresenham_step(int *acc, int *major_counter, int *minor_counter, int
 }
 
 // predicts how many points there will be
-inline int point_count(KZ_Point p1, KZ_Point p2)  {
+static inline int point_count(KZ_Point p1, KZ_Point p2)  {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);
@@ -36,7 +36,7 @@ inline int point_count(KZ_Point p1, KZ_Point p2)  {
   return (dx > dy ? dx : dy) + 1;
 }
 
-inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
+static inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   if (p1.x == p2.x) {
     consider_KZ_Point(p1);
     return;
@@ -72,7 +72,7 @@ inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
 
 // discover all points using the bresenham_step
 // RETURNS: number of points actually found
-inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
+static inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   KZ_Point greatP = p2;
   KZ_Point littleP = p1;
   order_endpoints(&littleP, &greatP);

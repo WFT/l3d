@@ -35,7 +35,7 @@ char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
-inline void add_colors_for_obj(Matrix *obj) {
+static inline void add_colors_for_obj(Matrix *obj) {
   int c;
   double r[] = {1, 0, 0};
   double g[] = {0, 1, 0};
@@ -58,7 +58,7 @@ inline void add_colors_for_obj(Matrix *obj) {
 }
 
 // will destroy the transform
-inline void multiply_transform(Matrix *transform) {
+static inline void multiply_transform(Matrix *transform) {
   Matrix *temp = mat_multiply(tform, transform);
   mat_destruct(tform);
   tform = temp;
