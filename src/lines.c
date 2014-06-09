@@ -87,7 +87,7 @@ inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   double rstep = (greatP.kr - littleP.kr) / pcount;
   double gstep = (greatP.kg - littleP.kg) / pcount;
   double bstep = (greatP.kb - littleP.kb) / pcount;
-  if (greatP.x == littleP.x)
+  if (pcount == 0)
     radstep = rstep = gstep = bstep = 0;
 
   int i = 0;
