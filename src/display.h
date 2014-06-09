@@ -22,7 +22,8 @@ double *screen;
 // returns 0 on success, 1 on fail and prints error
 int init_live_render(int w, int h);
 
-void set_screen();
+void set_screen(double xmin, double ymin,
+		double xmax, double ymax);
 
 // setting a pixel for which this function returns 0 is undefined
 // will probably result in a segfault
