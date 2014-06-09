@@ -353,4 +353,5 @@ int main(int argc, char **argv) {
   }
   if (rendering_initialized)
     finish_live_display();
+  return 0;
 }
