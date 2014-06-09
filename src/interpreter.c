@@ -15,8 +15,6 @@
 #include "transform.h"
 #include "objects.h"
 
-#define TO_RAD(deg) (deg * M_PI / 180)
-
 double *autocyclops = NULL;
 // double *autostereo = NULL;
 
