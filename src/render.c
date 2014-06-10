@@ -22,15 +22,19 @@ static inline void extract_vectors(double coors[12],
   b[2] = p3[2]-p2[2];
 }
 
+static inline void cross_vectors(double a[3], double b[3],
+				 double cross[3]) {
+  cross[0] = (a[1]*b[2]) - (a[2]*b[1]);
+  cross[1] = (a[2]*b[0]) - (a[0]*b[2]);
+  cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
+}
+
 // assumes x y z 1 pattern
 static inline char culltri(double coors[12], double *eye) {
   //backface culling
   double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
   double a[3], b[3], cross[3];
   extract_vectors(coors, a, b);
-  cross[0] = (a[1]*b[2]) - (a[2]*b[1]);
-  cross[1] = (a[2]*b[0]) - (a[0]*b[2]);
-  cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
   double ep1[3];
   ep1[0] = p1[0] - eye[0]; //p1 - eye
   ep1[1] = p1[1] - eye[1];
