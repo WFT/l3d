@@ -30,11 +30,10 @@ static inline void cross_vectors(double a[3], double b[3],
 }
 
 // assumes x y z 1 pattern
-static inline char culltri(double coors[12], double *eye) {
+static inline char culltri(double coors[12], double *eye,
+			   double cross[3]) {
   //backface culling
   double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
-  double a[3], b[3], cross[3];
-  extract_vectors(coors, a, b);
   double ep1[3];
   ep1[0] = p1[0] - eye[0]; //p1 - eye
   ep1[1] = p1[1] - eye[1];
@@ -60,7 +59,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
       mat_get_column(faces, c, tri);
       mat_get_column(faces, c+1, tri+4);
       mat_get_column(faces, c+2, tri+8);
-      if (culltri(tri, eye))
+      double a[3], b[3], cross[3];
+      extract_vectors(tri, a, b);
+      if (culltri(tri, eye, cross))
 	continue;
 #endif
     pz = mat_get_cell(faces, c, 2);
