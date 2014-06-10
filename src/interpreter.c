@@ -339,7 +339,7 @@ int main(int argc, char **argv) {
   in = stdin;
   screen = 0;
   rendering_initialized = 0;
-  ambient_red = ambient_blue = ambient_green = 255;
+  ambient_red = ambient_blue = ambient_green = 100;
   if (argc > 1) {
     in = fopen(argv[1], "r");
   }
