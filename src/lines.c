@@ -108,7 +108,7 @@ static inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   } else {
     int  acc = dy/2;
     char up = littleP.y < greatP.y;
-    while (up ? p.y <= greatP.y : p.y >= greatP.y) {
+    while (i < pcount) {//(up ? p.y <= greatP.y : p.y >= greatP.y) {
       points[i] = p;
       bresenham_step(&acc, &p.y, &p.x, dy, dx, ystep, 1);
       p.kr += rstep;
