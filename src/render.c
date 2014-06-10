@@ -11,17 +11,23 @@ inline double eye_distance(double x, double y, double z, double *eye) {
   return (dx*dx) + (dy*dy) + (dz*dz);
 }
 
-// assumes x y z 1 pattern
-inline char culltri(double coors[12], double *eye) {
-  //backface culling
+static inline void extract_vectors(double coors[12],
+				   double a[3], double b[3]) {
   double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
-  double a[3], b[3], cross[3];
   a[0] = p2[0]-p1[0]; //p2-p1
   a[1] = p2[1]-p1[1];
   a[2] = p2[2]-p1[2];
   b[0] = p3[0]-p2[0]; //p3-p2
   b[1] = p3[1]-p2[1];
   b[2] = p3[2]-p2[2];
+}
+
+// assumes x y z 1 pattern
+static inline char culltri(double coors[12], double *eye) {
+  //backface culling
+  double *p1 = coors, *p2 = coors+4, *p3 = coors+8;
+  double a[3], b[3], cross[3];
+  extract_vectors(coors, a, b);
   cross[0] = (a[1]*b[2]) - (a[2]*b[1]);
   cross[1] = (a[2]*b[0]) - (a[0]*b[2]);
   cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
