@@ -28,6 +28,7 @@ char tform_keys[100][25];
 Matrix *tform_mats[100];
 int lastmdex = -1;
 
+Matrix *light;
 Matrix *color;
 Matrix *tri;
 Matrix *tform;
@@ -115,6 +116,12 @@ void interpret(char *l) {
     add_colors_for_obj( obj);
     mat_destruct(cube);
     mat_destruct(obj);
+  } else if (strcmp(list[0], "lamp") == 0) {
+    if (argc == 6) {
+      mat_add_column(light, args);
+    } else {
+      printf("Usage:\n\tlamp x y z r g b\n");
+    }
   } else if (strcmp(list[0], "tri") == 0) {
     printf("drawing some triangle\n");
     double col[4] = {0, 0, 0, 1};
@@ -322,6 +329,9 @@ void interpret(char *l) {
 
 int main(int argc, char **argv) {  
   color = mat_construct(0, 3);
+  light = mat_construct(0, 6);
+  double l[6] = {0, 0, 10, 200, 200, 200};
+  mat_add_column(light, l);
   surface_color = malloc(3 * sizeof(double));
   surface_color[0] = surface_color[1] = surface_color[2] = .9;
   tri = mat_construct(0, 4);
@@ -353,6 +363,10 @@ int main(int argc, char **argv) {
       quit = 1;
   }
   free(surface_color);
+  mat_destruct(tri);
+  mat_destruct(color);
+  mat_destruct(light);
+  mat_destruct(tform);
   if (rendering_initialized)
     finish_live_display();
   return 0;

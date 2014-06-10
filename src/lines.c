@@ -51,7 +51,6 @@ static inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
   double rstep = (greatP.kr - littleP.kr) / dx;
   double gstep = (greatP.kg - littleP.kg) / dx;
   double bstep = (greatP.kb - littleP.kb) / dx;
-  double lstep = (greatP.k_difffuse - littleP.l_diffuse) / dx;
   KZ_Point p = littleP;
   while (p.x <= greatP.x) {
     if (pix_in_screen(p.x, p.y)) {
@@ -65,7 +64,6 @@ static inline void draw_horizontal(KZ_Point p1, KZ_Point p2) {
     p.kg += gstep;
     p.kb += bstep;
     p.r += radstep;
-    p.k_diffuse += lstep;
     p.ared  = p.kr * ambient_red;
     p.agreen = p.kg * ambient_green;
     p.ablue = p.kb * ambient_blue;
@@ -89,7 +87,7 @@ static inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
   double rstep = (greatP.kr - littleP.kr) / pcount;
   double gstep = (greatP.kg - littleP.kg) / pcount;
   double bstep = (greatP.kb - littleP.kb) / pcount;
-  double lstep = (greatP.k_difffuse - littleP.l_diffuse) / pcount;
+
   if (pcount == 0)
     radstep = rstep = gstep = bstep = 0;
 
@@ -103,7 +101,6 @@ static inline int find_points(KZ_Point p1, KZ_Point p2, KZ_Point *points) {
       p.kg += gstep;
       p.kb += bstep;
       p.r += radstep;
-      p.k_diffuse += lstep;
       p.ared = p.kr * ambient_red;
       p.agreen = p.kg * ambient_green;
       p.ablue = p.kb * ambient_blue;

@@ -15,7 +15,7 @@ typedef struct kz_point {
   uint32_t ablue;
   uint32_t agreen;
   // normal at this point
-  double k_diffuse;
+  double norm_x, norm_y, norm_z;
 } KZ_Point;
 
 char rendering_initialized;

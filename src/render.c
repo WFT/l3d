@@ -29,6 +29,10 @@ static inline void cross_vectors(double a[3], double b[3],
   cross[2] = (a[0]*b[1]) - (a[1]*b[0]);
 }
 
+static inline double dot_vectors(double a[3], double b[3]) {
+  return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
+}
+
 // assumes x y z 1 pattern
 static inline char culltri(double coors[12], double *eye,
 			   double cross[3]) {
@@ -74,6 +78,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p1.ared = p1.kr * ambient_red;
     p1.agreen = p1.kg * ambient_green;
     p1.ablue = p1.kb * ambient_blue;
+    p1.norm_x = cross[0];
+    p1.norm_y = cross[1];
+    p1.norm_z = cross[2];
     perspectify(coors, coors+1, pz, eye);
 
     pz = mat_get_cell(faces, c+1, 2);
@@ -86,6 +93,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p2.ared = p2.kr * ambient_red;
     p2.agreen = p2.kg * ambient_green;
     p2.ablue = p2.kb * ambient_blue;
+    p2.norm_x = cross[0];
+    p2.norm_y = cross[1];
+    p2.norm_z = cross[2];
     perspectify(coors+2, coors+3, pz, eye);
 
     pz = mat_get_cell(faces, c+2, 2);
@@ -98,6 +108,9 @@ void renderperspective(Matrix *faces, double *eye, Matrix *colors) {
     p3.ared = p3.kr * ambient_red;
     p3.agreen = p3.kg * ambient_green;
     p3.ablue = p3.kb * ambient_blue;
+    p3.norm_x = cross[0];
+    p3.norm_y = cross[1];
+    p3.norm_z = cross[2];
     perspectify(coors+4, coors+5, pz, eye);
 
     map_coors(coors, coors+1);
