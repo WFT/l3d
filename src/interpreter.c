@@ -31,29 +31,15 @@ int lastmdex = -1;
 Matrix *color;
 Matrix *tri;
 Matrix *tform;
+double *surface_color;
 char quit = 0;
 char sdl_initialized = 0;
 FILE *in;
 
 static inline void add_colors_for_obj(Matrix *obj) {
   int c;
-  double r[] = {1, 0, 0};
-  double g[] = {0, 1, 0};
-  double b[] = {0, 0, 1};
   for (c = 0; c < obj->cols; c++) {
-    switch (c%3) {
-    case 0:
-      mat_add_column(color, r);
-      break;
-    case 1:
-      mat_add_column(color, g);
-      break;
-    case 2:
-      mat_add_column(color, b);
-      break;
-    default:
-      break;
-    }
+    mat_add_column(color, surface_color);
   }
 }
 
@@ -274,6 +260,20 @@ void interpret(char *l) {
       free(autostereo);
       autostereo = NULL;
       }*/
+  } else if (strcmp(list[0], "color") == 0) {
+    if (argc == 3) {
+      memcpy(surface_color, args, 3 * sizeof(double));
+    } else {
+      printf("Usage:\n\tcolor kr kg kb\n");
+    }
+  } else if (strcmp(list[0], "ambient") == 0) {
+    if (argc == 3) {
+      ambient_red = (int)args[0];
+      ambient_green = (int)args[1];
+      ambient_blue = (int)args[2];
+    } else {
+      printf("Usage:\n\tambient r g b\n");
+    }
   } /*else if (strcmp(list[0], "autors") == 0) {
     if (!autostereo)
       autostereo = malloc(6 * sizeof(double));
@@ -322,6 +322,8 @@ void interpret(char *l) {
 
 int main(int argc, char **argv) {  
   color = mat_construct(0, 3);
+  surface_color = malloc(3 * sizeof(double));
+  surface_color[0] = surface_color[1] = surface_color[2] = .9;
   tri = mat_construct(0, 4);
   tform = identity_mat();
   in = stdin;
@@ -350,6 +352,7 @@ int main(int argc, char **argv) {
     if (nowframe == totalframes)
       quit = 1;
   }
+  free(surface_color);
   if (rendering_initialized)
     finish_live_display();
   return 0;
