@@ -52,14 +52,17 @@ void render_spin_test() {
   clock_t t;
   double rad = rand_radian();
   unsigned long i;
+  double white[3] = {1, 1, 1};
+  Matrix *color = mat_construct(0, 3);
   do {
     for (i=0; i < 3000; i++) {
       rand_point(col);
       mat_add_column(faces, col);
+      mat_add_column(color, white);
     }
     t = clock();
     apply_transform(rotate_y_mat(rad), &faces);
-    rendercyclops(faces, eye);
+    rendercyclops(faces, eye, color);
     t = clock() - t;
     printf("%d faces spun in %f seconds\n", faces->cols/3, ((float)t)/CLOCKS_PER_SEC);
   } while (((float)t)/CLOCKS_PER_SEC < 1);
