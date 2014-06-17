@@ -228,6 +228,7 @@ void renderppm(char *path) {
   unlock_surface();
   fwrite(obuf, 1, bwrit, out);
   fclose(out);
+  free(obuf);
 }
 
 void update_display() {
