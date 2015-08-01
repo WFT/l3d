@@ -35,12 +35,25 @@ Matrix *tform;
 double *surface_color;
 char quit = 0;
 char sdl_initialized = 0;
+char randomize_color = 0;
 FILE *in;
+
+static inline void random_color(double *color) {
+  color[0] = (double)arc4random() / (double)UINT32_MAX;
+  color[1] = (double)arc4random() / (double)UINT32_MAX;
+  color[2] = (double)arc4random() / (double)UINT32_MAX;
+}
 
 static inline void add_colors_for_obj(Matrix *obj) {
   int c;
+  double randcolor[3];
   for (c = 0; c < obj->cols; c++) {
-    mat_add_column(color, surface_color);
+    if (randomize_color) {
+      random_color(randcolor);
+      mat_add_column(color, randcolor);
+    } else {
+      mat_add_column(color, surface_color);
+    }
   }
 }
 
@@ -267,6 +280,14 @@ void interpret(char *l) {
       free(autostereo);
       autostereo = NULL;
       }*/
+  } else if (strcmp(list[0], "rand_color") == 0) {
+    if (argc == 1) {
+      randomize_color = (int)args[0];
+    } else if (argc == 0) {
+      randomize_color = 1;
+    } else {
+      printf("Usage:\n\trand_color [0/1]");
+    }
   } else if (strcmp(list[0], "color") == 0) {
     if (argc == 3) {
       memcpy(surface_color, args, 3 * sizeof(double));
